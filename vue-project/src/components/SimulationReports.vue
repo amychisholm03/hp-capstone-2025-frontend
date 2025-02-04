@@ -1,19 +1,45 @@
 <template>
-	<v-app>
-		<v-dialog scrollable persistent class="detailed-report" max-width="500px" v-model="SimulationReportDialogue" content-class="overflow-y-auto">
-			<div style="max-height: 60vh; overflow-y: hidden; overflow-x:hidden;">
-				<detailed-report @exit="SimulationReportDialogue = false" :report="selectedReport" :printJob="selectedPrintJob" :workflow="selectedWorkflow"></detailed-report>
-			</div>
-		</v-dialog>
-		<v-main class="pa-3">
-			<v-card style="width:700px" class="large-module pa-3 mb-3">
-        		<simulation-report-history style="width:100%;" :printJobs="printJobs" @select-report="selectSimulationReport" :workflows="workflows" :simulationReports="simulationReports"></simulation-report-history>
-      		</v-card>
-			<v-card class="module pa-3 mb-3">
-		      <simulation-report-generate style="height:300px; width:800px;"  @create="getSimulationReports" :printJobs="printJobs" :workflows="workflows"></simulation-report-generate>
-      		</v-card>
-		</v-main>
-	</v-app>
+  <v-app>
+    <v-dialog
+      v-model="SimulationReportDialogue"
+      scrollable
+      persistent
+      class="detailed-report"
+      max-width="500px"
+      content-class="overflow-y-auto"
+    >
+      <div style="max-height: 60vh; overflow-y: hidden; overflow-x:hidden;">
+        <detailed-report
+          :report="selectedReport"
+          :print-job="selectedPrintJob"
+          :workflow="selectedWorkflow"
+          @exit="SimulationReportDialogue = false"
+        ></detailed-report>
+      </div>
+    </v-dialog>
+    <v-main class="pa-3">
+      <v-card
+        style="width:700px"
+        class="large-module mb-3 pa-3"
+      >
+        <simulation-report-history
+          style="width:100%;"
+          :print-jobs="printJobs"
+          :workflows="workflows"
+          :simulation-reports="simulationReports"
+          @select-report="selectSimulationReport"
+        ></simulation-report-history>
+      </v-card>
+      <v-card class="mb-3 module pa-3">
+        <simulation-report-generate
+          style="height:300px; width:800px;"
+          :print-jobs="printJobs"
+          :workflows="workflows"
+          @create="getSimulationReports"
+        ></simulation-report-generate>
+      </v-card>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
@@ -37,9 +63,15 @@ const selectedWorkflow = ref(null)
 //////////////////////
 
 const selectSimulationReport = (id) => {
-	selectedReport.value = simulationReports.value.find(item => item.id === id)
-	selectedPrintJob.value = printJobs.value.find(item => item.id === selectedReport.value.PrintJobID)
-	selectedWorkflow.value = workflows.value.find(item => item.id === selectedReport.value.WorkflowID)
+	selectedReport.value = simulationReports.value.find(item => {
+return item.id === id
+})
+	selectedPrintJob.value = printJobs.value.find(item => {
+return item.id === selectedReport.value.PrintJobID
+})
+	selectedWorkflow.value = workflows.value.find(item => {
+return item.id === selectedReport.value.WorkflowID
+})
 	SimulationReportDialogue.value = true
 }
 
@@ -64,8 +96,12 @@ const getSimulationReports = async () => {
       	report.Date= dateObj.getMonth()+1  + "/" + dateObj.getDate() + "/" + dateObj.getFullYear();
 				let hours = dateObj.getHours().toString();
 				let minutes = dateObj.getMinutes().toString();
-				if (hours.length == 1) hours = '0' + hours;
-				if (minutes.length == 1) minutes = '0' + minutes;
+				if (hours.length == 1) {
+hours = '0' + hours;
+}
+				if (minutes.length == 1) {
+minutes = '0' + minutes;
+}
 	      report.Time = hours + ":" + minutes;
 
       });
@@ -80,8 +116,11 @@ const getSimulationReports = async () => {
 const getPrintJobs = async () => {
 	try {
 		const response = await getCollection("PrintJob");
-		if (response.ok) printJobs.value = await response.json();
-		else throw new Error(String(response.status));
+		if (response.ok) {
+printJobs.value = await response.json();
+} else {
+throw new Error(String(response.status));
+}
 	} catch (error) {
 		console.log(`Error fetching list of PrintJobs: ${error}`);
 	}
@@ -90,8 +129,11 @@ const getPrintJobs = async () => {
 const getWorkflows = async () => {
 	try {
 		const response = await getCollection("Workflow");
-		if (response.ok) workflows.value = await response.json();
-		else throw new Error(String(response.status));
+		if (response.ok) {
+workflows.value = await response.json();
+} else {
+throw new Error(String(response.status));
+}
 	} catch (error) {
 		console.log(`Error fetching list of Workflows: ${error}`);
 	}
@@ -159,5 +201,4 @@ onMounted(async () => {
 .item-val {
 	font-size: x-small;
 }
-
 </style>

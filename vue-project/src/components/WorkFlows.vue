@@ -59,6 +59,8 @@
                             </template>
                         </v-select>
 
+                        <v-text-field :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of Rips" v-model="numberOfRips" />
+
                         
                     </div>
                     <v-btn type="submit" class="mb" color="primary" :disabled="failure || success">
@@ -95,6 +97,7 @@
 
     const enabled = ref(false);
     const parallelSteps = ref(null);
+    const numberOfRips = ref("1");
 
     const workflowTitle = ref('');
     const selectedSteps = ref(null);
@@ -121,6 +124,10 @@
 
     const parallelStepsValidation = [
         x => { if (x && x.length !== 0) return true; return 'At least one step must be selected'}
+    ]
+
+    const numberOfRipsValidation = [
+        x => { if (Number(x) > 0 && Number(x) <= 10) return true; return 'Number of Rips must be greater than 0 and less than 10'}
     ]
 
     const validateCreatedWorkflow = () => {
@@ -176,7 +183,7 @@
         }
         selectedStepsIDs.value = selectedSteps.value.map(stepID => stepID.id)
         let steps = formatLinearSteps(toRaw(selectedStepsIDs.value));
-        const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled, parallelSteps.value);
+        const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled.value, parallelSteps.value, numberOfRips.value);
 
         if (!response.ok) {
             console.log("Error posting data. Response from server: " + String(response.status))

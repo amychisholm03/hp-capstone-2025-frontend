@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "7.4.47",
     "core-js": "^3.37.1",
+    "mkdirp": "^3.0.1",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vuetify": "^3.6.11"
@@ -23,6 +24,9 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.4.0",
     "eslint-plugin-vue": "^9.27.0",
+    "eslint-plugin-sonarjs": "3.0.1",
+    "eslint-plugin-vuetify": "2.5.1",
+    "eslint-plugin-jsdoc": "50.6.3",
     "sass": "1.77.6",
     "unplugin-fonts": "^1.1.1",
     "unplugin-vue-components": "^0.27.2",

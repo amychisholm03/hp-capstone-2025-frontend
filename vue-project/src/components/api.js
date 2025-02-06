@@ -1,7 +1,7 @@
-//export const API_URL = "http://api.wsuv-hp-capstone.com"
-//export const API_PORT = "80"
-export const API_URL = "http://localhost"
-export const API_PORT = "5040"
+export const API_URL = "http://api.wsuv-hp-capstone.com"
+export const API_PORT = "80"
+// export const API_URL = "http://localhost"
+// export const API_PORT = "5040"
 
 
 export async function getCollection(coll){

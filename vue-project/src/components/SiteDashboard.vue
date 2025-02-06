@@ -1,26 +1,40 @@
 <template>
   <v-app theme="light">
     <v-toolbar class="toolbar">
-        <v-toolbar-title class="header">Dashboard</v-toolbar-title>
+      <v-toolbar-title class="header">
+        Dashboard
+      </v-toolbar-title>
     </v-toolbar> 
-      <v-main>
-      <v-container class="pa-3 ma-3">
+    <v-main>
+      <v-container class="ma-3 pa-3">
         <v-row>
-          <v-card class="ma-3 dashboard-component" style="width: 425px; height: 305px;">
+          <v-card
+            class="dashboard-component ma-3"
+            style="width: 425px; height: 305px;"
+          >
             <v-img src="/src/assets/image1.png"></v-img>
           </v-card>
 
-          <v-card class="ma-3 dashboard-component" style="width: 425px; height: 305px;">
+          <v-card
+            class="dashboard-component ma-3"
+            style="width: 425px; height: 305px;"
+          >
             <v-img src="/src/assets/image2.png"></v-img>
           </v-card>
         </v-row>
 
         <v-row>
-          <v-card class="ma-3 dashboard-component" style="width: 425px; height: 305px;">
+          <v-card
+            class="dashboard-component ma-3"
+            style="width: 425px; height: 305px;"
+          >
             <v-img src="/src/assets/image4.png"></v-img>
           </v-card>
 
-          <v-card class="ma-3 dashboard-component" style="width: 425px; height: 305px;">
+          <v-card
+            class="dashboard-component ma-3"
+            style="width: 425px; height: 305px;"
+          >
             <v-img src="/src/assets/image3.png"></v-img>
           </v-card>
         </v-row>

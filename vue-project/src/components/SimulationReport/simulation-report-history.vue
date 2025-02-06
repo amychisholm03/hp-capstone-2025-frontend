@@ -1,51 +1,105 @@
 <template>
   <v-app>
     <v-row class="mb-2 ml-1">
-      <v-col class="d-flex align-center justify-start" style="font-size:x-large;">
+      <v-col
+        class="align-center d-flex justify-start"
+        style="font-size:x-large;"
+      >
         <span class="module-title">Simulation Report History</span>
       </v-col>
       <v-col class="d-flex justify-end">
-        <v-menu location="start" :close-on-content-click="false" transition="slide-x-reverse-transition" v-model="drawer">
-          <template v-slot:activator="{ props }">
+        <v-menu
+          v-model="drawer"
+          location="start"
+          :close-on-content-click="false"
+          transition="slide-x-reverse-transition"
+        >
+          <template #activator="{ props }">
             <v-btn
-              @click="drawer=!drawer;"
               v-bind="props"
               icon
               class="mb-2 mt-1"
               tile
+              @click="drawer=!drawer;"
             >
               <v-icon>mdi-filter</v-icon>
             </v-btn>
           </template>
-          <v-card width="300px" class="pa-5">
+          <v-card
+            width="300px"
+            class="pa-5"
+          >
             <v-col>
               <v-row>
                 <v-text-field
                   v-model="searchValue"
-                  @update:modelValue="filter"
                   single-line
                   density="compac"
                   label="Search Reports"
                   append-icon="mdi-magnify"
+                  @update:modelValue="filter"
                 />
               </v-row>
               <v-divider></v-divider>
-              <v-row class="mt-1 mb-2">
+              <v-row class="mb-2 mt-1">
                 <v-col class="ma-0 pa-0">
-                  <v-text-field flat solo-filled hide-details outlined density="compac" single-line v-model="fromDate" label="From" type="datetime-local">
+                  <v-text-field
+                    v-model="fromDate"
+                    flat
+                    solo-filled
+                    hide-details
+                    outlined
+                    density="compac"
+                    single-line
+                    label="From"
+                    type="datetime-local"
+                  >
                   </v-text-field>
                 </v-col>
                 <v-col class="ma-0 ml-2 pa-0">
-                  <v-text-field flat hide-details style="font-size:xx-small" outlined density="compac" single-line v-model="toDate" label="To" type="datetime-local">
+                  <v-text-field
+                    v-model="toDate"
+                    flat
+                    hide-details
+                    style="font-size:xx-small"
+                    outlined
+                    density="compac"
+                    single-line
+                    label="To"
+                    type="datetime-local"
+                  >
                   </v-text-field>
                 </v-col>
               </v-row>
               <v-divider></v-divider>
-              <v-row class="mt-3 mb-1">
+              <v-row class="mb-1 mt-3">
                 <v-col class="ma-0 pa-0">
-                  <v-autocomplete density="compac" variant="solo-filled" single-line style="overflow-y:auto" @update:modelValue="filter" multiple v-model="selectedPrintJobs" :items="printJobs" item-title="Title" item-value="Title" label="Print Job">
+                  <v-autocomplete
+                    v-model="selectedPrintJobs"
+                    density="compac"
+                    variant="solo-filled"
+                    single-line
+                    style="overflow-y:auto"
+                    multiple
+                    :items="printJobs"
+                    item-title="Title"
+                    item-value="Title"
+                    label="Print Job"
+                    @update:modelValue="filter"
+                  >
                   </v-autocomplete>
-                  <v-autocomplete density="compac" variant="solo-filled" single-line @update:modelValue="filter" multiple v-model="selectedWorkflows" :items="workflows" item-title="Title" item-value="Title" label="Workflow">
+                  <v-autocomplete
+                    v-model="selectedWorkflows"
+                    density="compac"
+                    variant="solo-filled"
+                    single-line
+                    multiple
+                    :items="workflows"
+                    item-title="Title"
+                    item-value="Title"
+                    label="Workflow"
+                    @update:modelValue="filter"
+                  >
                   </v-autocomplete>
                 </v-col>
               </v-row>
@@ -54,72 +108,112 @@
         </v-menu>
       </v-col>
     </v-row>
-      <div style="width:98%;" class="report-history-table">
+    <div
+      style="width:98%;"
+      class="report-history-table"
+    >
       <v-list style="margin:0; padding:0;">
-      <v-list-item v-for="(report, index) in simulationReportsDisplay" style="margin:0; padding:0;"
-        :key="index">
-        <v-card class="report-history-item" @click="$emit('select-report', report.id)">
-          <!--Workflow has defined printjob title-->
-          <div >
-            <v-row class="pa-0 ml-0 mt-2">
-              <v-col cols="3" class="pa-0 ma-0">
-                <v-card-text class="ml-5 mb-1 pa-0 item-desc">Print Job:</v-card-text>
-                <v-card-text class="ml-5 pa-0 item-desc">Workflow:</v-card-text>
-              </v-col>
+        <v-list-item
+          v-for="(report, index) in simulationReportsDisplay"
+          :key="index"
+          style="margin:0; padding:0;"
+        >
+          <v-card
+            class="report-history-item"
+            @click="$emit('select-report', report.id)"
+          >
+            <!-- Workflow has defined printjob title -->
+            <div>
+              <v-row class="ml-0 mt-2 pa-0">
+                <v-col
+                  cols="3"
+                  class="ma-0 pa-0"
+                >
+                  <v-card-text class="item-desc mb-1 ml-5 pa-0">
+                    Print Job:
+                  </v-card-text>
+                  <v-card-text class="item-desc ml-5 pa-0">
+                    Workflow:
+                  </v-card-text>
+                </v-col>
 
-              <v-col cols="3" class="pa-0 mb-2">
-                <v-card-text
-                  class="ml-0 mb-1 pa-0 item-val">{{ report.PrintJobTitle ? report.PrintJobTitle : 'N/A' }}</v-card-text>
-                <v-card-text
-                  class="ml-0 ma-0 pa-0 item-val">{{ report.WorkflowTitle ? report.WorkflowTitle : 'N/A' }}</v-card-text>
-              </v-col>
+                <v-col
+                  cols="3"
+                  class="mb-2 pa-0"
+                >
+                  <v-card-text
+                    class="item-val mb-1 ml-0 pa-0"
+                  >
+                    {{ report.PrintJobTitle ? report.PrintJobTitle : 'N/A' }}
+                  </v-card-text>
+                  <v-card-text
+                    class="item-val ma-0 ml-0 pa-0"
+                  >
+                    {{ report.WorkflowTitle ? report.WorkflowTitle : 'N/A' }}
+                  </v-card-text>
+                </v-col>
 
-              <v-col cols="3" class="pa-0 ma-0">
-                <v-card-text class="ml-5 mb-1 pa-0 item-desc">Total Time:</v-card-text>
-              </v-col>
-              <v-col cols="3" class="pa-0 mb-2">
-                <v-card-text class="ml-0 mb-1 pa-0 item-val">{{ report.TotalTimeTaken ? report.TotalTimeTaken : 'N/A' }}
-                  secs.</v-card-text>
-              </v-col>
-            </v-row>
-            <v-row class="pa-0 ml-0 mb-0 mt-2">
-              <v-col cols="3" class="pa-0 ma-0">
-                <v-card-text class="ml-5 mb-1 pa-0 item-desc">Created:</v-card-text>
-              </v-col>
-              <v-col cols="3" class="pa-0 ma-0">
-                <v-card-text class="ml-0 ma-0 pa-0 item-val">
+                <v-col
+                  cols="3"
+                  class="ma-0 pa-0"
+                >
+                  <v-card-text class="item-desc mb-1 ml-5 pa-0">
+                    Total Time:
+                  </v-card-text>
+                </v-col>
+                <v-col
+                  cols="3"
+                  class="mb-2 pa-0"
+                >
+                  <v-card-text class="item-val mb-1 ml-0 pa-0">
+                    {{ report.TotalTimeTaken ? report.TotalTimeTaken : 'N/A' }}
+                    secs.
+                  </v-card-text>
+                </v-col>
+              </v-row>
+              <v-row class="mb-0 ml-0 mt-2 pa-0">
+                <v-col
+                  cols="3"
+                  class="ma-0 pa-0"
+                >
+                  <v-card-text class="item-desc mb-1 ml-5 pa-0">
+                    Created:
+                  </v-card-text>
+                </v-col>
+                <v-col
+                  cols="3"
+                  class="ma-0 pa-0"
+                >
+                  <v-card-text class="item-val ma-0 ml-0 pa-0">
                     {{ report.Date }} @ {{ report.Time }}
-                </v-card-text>
-              </v-col>
-            </v-row>
-          </div>
-         </v-card>
-      </v-list-item>
-    </v-list>
-  </div>
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card>
+        </v-list-item>
+      </v-list>
+    </div>
   </v-app>
 </template>
 
 <script setup>
   import { nextTick, ref, onMounted, watch } from "vue";
 
-  /*
-    Props
-  */
-  const {simulationReports, workflows, printJobs} = defineProps({
-      simulationReports: Array,
-      workflows : Array,
-      printJobs: Array,
-    });
+  const {
+    simulationReports = [],
+    workflows = [],
+    printJobs = []
+  }
+  =
+  defineProps({
+    simulationReports: Array,
+    workflows : Array,
+    printJobs: Array,
+  });
 
-  /*
-    Emits
-  */
   const emit = defineEmits(['select-report']);
 
-  /*
-    Reactive Variables
-  */
   const simulationReportsDisplay = ref([]);
   const searchValue = ref('');
   const drawer = ref(false);
@@ -131,9 +225,6 @@
   ///////////////////////////////
   ///// Filters and Searching
   ///////////////////////////////
-  /**
-  * Search Print Job and Workflow Titles
-  */
   const filter = () => {
 
     nextTick(() => {
@@ -169,13 +260,20 @@
         if ((!report.PrintJobTitle) || (!report.WorkflowTitle)) {
           return false;
         }
-        return (report.PrintJobTitle.toLowerCase().includes(searchValue.value.toLowerCase()) || report.WorkflowTitle.toLowerCase().includes(searchValue.value.toLowerCase()));
+
+        const matchPrintJobTitle = report.PrintJobTitle.toLowerCase().includes(searchValue.value.toLowerCase());
+        const matchWorkflowTitle = report.WorkflowTitle.toLowerCase().includes(searchValue.value.toLowerCase());
+
+        return (matchPrintJobTitle || matchWorkflowTitle);
+
       });
     });
   }
 
   watch(
-    () => simulationReports,
+    () => {
+return simulationReports
+},
     (newReports) => {
       simulationReportsDisplay.value = newReports;
       filter();
@@ -186,7 +284,6 @@
   onMounted( async () => {
     simulationReportsDisplay.value = simulationReports;
   });
-
 </script>
 
 

@@ -1,5 +1,5 @@
 <template>
-    <v-app theme="light">
+     <v-app theme="light">
         <!-- <v-toolbar class="toolbar">
             <v-toolbar-title class="header">Workflows</v-toolbar-title>
         </v-toolbar>  -->
@@ -102,11 +102,19 @@
 
     //// METHODS ////
     const workflowTitleValidation = [
-        x => { if (x) return true; return 'Workflow title cannot not be left empty'}
+        x => {
+ if (x) {
+return true;
+} return 'Workflow title cannot not be left empty'
+}
     ];
 
     const selectedStepsValidation = [
-        x => { if (x && x.length !== 0) return true; return 'Workflow must contain at least one step'}
+        x => {
+ if (x && x.length !== 0) {
+return true;
+} return 'Workflow must contain at least one step'
+}
     ];
 
     const parallelStepsValidation = [
@@ -208,12 +216,10 @@
     .v-btn{
         margin: 0 5px;
     }
-
 </style>
 
 <style>
-
-    .exit-button{
+.exit-button{
     border:none;
     padding:0;
     box-shadow: none;

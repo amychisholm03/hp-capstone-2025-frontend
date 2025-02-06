@@ -31,7 +31,7 @@ export async function postPrintJob(Title, PageCount, RasterizationProfileID){
 }
 
 
-export async function postWorkflow(Title, WorkflowSteps){
+export async function postWorkflow(Title, WorkflowSteps, Enabled, ParallelSteps){
 	return await postNewDocument("Workflow", {
         Title: Title,
         WorkflowSteps: WorkflowSteps

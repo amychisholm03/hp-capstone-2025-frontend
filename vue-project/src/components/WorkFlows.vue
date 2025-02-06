@@ -177,7 +177,7 @@ import { onUpdated } from "vue";
         }
         selectedStepsIDs.value = selectedSteps.value.map(stepID => stepID.id)
         let steps = formatLinearSteps(toRaw(selectedStepsIDs.value));
-        const response = await postWorkflow(workflowTitle.value.toString(), steps);
+        const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled, parallelSteps.value);
 
         if (!response.ok) {
             console.log("Error posting data. Response from server: " + String(response.status))

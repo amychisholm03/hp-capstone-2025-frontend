@@ -99,6 +99,7 @@ import { onUpdated } from "vue";
 
     const workflowTitle = ref('');
     const selectedSteps = ref(null);
+    const selectedStepsIDs = ref(null);
     const workflowSteps = ref([]);
 
 
@@ -174,8 +175,8 @@ import { onUpdated } from "vue";
         if (!validateCreatedWorkflow()){
             return false;
         }
-        selectedSteps.value = selectedSteps.value.map(stepID => stepID.id)
-        let steps = formatLinearSteps(toRaw(selectedSteps.value));
+        selectedStepsIDs.value = selectedSteps.value.map(stepID => stepID.id)
+        let steps = formatLinearSteps(toRaw(selectedStepsIDs.value));
         const response = await postWorkflow(workflowTitle.value.toString(), steps);
 
         if (!response.ok) {

@@ -6,7 +6,7 @@
         <v-main>
             <v-card class="ma-3 pa-3" style="width:700px; height:370px; border-width:2px;">
                 <v-card-title class="module-title">Create New Workflow</v-card-title>
-                <v-form ref="createWorkflowForm" fast-fail @submit.prevent="createWorkflow">
+                <v-form fast-fail @submit.prevent="createWorkflow">
                     <v-text-field :rules="workflowTitleValidation" label="Workflow Title" v-model="workflowTitle" />
                     <v-select
                         v-model="selectedSteps"
@@ -84,7 +84,6 @@
     import { ref, onMounted, toRaw } from "vue";
     import { useRouter } from 'vue-router';
     import { getCollection, formatLinearSteps, postWorkflow } from "./api.js";
-import { onUpdated } from "vue";
 
     const router = useRouter();
     const routeTo = (where) => {

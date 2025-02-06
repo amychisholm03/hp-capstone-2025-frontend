@@ -14,7 +14,7 @@
                         :items="workflowSteps"
                         label="Select Workflow Steps"
                         item-title="Title"
-                        item-value="id"
+                        return-object
                         multiple
                     >
                         <template v-slot:selection="{ item, index }">
@@ -33,14 +33,15 @@
                         <v-checkbox-btn
                         v-model="enabled"
                         class="pe-2"
+                        
                         ></v-checkbox-btn>
 
                         <v-select
                             :disabled="!enabled"
                             v-model="parallelSteps"
                             :rules="parallelStepsValidation"
-                            :items="workflowSteps"
-                            label="Parallel Workflow Steps"
+                            :items="selectedSteps ? selectedSteps : []"
+                            label="Parallelize Workflow Steps"
                             item-title="Title"
                             item-value="id"
                             multiple
@@ -53,7 +54,7 @@
                                     v-if="index === 2"
                                     class="text-grey text-caption align-self-center"
                                 >
-                                    (+{{ selectedSteps.length - 2 }} others)
+                                    (+{{ parallelSteps.length - 2 }} others)
                                 </span>
                             </template>
                         </v-select>
@@ -83,6 +84,7 @@
     import { ref, onMounted, toRaw } from "vue";
     import { useRouter } from 'vue-router';
     import { getCollection, formatLinearSteps, postWorkflow } from "./api.js";
+import { onUpdated } from "vue";
 
     const router = useRouter();
     const routeTo = (where) => {
@@ -167,11 +169,12 @@
         await getWorkflowSteps();
     })
 
+
     const createWorkflow = async () => {
         if (!validateCreatedWorkflow()){
             return false;
         }
-
+        selectedSteps.value = selectedSteps.value.map(stepID => stepID.id)
         let steps = formatLinearSteps(toRaw(selectedSteps.value));
         const response = await postWorkflow(workflowTitle.value.toString(), steps);
 

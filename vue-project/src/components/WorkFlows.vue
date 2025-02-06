@@ -103,18 +103,18 @@
     //// METHODS ////
     const workflowTitleValidation = [
         x => {
- if (x) {
-return true;
-} return 'Workflow title cannot not be left empty'
-}
+            if (x) {
+                return true;
+            } return 'Workflow title cannot not be left empty'
+        }
     ];
 
     const selectedStepsValidation = [
         x => {
- if (x && x.length !== 0) {
-return true;
-} return 'Workflow must contain at least one step'
-}
+            if (x && x.length !== 0) {
+                return true;
+            } return 'Workflow must contain at least one step'
+        }
     ];
 
     const parallelStepsValidation = [
@@ -155,7 +155,6 @@ return true;
           const response = await getCollection("WorkflowStep");
           if (response.ok) {
             workflowSteps.value = await response.json();
-            console.log(workflowSteps.value);
           } else {
             throw new Error(String(response.status));
           }

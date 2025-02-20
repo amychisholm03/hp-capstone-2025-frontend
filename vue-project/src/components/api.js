@@ -44,14 +44,14 @@ export async function postWorkflow(Title, WorkflowSteps, Enabled, ParallelSteps,
 // Takes a list of steps and formats them as a graph, where each step's
 // prev step is the one before it in the array, and the next step
 // is the one after it, for compatibility with previous implementation
-export function formatLinearSteps(steps){
+export function formatSteps(steps){
 	let output = [];
 	for(let i = 0; i < steps.length; i++){
     console.log(steps[i]);
 		output.push({
 			WorkflowStepID: steps[i],
-			Prev: (i > 0) ? [i-1] : [],
-			Next: (i < steps.length-1) ? [i+1] : []
+			Prev: [],
+			Next: []
 		});
 	}
 	return output

@@ -16,11 +16,13 @@
                             </span>
                         </template>
                     </v-select>
+                    
                     <v-row>
                         <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field"
                                 :rules="numberOfRipsValidation" label="Number of RIPs" v-model="numberOfRips" />
                         </v-col>
                     </v-row>
+
                     <v-btn type="submit" class="mb" color="primary" :disabled="failure || success">
                         Create Workflow
                     </v-btn>

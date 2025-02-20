@@ -125,7 +125,7 @@
         >
           <v-card
             class="report-history-item"
-            @click="$emit('select-report', report.id)"
+            @click="compare(report)"
           >
             <!-- Workflow has defined printjob title -->
             <div>
@@ -228,6 +228,9 @@
   const toDate = ref(null);
   const enabled = ref(false);
 
+  const reportOne = ref(null);
+
+
   ///////////////////////////////
   ///// Filters and Searching
   ///////////////////////////////
@@ -276,10 +279,25 @@
     });
   }
 
+  const compare = (report) => {
+    if (enabled.value === true){
+      if (reportOne.value === null) {
+        reportOne.value = report.id
+      } else {
+        // two reports selected compare the two
+        emit('compare-reports', reportOne.value, report.id)
+      }
+      
+    } else {
+      emit('select-report', report.id)
+    }
+
+  }
+
   watch(
     () => {
-return simulationReports
-},
+      return simulationReports
+    },
     (newReports) => {
       simulationReportsDisplay.value = newReports;
       filter();
@@ -290,6 +308,8 @@ return simulationReports
   onMounted( async () => {
     simulationReportsDisplay.value = simulationReports;
   });
+
+
 </script>
 
 

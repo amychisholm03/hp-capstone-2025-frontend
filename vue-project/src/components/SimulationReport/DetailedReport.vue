@@ -123,6 +123,8 @@ viewablePrintJob.value = JSON.parse(JSON.stringify(printJob));
 
 onMounted(async () => {
     dateTime.value = report.Date + "  " + report.Time
+    // console.log("Here")
+    // console.log(viewableWorkflow.value)
 });
 </script>
 

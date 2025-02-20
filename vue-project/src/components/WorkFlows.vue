@@ -36,6 +36,7 @@
                                 <v-checkbox-btn
                                     v-model="enabled"
                                     class="pe-2"
+                                    label="Parallelize"
                                 ></v-checkbox-btn>
                             </v-col>
                             <v-col cols="100" class="d-flex align-center">
@@ -44,7 +45,7 @@
                                 v-model="parallelSteps"
                                 :rules="parallelStepsValidation"
                                 :items="selectedSteps ? selectedSteps : []"
-                                label="Parallelize Workflow Steps"
+                                label="Parallel Workflow Steps"
                                 item-title="Title"
                                 item-value="id"
                                 multiple
@@ -64,7 +65,7 @@
                             </v-select>
                             </v-col>
 
-                            <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field" :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of Rips" v-model="numberOfRips" /> </v-col> 
+                            <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field" :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of RIPs" v-model="numberOfRips" /> </v-col> 
                         </v-row>
   
                     </div>
@@ -128,7 +129,7 @@
     ];
 
     const parallelStepsValidation = [
-        x => { if (x && x.length !== 0) return true; return 'At least one step must be selected'}
+        x => { if (enabled.value === false || (x && x.length !== 0)) return true; return 'At least one step must be selected'}
     ]
 
     const numberOfRipsValidation = [

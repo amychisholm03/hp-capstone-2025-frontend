@@ -1,8 +1,5 @@
 <template>
     <v-app theme="light">
-        <!-- <v-toolbar class="toolbar">
-            <v-toolbar-title class="header">Workflows</v-toolbar-title>
-        </v-toolbar>  -->
         <v-main>
             <v-card class="ma-3 pa-3" style="width:700px; height:390px; border-width:2px;">
                 <v-card-title class="module-title">Create New Workflow</v-card-title>
@@ -19,33 +16,11 @@
                             </span>
                         </template>
                     </v-select>
-                    <div class="d-flex pa-4">
-
-                        <v-row>
-                            <v-col cols="auto" class="d-flex align-center">
-                                <v-checkbox-btn v-model="enabled" class="pe-2"></v-checkbox-btn>
-                            </v-col>
-                            <v-col cols="100" class="d-flex align-center">
-                                <v-select :disabled="!enabled" v-model="parallelSteps" :rules="parallelStepsValidation"
-                                    :items="selectedSteps ? selectedSteps : []" label="Parallelize Workflow Steps"
-                                    item-title="Title" item-value="id" multiple class="custom-field">
-                                    <template v-slot:selection="{ item, index }">
-                                        <v-chip v-if="index < 2">
-                                            <span>{{ item.title }}</span>
-                                        </v-chip>
-                                        <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                                            (+{{ parallelSteps.length - 2 }} others)
-                                        </span>
-                                    </template>
-                                </v-select>
-                            </v-col>
-
-                            <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field"
-                                    :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of Rips"
-                                    v-model="numberOfRips" /> </v-col>
-                        </v-row>
-
-                    </div>
+                    <v-row>
+                        <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field"
+                                :rules="numberOfRipsValidation" label="Number of RIPs" v-model="numberOfRips" />
+                        </v-col>
+                    </v-row>
                     <v-btn type="submit" class="mb" color="primary" :disabled="failure || success">
                         Create Workflow
                     </v-btn>
@@ -147,6 +122,8 @@ const getWorkflowSteps = async () => {
         const response = await getCollection("WorkflowStep");
         if (response.ok) {
             workflowSteps.value = await response.json();
+            // Pre-select the first 7 steps because they are required
+            selectedSteps.value = workflowSteps.value.slice(0, 7);
         } else {
             throw new Error(String(response.status));
         }

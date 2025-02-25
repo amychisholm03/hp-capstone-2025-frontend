@@ -18,8 +18,6 @@ declare module 'vue' {
     SiteDashboard: typeof import('./src/components/SiteDashboard.vue')['default']
     SiteNavigationDrawer: typeof import('./src/components/SiteNavigationDrawer.vue')['default']
     SubmitJobs: typeof import('./src/components/SubmitJobs.vue')['default']
-    SubmitWorkflows: typeof import('./src/components/SubmitWorkflows.vue')['default']
-    Workflows: typeof import('./src/components/Workflows.vue')['default']
     WorkFlows: typeof import('./src/components/WorkFlows.vue')['default']
   }
 }

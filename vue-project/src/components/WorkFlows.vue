@@ -1,95 +1,143 @@
 <template>
-     <v-app theme="light">
-        <!-- <v-toolbar class="toolbar">
-            <v-toolbar-title class="header">Workflows</v-toolbar-title>
-        </v-toolbar>  -->
-        <v-main>
-            <error-popups
-                :error="errorMessage"
-                @clear-error="errorMessage = ''"
-            >
-            </error-popups>
-            <v-card class="ma-3 pa-3" style="width:700px; height:390px; border-width:2px;">
-                <v-card-title class="module-title">Create New Workflow</v-card-title>
-                <v-form fast-fail @submit.prevent="createWorkflow">
-                    <v-text-field :rules="workflowTitleValidation" label="Workflow Title" v-model="workflowTitle" />
-                    <v-select
-                        v-model="selectedSteps"
-                        :rules="selectedStepsValidation"
-                        :items="workflowSteps"
-                        label="Select Workflow Steps"
-                        item-title="Title"
-                        return-object
-                        multiple
+  <v-app theme="light">
+    <!--
+      <v-toolbar class="toolbar">
+      <v-toolbar-title class="header">Workflows</v-toolbar-title>
+      </v-toolbar>  
+    -->
+    <v-main>
+      <error-popups
+        :error="errorMessage"
+        @clear-error="errorMessage = ''"
+      >
+      </error-popups>
+      <v-card
+        class="ma-3 pa-3"
+        style="width:700px; height:390px; border-width:2px;"
+      >
+        <v-card-title class="module-title">
+          Create New Workflow
+        </v-card-title>
+        <v-form
+          fast-fail
+          @submit.prevent="createWorkflow"
+        >
+          <v-text-field
+            v-model="workflowTitle"
+            :rules="workflowTitleValidation"
+            label="Workflow Title"
+          />
+          <v-select
+            v-model="selectedSteps"
+            :rules="selectedStepsValidation"
+            :items="workflowSteps"
+            label="Select Workflow Steps"
+            item-title="Title"
+            return-object
+            multiple
+          >
+            <template #selection="{ item, index }">
+              <v-chip v-if="index < 2">
+                <span>{{ item.title }}</span>
+              </v-chip>
+              <span
+                v-if="index === 2"
+                class="align-self-center text-caption text-grey"
+              >
+                (+{{ selectedSteps.length - 2 }} others)
+              </span>
+            </template>
+          </v-select>
+          <div class="d-flex pa-4">
+            <v-row>
+              <v-col
+                cols="auto"
+                class="align-center d-flex"
+              >
+                <v-checkbox-btn
+                  v-model="enabled"
+                  class="pe-2"
+                ></v-checkbox-btn>
+              </v-col>
+              <v-col
+                cols="100"
+                class="align-center d-flex"
+              >
+                <v-select
+                  v-model="parallelSteps"
+                  :disabled="!enabled"
+                  :rules="parallelStepsValidation"
+                  :items="selectedSteps ? selectedSteps : []"
+                  label="Parallelize Workflow Steps"
+                  item-title="Title"
+                  item-value="id"
+                  multiple
+                  class="custom-field"
+                >
+                  <template #selection="{ item, index }">
+                    <v-chip v-if="index < 2">
+                      <span>{{ item.title }}</span>
+                    </v-chip>
+                    <span
+                      v-if="index === 2"
+                      class="align-self-center text-caption text-grey"
                     >
-                        <template v-slot:selection="{ item, index }">
-                            <v-chip v-if="index < 2">
-                                <span>{{ item.title }}</span>
-                            </v-chip>
-                            <span
-                                v-if="index === 2"
-                                class="text-grey text-caption align-self-center"
-                            >
-                                (+{{ selectedSteps.length - 2 }} others)
-                            </span>
-                        </template>
-                    </v-select>
-                    <div class="d-flex pa-4">
+                      (+{{ parallelSteps.length - 2 }} others)
+                    </span>
+                  </template>
+                </v-select>
+              </v-col>
 
-                        <v-row>
-                            <v-col cols="auto" class="d-flex align-center">
-                                <v-checkbox-btn
-                                    v-model="enabled"
-                                    class="pe-2"
-                                ></v-checkbox-btn>
-                            </v-col>
-                            <v-col cols="100" class="d-flex align-center">
-                            <v-select
-                                :disabled="!enabled"
-                                v-model="parallelSteps"
-                                :rules="parallelStepsValidation"
-                                :items="selectedSteps ? selectedSteps : []"
-                                label="Parallelize Workflow Steps"
-                                item-title="Title"
-                                item-value="id"
-                                multiple
-                                class="custom-field"
-                            >
-                                <template v-slot:selection="{ item, index }">
-                                    <v-chip v-if="index < 2">
-                                        <span>{{ item.title }}</span>
-                                    </v-chip>
-                                    <span
-                                        v-if="index === 2"
-                                        class="text-grey text-caption align-self-center"
-                                    >
-                                        (+{{ parallelSteps.length - 2 }} others)
-                                    </span>
-                                </template>
-                            </v-select>
-                            </v-col>
-
-                            <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field" :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of Rips" v-model="numberOfRips" /> </v-col>
-                        </v-row>
-
-                    </div>
-                    <v-btn type="submit" class="mb" color="primary" :disabled="failure || success">
-                        Create Workflow
-                    </v-btn>
-                    <v-btn size="x-small" icon type="submit" class="mb-2" v-if="success && !failure" color="success">
-                        <v-icon size="medium">
-                        mdi-check
-                        </v-icon>
-                    </v-btn>
-                    <v-btn size="x-small" icon type="submit" class="mb-2" v-if="!success && failure" color="error">
-                        <v-icon size="medium">
-                        mdi-close
-                        </v-icon>
-                    </v-btn>
-                </v-form>
-            </v-card>
-        </v-main>
-    </v-app>
+              <v-col
+                cols="100"
+                class="align-center d-flex"
+              >
+                <v-text-field
+                  v-model="numberOfRips"
+                  class="custom-field"
+                  :disabled="!enabled"
+                  :rules="numberOfRipsValidation"
+                  label="Number of Rips"
+                />
+              </v-col>
+            </v-row>
+          </div>
+          <v-btn
+            type="submit"
+            class="mb"
+            color="primary"
+            :disabled="failure || success"
+          >
+            Create Workflow
+          </v-btn>
+          <v-btn
+            v-if="success && !failure"
+            size="x-small"
+            icon
+            type="submit"
+            class="mb-2"
+            color="success"
+          >
+            <v-icon size="medium">
+              mdi-check
+            </v-icon>
+          </v-btn>
+          <v-btn
+            v-if="!success && failure"
+            size="x-small"
+            icon
+            type="submit"
+            class="mb-2"
+            color="error"
+          >
+            <v-icon size="medium">
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-form>
+      </v-card>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
@@ -136,11 +184,19 @@
     ];
 
     const parallelStepsValidation = [
-        x => { if (x && x.length !== 0) return true; return 'At least one step must be selected'}
+        x => {
+ if (x && x.length !== 0) {
+return true;
+} return 'At least one step must be selected'
+}
     ]
 
     const numberOfRipsValidation = [
-        x => { if (Number(x) > 0 && Number(x) <= 10) return true; return 'Number of Rips must be greater than 0 and less than 10'}
+        x => {
+ if (Number(x) > 0 && Number(x) <= 10) {
+return true;
+} return 'Number of Rips must be greater than 0 and less than 10'
+}
     ]
 
     const validateCreatedWorkflow = () => {
@@ -195,7 +251,9 @@
         if (!validateCreatedWorkflow()){
             return false;
         }
-        selectedStepsIDs.value = selectedSteps.value.map(stepID => stepID.id)
+        selectedStepsIDs.value = selectedSteps.value.map(stepID => {
+return stepID.id
+})
         let steps = formatLinearSteps(toRaw(selectedStepsIDs.value));
         const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled.value, parallelSteps.value, Number(numberOfRips.value));
 
@@ -231,5 +289,4 @@
     .v-btn{
         margin: 0 5px;
     }
-
 </style>

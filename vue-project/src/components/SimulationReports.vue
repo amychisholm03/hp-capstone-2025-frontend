@@ -145,7 +145,7 @@ workflows.value = await response.json();
 throw new Error(String(response.status));
 }
 	} catch (error) {
-    errorMessage = "Error fetching list of workflows";
+    errorMessage.value = "Error fetching list of workflows";
 		console.log(`Error fetching list of Workflows: ${error}`);
 	}
 }

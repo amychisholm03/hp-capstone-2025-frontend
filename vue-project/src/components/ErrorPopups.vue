@@ -1,11 +1,11 @@
 <template>
-  <div class="text-center ma-2">
+  <div class="ma-2 text-center">
     <v-snackbar
       v-model="errorMessage"
     >
       {{ error }}
 
-      <template v-slot:actions>
+      <template #actions>
         <v-btn
           color="pink"
           variant="text"
@@ -20,22 +20,22 @@
 
 <script>
   export default {
-    data: () => ({
-      enabled: false
-    }),
+    name: 'error-popup',
+    props: {
+      error: {
+        type: String,
+        default: ""
+      }
+    },
     computed: {
       errorMessage: {
         get: function () {
-          this.enabled = !!this.error;
-          return this.enabled;
+          return !!this.error;
         },
-        set: function() {
+        set: function () {
           return;
         }
       }
-    },
-    props: {
-      error: String
     }
   }
 </script>

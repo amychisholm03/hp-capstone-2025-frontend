@@ -4,6 +4,11 @@
             <v-toolbar-title class="header">Workflows</v-toolbar-title>
         </v-toolbar>  -->
         <v-main>
+            <error-popups
+                :error="errorMessage"
+                @clear-error="errorMessage = ''"
+            >
+            </error-popups>
             <v-card class="ma-3 pa-3" style="width:700px; height:390px; border-width:2px;">
                 <v-card-title class="module-title">Create New Workflow</v-card-title>
                 <v-form fast-fail @submit.prevent="createWorkflow">
@@ -30,7 +35,7 @@
                         </template>
                     </v-select>
                     <div class="d-flex pa-4">
-                        
+
                         <v-row>
                             <v-col cols="auto" class="d-flex align-center">
                                 <v-checkbox-btn
@@ -64,9 +69,9 @@
                             </v-select>
                             </v-col>
 
-                            <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field" :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of Rips" v-model="numberOfRips" /> </v-col> 
+                            <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field" :disabled="!enabled" :rules="numberOfRipsValidation" label="Number of Rips" v-model="numberOfRips" /> </v-col>
                         </v-row>
-  
+
                     </div>
                     <v-btn type="submit" class="mb" color="primary" :disabled="failure || success">
                         Create Workflow
@@ -91,6 +96,9 @@
     import { ref, onMounted, toRaw } from "vue";
     import { useRouter } from 'vue-router';
     import { getCollection, formatLinearSteps, postWorkflow } from "./api.js";
+    import ErrorPopups from "./ErrorPopups.vue";
+
+    const errorMessage = ref('');
 
     const router = useRouter();
     const routeTo = (where) => {
@@ -173,6 +181,7 @@
             throw new Error(String(response.status));
           }
         } catch (error) {
+            errorMessage.value = "Error fetching list of workflow steps";
             console.log(`Error fetching list of WorkflowSteps: ${error}`);
         }
     }
@@ -191,6 +200,7 @@
         const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled.value, parallelSteps.value, Number(numberOfRips.value));
 
         if (!response.ok) {
+            errorMessage.value = "Error posting data to server"
             console.log("Error posting data. Response from server: " + String(response.status))
             failure.value=true;
             setTimeout(() => {

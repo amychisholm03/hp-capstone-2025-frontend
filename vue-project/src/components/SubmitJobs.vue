@@ -1,6 +1,7 @@
 <!-- Not Used? -->
 <template>
   <v-app theme="light">
+
     <v-toolbar class="toolbar">
       <v-toolbar-title class="header">
         Submit Print Jobs
@@ -154,7 +155,9 @@ return true;
         const workflow = previousWorkflows.value.find(workflow => {
 return workflow.WorkflowID === selectedWorkflow.value
 })
-        message1.value = printJobTitle.value + " has been submitted using the workflow: " + workflow.Title
+        console.log("This is happening");
+        errorMessage.value = "hello";
+        message1.value = printJobTitle.value + " has been submitted using the workflow: " + workflow.Title;
         setTimeout(() => {
           message1.value = '';
         }, 3000);

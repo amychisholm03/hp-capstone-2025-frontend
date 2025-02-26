@@ -154,7 +154,7 @@ return true;
         const workflow = previousWorkflows.value.find(workflow => {
 return workflow.WorkflowID === selectedWorkflow.value
 })
-        message1.value = printJobTitle.value + " has been submitted using the workflow: " + workflow.Title
+        message1.value = printJobTitle.value + " has been submitted using the workflow: " + workflow.Title;
         setTimeout(() => {
           message1.value = '';
         }, 3000);

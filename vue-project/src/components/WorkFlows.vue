@@ -1,6 +1,8 @@
 <template>
     <v-app theme="light">
         <v-main>
+            <error-popups :error="errorMessage" @clear-error="errorMessage = ''">
+            </error-popups>
             <v-card class="ma-3 pa-3" style="width:700px; height:390px; border-width:2px;">
                 <v-card-title class="module-title">Create New Workflow</v-card-title>
                 <v-form fast-fail @submit.prevent="createWorkflow">
@@ -44,6 +46,9 @@
 import { ref, onMounted, toRaw } from "vue";
 import { useRouter } from 'vue-router';
 import { getCollection, formatSteps, postWorkflow } from "./api.js";
+import ErrorPopups from "./ErrorPopups.vue";
+
+const errorMessage = ref('');
 
 const router = useRouter();
 const routeTo = (where) => {
@@ -63,7 +68,6 @@ const selectedStepsIDs = ref(null);
 const workflowSteps = ref([]);
 
 
-//// METHODS ////
 const workflowTitleValidation = [
     x => {
         if (x) {
@@ -79,10 +83,6 @@ const selectedStepsValidation = [
         } return 'Workflow must contain at least one step'
     }
 ];
-
-const parallelStepsValidation = [
-    x => { if (x && x.length !== 0) return true; return 'At least one step must be selected' }
-]
 
 const numberOfRipsValidation = [
     x => { if (Number(x) > 0 && Number(x) <= 10) return true; return 'Number of Rips must be greater than 0 and less than 10' }
@@ -102,7 +102,6 @@ const validateCreatedWorkflow = () => {
         if (typeof result === "string") {
             errors.push(result);
         }
-
     });
 
     if (errors.length > 0) {
@@ -116,7 +115,6 @@ const validateCreatedWorkflow = () => {
     return true;
 }
 
-//// API CALLS ////
 const getWorkflowSteps = async () => {
     try {
         const response = await getCollection("WorkflowStep");

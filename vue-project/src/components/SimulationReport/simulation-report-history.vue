@@ -15,6 +15,11 @@
           transition="slide-x-reverse-transition"
         >
           <template #activator="{ props }">
+            <v-checkbox-btn
+              v-model="enabled"
+              class="pe-2"
+              label="Compare Reports"
+            ></v-checkbox-btn>
             <v-btn
               v-bind="props"
               icon
@@ -221,6 +226,7 @@
   const selectedWorkflows = ref([]);
   const fromDate = ref(null);
   const toDate = ref(null);
+  const enabled = ref(false);
 
   ///////////////////////////////
   ///// Filters and Searching

@@ -1,6 +1,11 @@
 <template>
   <v-app theme="light">
     <v-main>
+      <error-popups
+        :error="errorMessage"
+        @clear-error="errorMessage = ''"
+      >
+      </error-popups>
       <v-card
         class="ma-3 pa-3"
         style="width: 800px; height:400px; border-width:2px;"
@@ -82,6 +87,9 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router';
 import { postPrintJob, getCollection } from "./api.js";
+import ErrorPopups from "./ErrorPopups.vue";
+
+const errorMessage = ref('');
 
 const router = useRouter();
 const routeTo = (where) => {
@@ -112,7 +120,8 @@ const pageCountValidation = [
   x => {
  if (x) {
 return true;
-} return 'Page count must be non-zero.';
+}
+  return 'Page count must be non-zero.';
 }
 ];
 
@@ -172,6 +181,7 @@ const createPrintSettings = async () => {
   );
 
   if (!response.ok) {
+    errorMessage.value = "Error creating print job";
     console.log("Error creating print job. Response from server: " + String(response.status))
     failure.value=true;
     setTimeout(() => {
@@ -200,7 +210,7 @@ onMounted( async () => {
 </script>
 
 <style>
-.exit-button {
+.exit-button{
   border: none;
   padding: 0;
   box-shadow: none;

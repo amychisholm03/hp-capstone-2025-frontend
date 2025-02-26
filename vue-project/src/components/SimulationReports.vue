@@ -1,5 +1,10 @@
 <template>
   <v-app>
+    <error-popups
+      :error="errorMessage"
+      @clear-error="errorMessage = ''"
+    >
+    </error-popups>
     <v-dialog
       v-model="SimulationReportDialogue"
       scrollable
@@ -47,8 +52,10 @@ import { ref, onMounted } from "vue";
 import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';
+import ErrorPopups from "./ErrorPopups.vue";
 import { getCollection } from "./api.js";
 
+const errorMessage = ref('');
 const workflows = ref([]);
 const printJobs = ref([]);
 const simulationReports = ref([]);
@@ -106,9 +113,11 @@ minutes = '0' + minutes;
 
       });
     } else {
+      errorMessage.value = "Error fetching data";
 			console.log("Error fetching data. Response from server: " + String(response.status));
 		}
 	} catch (error) {
+    errorMessage.value = "Error fetching list of simulation reports";
 		console.log(`Error fetching list of simulation reports: ${error}`);
 	}
 }
@@ -122,6 +131,7 @@ printJobs.value = await response.json();
 throw new Error(String(response.status));
 }
 	} catch (error) {
+    errorMessage.value = "Error fetching list of print jobs";
 		console.log(`Error fetching list of PrintJobs: ${error}`);
 	}
 }
@@ -135,6 +145,7 @@ workflows.value = await response.json();
 throw new Error(String(response.status));
 }
 	} catch (error) {
+    errorMessage.value = "Error fetching list of workflows";
 		console.log(`Error fetching list of Workflows: ${error}`);
 	}
 }

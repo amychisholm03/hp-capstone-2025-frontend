@@ -132,7 +132,7 @@ const createWorkflow = async () => {
     selectedStepsIDs.value = selectedSteps.value.map(stepID => {
 return stepID.id
 })
-    let steps = formatSteps(toRaw(selectedStepsIDs.value));
+    const steps = formatSteps(toRaw(selectedStepsIDs.value));
     const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled.value, parallelSteps.value, Number(numberOfRips.value));
 
     if (!response.ok) {

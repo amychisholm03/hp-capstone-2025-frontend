@@ -56,7 +56,7 @@
           dark
           style="text-transform: none;"
           :color="comparing ? 'error' : 'grey-darken-1'"
-          @click="comparing = !comparing"
+          @click="toggleCompareReports"
         >
           <p v-if="!comparing">
             Compare Reports
@@ -146,6 +146,17 @@
   ///// Comparison Functions
   ///////////////////////////////
 
+  /*
+  * Enable or disable Report Comparison.
+  * Clear selections on disable.
+  */
+  const toggleCompareReports = () => {
+    if (comparing.value) {
+      clearSelectedReports();
+    }
+    comparing.value = !comparing.value;
+  }
+
   /**
   * Tell our parent to compare two reports
   */
@@ -154,6 +165,7 @@
       return;
     }
     emit('compare-reports', compareSelections.value.first, compareSelections.value.second);
+    clearSelectedReports();
   }
 
   /**
@@ -298,6 +310,7 @@
     (newReports) => {
       simulationReportsDisplay.value = newReports;
       filter();
+      console.log("REPORTS!:", simulationReportsDisplay.value);
     },
     { immediate: true }
   );
@@ -388,4 +401,3 @@
   opacity: 0;
 }
 </style>
-

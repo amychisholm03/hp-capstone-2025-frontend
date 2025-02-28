@@ -5,7 +5,7 @@
       scrollable
       persistent
       class="detailed-report"
-      max-width="500px"
+      style="max-width: 50%"
       content-class="overflow-y-auto"
     >
       <simulation-report-compare

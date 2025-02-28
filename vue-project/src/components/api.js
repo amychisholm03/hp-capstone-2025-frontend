@@ -25,6 +25,12 @@ export async function getWorkflow(id) {
   })
 }
 
+export async function getWorkflowTimes(id) {
+  return await fetch(`${API_URL}:${API_PORT}/${'SimulationReport'}/${id}/WorkflowStep/Time`, {
+    method: 'GET',
+    mode: 'cors'
+  })
+}
 
 async function postNewDocument(coll, doc){
 	return await fetch(`${API_URL}:${API_PORT}/${coll}`, {

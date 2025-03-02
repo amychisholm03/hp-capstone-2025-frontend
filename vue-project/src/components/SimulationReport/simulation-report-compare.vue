@@ -1,40 +1,43 @@
 <template>
-  <v-app v-if="loading">
-    <v-banner
-      max-height="75px"
-      style="border-width: 0px; font-size:large; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: bold;"
+  <v-card v-if="loading" class="pa-0 ma-0">
+    <!-- Header -->
+    <v-row
+      class="d-flex align-center ma-0"
+      style="background-color:#555555; color:white; position:fixed; z-index:100; height:40px; width:100%;"
     >
-      <!-- Header -->
-      <v-row>
-        <v-col
-          class="align-center d-flex justify-start"
-        >
+      <v-col
+        class="d-flex justify-center align-center"
+      >
+        <h4 style="font-weight:600;">
           Simulation Report Comparison
-        </v-col>
-        <v-col
-          cols="2"
-          class="align-center d-flex justify-end"
-          align="right"
+        </h4>
+      </v-col>
+      <v-col
+        style="position:fixed;"
+        class="d-flex justify-end align-center mb-1"
+      >
+        <v-btn
+          class="close-button ma-0 pa-0"
+          icon
+          size="xx-small"
+          color="error"
+          @click="$emit('exit')"
         >
-          <v-btn
-            class="align-center close-button d-flex"
-            icon
-            tile
-            @click="$emit('exit')"
-          >
-            <v-icon>
-              mdi-window-close
-            </v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-banner>
+          <v-icon>
+            mdi-window-close
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
 
     <!-- Main Body -->
-    <v-row class="ml-3 mr-5 mt-3">
+    <v-row class="ml-3 mr-5" style="margin-top:40px;">
       <!-- General Comparison Section -->
       <v-col no-gutters>
-        <v-card class="pa-5">
+        <v-card
+          class="pa-5"
+          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2)"
+        >
           <v-row no-gutters>
             <!-- Simulation Report 1 -->
             <v-col class="mr-2">
@@ -121,41 +124,54 @@
 
       <!-- Workflow Step Comparison Section -->
       <v-col>
-        <v-card class="pa-3">
+        <v-card
+          class="pa-3"
+          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2)"
+        >
           <v-row no-gutters>
             <v-col no-gutters>
-              <v-list class="ma-0">
-                <v-list-item
-                  v-for="(step) in stepsReport1"
-                  :key="step"
-                  class="ma-0"
-                >
-                  <span>
-                    <v-list-item-title> <strong>Step: </strong>{{ step.Title }}</v-list-item-title>
-                    <v-list-item-subtitle> <strong>Time Taken:</strong> {{ }} secs</v-list-item-subtitle>
-                  </span>
-                </v-list-item>
-              </v-list>
+              <v-data-table
+                :items="stepsReport1"
+                :headers="stepTimeHeaders"
+                hide-default-footer
+              >
+                <template #[`item.time`]="{ item }">
+                  <v-text-field
+                    v-model="item.time"
+                    density="compact"
+                    flat
+                    style="background-color: white; border-color:white; box-shadow: white; outline: white;"
+                    hide-details
+                  ></v-text-field>
+                </template>
+              </v-data-table>
             </v-col>
+            <v-divider
+              vertical
+              class="ml-2 mr-2"
+            />
             <v-col class="no-gutters">
-              <v-list class="ma-0">
-                <v-list-item
-                  v-for="(step) in stepsReport2"
-                  :key="step"
-                  class="ma-0"
-                >
-                  <span>
-                    <v-list-item-title> <strong>Step: </strong>{{ step.Title }}</v-list-item-title>
-                    <v-list-item-subtitle> <strong>Time Taken:</strong> {{ }} secs</v-list-item-subtitle>
-                  </span>
-                </v-list-item>
-              </v-list>
+              <v-data-table
+                :items="stepsReport2"
+                :headers="stepTimeHeaders2"
+                hide-default-footer
+              >
+                <template #[`item.time`]="{ item }">
+                  <v-text-field
+                    v-model="item.time"
+                    density="compact"
+                    flat
+                    style="background-color: white; border-color:white; box-shadow: white; outline: white;"
+                    hide-details
+                  ></v-text-field>
+                </template>
+              </v-data-table>
             </v-col>
           </v-row>
         </v-card>
       </v-col>
     </v-row>
-  </v-app>
+  </v-card>
 </template>
 
 <script setup>
@@ -190,6 +206,15 @@ const workflowReport2 = ref(null);
 const stepTimeReport2 = ref(null);
 const stepsReport2 = ref(null);
 
+const stepTimeHeaders = [
+  { title: "Step", value: "Title"},
+  { title: "Time", value: "time"},
+];
+const stepTimeHeaders2 = [
+  { title: "Time", value: "time"},
+  { title: "Step", value: "Title"},
+];
+
 
 const loading = ref(false);
 
@@ -201,8 +226,8 @@ viewableReport2.value = JSON.parse(JSON.stringify(report2));
 * Insert times into the main step array, if they exist.
 */
 const addTimesToWorkflowStepArray = (workflowSteps, stepTimes) => {
-  workflowSteps.forEach(step => {
-    step.time = stepTimes[step.id] ? stepTimes[step] : null;
+  workflowSteps.forEach((step) => {
+    step.time = stepTimes[step.id] ? stepTimes[step.id] : 0;
   });
   return workflowSteps;
 };
@@ -219,9 +244,12 @@ const addMissingStepsToWorkflowStepArray = (workflowSteps, stepDefinitions) => {
 
   const allSteps = [];
   stepDefinitions.forEach(definedStep => {
+    // If we have this step, join it with it's definition info
     const s = stepExists[definedStep.id];
+    definedStep.time = 0;
     if (s) {
-      allSteps.push(s);
+      allSteps.push({...definedStep, ...s });
+    // If we don't have this step, include only the definition
     } else {
       allSteps.push(definedStep);
     }
@@ -279,6 +307,18 @@ onMounted(
 <style scoped>
 .close-button:hover {
     color: red;
+}
+
+.table-header {
+  font-size: 14px;
+  font-weight: 600;
+  text-align:left;
+}
+
+.table-data {
+  font-size: 14px;
+  text-align:left;
+
 }
 </style>
 

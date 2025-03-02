@@ -4,11 +4,10 @@
       v-model="SimulationReportCompareDialogue"
       scrollable
       persistent
-      class="detailed-report"
-      style="max-width: 50%"
-      content-class="overflow-y-auto"
     >
       <simulation-report-compare
+        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
+        class="detailed-report"
         :report1="compareReportOne"
         :report2="compareReportTwo"
         @exit="clearCompareSimulationReports"
@@ -220,5 +219,13 @@ onMounted(async () => {
 
 .dashboard-container {
 	max-width: 400px;
+}
+
+.v-overlay--active .v-overlay__scrim {
+    display: none;
+}
+/* style the overlay container as required */
+.v-overlay--active {
+    backdrop-filter: blur(2px);
 }
 </style>

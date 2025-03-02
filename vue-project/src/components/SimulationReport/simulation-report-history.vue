@@ -231,6 +231,9 @@
 
   };
 
+  const reportOne = ref(null);
+
+
   ///////////////////////////////
   ///// Filters and Searching
   ///////////////////////////////
@@ -302,7 +305,6 @@
       });
   };
 
-  // Watch list of simulation reports for any changes.
   watch(
     () => {
       return simulationReports
@@ -318,6 +320,8 @@
   onMounted( async () => {
     simulationReportsDisplay.value = simulationReports;
   });
+
+
 </script>
 
 <style>

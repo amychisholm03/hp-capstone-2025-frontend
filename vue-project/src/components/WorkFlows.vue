@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <v-app theme="light">
     <v-main class="pa-3">
       <v-card class="module">
@@ -14,6 +15,49 @@
       </v-card>
     </v-main>
   </v-app>
+=======
+    <v-app theme="light">
+        <v-main>
+            <v-card class="ma-3 pa-3" style="width:700px; height:390px; border-width:2px;">
+                <v-card-title class="module-title">Create New Workflow</v-card-title>
+                <v-form fast-fail @submit.prevent="createWorkflow">
+                    <v-text-field :rules="workflowTitleValidation" label="Workflow Title" v-model="workflowTitle" />
+                    <v-select v-model="selectedSteps" :rules="selectedStepsValidation" :items="workflowSteps"
+                        label="Select Workflow Steps" item-title="Title" return-object multiple>
+                        <template v-slot:selection="{ item, index }">
+                            <v-chip v-if="index < 2">
+                                <span>{{ item.title }}</span>
+                            </v-chip>
+                            <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                                (+{{ selectedSteps.length - 2 }} others)
+                            </span>
+                        </template>
+                    </v-select>
+                    
+                    <v-row>
+                        <v-col cols="100" class="d-flex align-center"><v-text-field class="custom-field"
+                                :rules="numberOfRipsValidation" label="Number of RIPs" v-model="numberOfRips" />
+                        </v-col>
+                    </v-row>
+
+                    <v-btn type="submit" class="mb" color="primary" :disabled="failure || success">
+                        Create Workflow
+                    </v-btn>
+                    <v-btn size="x-small" icon type="submit" class="mb-2" v-if="success && !failure" color="success">
+                        <v-icon size="medium">
+                            mdi-check
+                        </v-icon>
+                    </v-btn>
+                    <v-btn size="x-small" icon type="submit" class="mb-2" v-if="!success && failure" color="error">
+                        <v-icon size="medium">
+                            mdi-close
+                        </v-icon>
+                    </v-btn>
+                </v-form>
+            </v-card>
+        </v-main>
+    </v-app>
+>>>>>>> origin/compareSimulationReports
 </template>
 
 <script setup>

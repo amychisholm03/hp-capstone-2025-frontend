@@ -32,11 +32,32 @@
         ></detailed-report>
       </div>
     </v-dialog>
+	<v-dialog
+      v-model="CompareReportsDialogue"
+      scrollable
+      persistent
+      class="compare-reports"
+      max-width="500px"
+      content-class="overflow-y-auto"
+    >
+		<div style="max-height: 100vh; overflow-y: hidden; overflow-x:hidden;">
+			<compare-reports
+			:report-one="selectedReport"
+			:print-job-one="selectedPrintJob"
+			:workflow-one="selectedWorkflow"
+			:report-two="selectedReport2"
+			:print-job-two="selectedPrintJob2"
+			:workflow-two="selectedWorkflow2"
+			@exit="CompareReportsDialogue = false"
+			></compare-reports>
+		</div>
+	</v-dialog>
     <v-main class="pa-3">
       <v-card
         class="module"
         style="max-height: 292px; height:auto;"
       >
+<<<<<<< HEAD
         <module-toolbar
           class="module-toolbar"
           title="Simulation Report Creation"
@@ -45,6 +66,18 @@
           @maximize="simReportGenMinimized=false"
         >
         </module-toolbar>
+=======
+        <simulation-report-history
+          style="width:100%;"
+          :print-jobs="printJobs"
+          :workflows="workflows"
+          :simulation-reports="simulationReports"
+          @select-report="selectSimulationReport"
+		  @compare-reports="compareSimulationReports"
+        ></simulation-report-history>
+      </v-card>
+      <v-card class="mb-3 module pa-3">
+>>>>>>> origin/compareSimulationReports
         <simulation-report-generate
           v-if="!simReportGenMinimized"
           :print-jobs="printJobs"
@@ -81,6 +114,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import DetailedReport from './SimulationReport/DetailedReport.vue';
+import CompareReports from './SimulationReport/CompareReports.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';
 import SimulationReportCompare from './SimulationReport/simulation-report-compare.vue';
@@ -90,18 +124,29 @@ import { getCollection } from "./api.js";
 const workflows = ref([]);
 const printJobs = ref([]);
 const simulationReports = ref([]);
+<<<<<<< HEAD
 const SimulationReportViewDialogue = ref(false);
 const SimulationReportCompareDialogue = ref(false);
+=======
+const SimulationReportDialogue = ref(false);
+const CompareReportsDialogue = ref(false);
+>>>>>>> origin/compareSimulationReports
 
 const selectedReport = ref(null)
 const selectedPrintJob = ref(null)
 const selectedWorkflow = ref(null)
 
+<<<<<<< HEAD
 const simReportGenMinimized = ref(false);
 const simReportHistoryMinimized = ref(false);
 
 const compareReportOne = ref(false);
 const compareReportTwo = ref(false);
+=======
+const selectedReport2 = ref(null)
+const selectedPrintJob2 = ref(null)
+const selectedWorkflow2 = ref(null)
+>>>>>>> origin/compareSimulationReports
 
 //////////////////////
 //// User Actions
@@ -120,6 +165,7 @@ const compareSimulationReports = (report1, report2) => {
 };
 
 const selectSimulationReport = (id) => {
+<<<<<<< HEAD
 	selectedReport.value = simulationReports.value.find(item => {
     return item.id === id
   });
@@ -130,6 +176,41 @@ const selectSimulationReport = (id) => {
     return item.id === selectedReport.value.WorkflowID
   });
 	SimulationReportViewDialogue.value = true;
+=======
+	selectedReport.value = simulationReports.value.find(item => { 
+		return item.id === id 
+	})
+	selectedPrintJob.value = printJobs.value.find(item => {
+		return item.id === selectedReport.value.PrintJobID
+	})
+	selectedWorkflow.value = workflows.value.find(item => {
+		return item.id === selectedReport.value.WorkflowID
+	})
+	SimulationReportDialogue.value = true
+>>>>>>> origin/compareSimulationReports
+}
+
+const compareSimulationReports = (id1, id2) => {
+	selectedReport.value = simulationReports.value.find(item => { 
+		return item.id === id1 
+	})
+	selectedPrintJob.value = printJobs.value.find(item => {
+		return item.id === selectedReport.value.PrintJobID
+	})
+	selectedWorkflow.value = workflows.value.find(item => {
+		return item.id === selectedReport.value.WorkflowID
+	})
+
+	selectedReport2.value = simulationReports.value.find(item => { 
+		return item.id === id2
+	})
+	selectedPrintJob2.value = printJobs.value.find(item => {
+		return item.id === selectedReport2.value.PrintJobID
+	})
+	selectedWorkflow2.value = workflows.value.find(item => {
+		return item.id === selectedReport2.value.WorkflowID
+	})
+	CompareReportsDialogue.value = true	
 }
 
 ///////////////////
@@ -145,23 +226,22 @@ const getSimulationReports = async () => {
 		const response = await getCollection("SimulationReport");
 		if (response.ok) {
 			simulationReports.value = await response.json();
-      console.log(simulationReports.value);
-  		simulationReports.value.forEach( (report) => {
+      		console.log(simulationReports.value);
+  			simulationReports.value.forEach( (report) => {
 
-        // parse the creation time to a human readable format
-      	const dateObj = new Date(report.CreationTime * 1000);
-      	report.Date= dateObj.getMonth()+1  + "/" + dateObj.getDate() + "/" + dateObj.getFullYear();
-				let hours = dateObj.getHours().toString();
-				let minutes = dateObj.getMinutes().toString();
-				if (hours.length == 1) {
-hours = '0' + hours;
-}
-				if (minutes.length == 1) {
-minutes = '0' + minutes;
-}
-	      report.Time = hours + ":" + minutes;
-
-      });
+			// parse the creation time to a human readable format
+			const dateObj = new Date(report.CreationTime * 1000);
+			report.Date= dateObj.getMonth()+1  + "/" + dateObj.getDate() + "/" + dateObj.getFullYear();
+					let hours = dateObj.getHours().toString();
+					let minutes = dateObj.getMinutes().toString();
+					if (hours.length == 1) {
+						hours = '0' + hours;
+					}
+					if (minutes.length == 1) {
+						minutes = '0' + minutes;
+					}
+			report.Time = hours + ":" + minutes;
+      	});
     } else {
 			console.log("Error fetching data. Response from server: " + String(response.status));
 		}

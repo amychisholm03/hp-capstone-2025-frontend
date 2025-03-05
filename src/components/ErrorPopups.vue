@@ -4,7 +4,6 @@
       v-model="errorMessage"
     >
       {{ error }}
-  
       <template #actions>
         <v-btn
           color="pink"
@@ -17,25 +16,25 @@
     </v-snackbar>
   </div>
 </template>
-  
-  <script>
-    export default {
-      name: 'error-popup',
-      props: {
-        error: {
-          type: String,
-          default: ""
-        }
-      },
-      computed: {
-        errorMessage: {
-          get: function () {
-            return !!this.error;
-          },
-          set: function () {
-            return;
-          }
+
+<script>
+  export default {
+    name: 'error-popup',
+    props: {
+      error: {
+        type: String,
+        default: ""
+      }
+    },
+    computed: {
+      errorMessage: {
+        get: function () {
+          return !!this.error;
+        },
+        set: function () {
+          return;
         }
       }
     }
-  </script>
+  }
+</script>

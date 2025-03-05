@@ -4,7 +4,6 @@
       v-model="errorMessage"
     >
       {{ error }}
-
       <template #actions>
         <v-btn
           color="pink"

@@ -1,7 +1,7 @@
 export const API_URL = "http://api.wsuv-hp-capstone.com"
 export const API_PORT = "80"
-// export const API_URL = "http://localhost"
-// export const API_PORT = "5040"
+//export const API_URL = "http://localhost"
+//export const API_PORT = "5040"
 
 
 export async function getCollection(coll){
@@ -11,6 +11,26 @@ export async function getCollection(coll){
 	});
 }
 
+export async function getPrintJob(id) {
+  return await fetch(`${API_URL}:${API_PORT}/${'PrintJob'}/${id}`, {
+    method: 'GET',
+    mode: 'cors'
+  })
+}
+
+export async function getWorkflow(id) {
+  return await fetch(`${API_URL}:${API_PORT}/${'Workflow'}/${id}`, {
+    method: 'GET',
+    mode: 'cors'
+  })
+}
+
+export async function getWorkflowTimes(id) {
+  return await fetch(`${API_URL}:${API_PORT}/${'SimulationReport'}/${id}/WorkflowStep/Time`, {
+    method: 'GET',
+    mode: 'cors'
+  })
+}
 
 async function postNewDocument(coll, doc){
 	return await fetch(`${API_URL}:${API_PORT}/${coll}`, {

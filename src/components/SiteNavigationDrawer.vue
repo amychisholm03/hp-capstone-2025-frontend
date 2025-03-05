@@ -24,7 +24,7 @@
           ></v-img>
         </v-col>
         <v-col
-          style="font-size:x-large; font-family:'Lucida Sans'; font-weight:200;"
+          style="font-size:x-large; font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-weight:200;"
           class="align-center d-flex justify-start"
         >
           <span> Print OS </span>

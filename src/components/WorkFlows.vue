@@ -1,19 +1,16 @@
 <template>
-  <v-app theme="light">
-    <v-main class="pa-3">
-      <v-card class="module">
-        <module-toolbar
-          class="module-toolbar"
-          title="Workflow Creation"
-          icon="mdi-graph"
-          @minimize="workflowCreateMinimized=true"
-          @maximize="workflowCreateMinimized=false"
-        ></module-toolbar>
-        <workflow-create v-if="!workflowCreateMinimized">
-        </workflow-create>
-      </v-card>
-    </v-main>
-  </v-app>
+    <v-app theme="light">
+        <v-main class="pa-3">
+            <error-popups :error="errorMessage" @clear-error="errorMessage = ''">
+            </error-popups>
+            <v-card class="module">
+                <module-toolbar class="module-toolbar" title="Workflow Creation" icon="mdi-graph"
+                    @minimize="workflowCreateMinimized = true" @maximize="workflowCreateMinimized = false"></module-toolbar>
+                <workflow-create v-if="!workflowCreateMinimized">
+                </workflow-create>
+            </v-card>
+        </v-main>
+    </v-app>
 </template>
 
 <script setup>
@@ -22,7 +19,9 @@ import { useRouter } from 'vue-router';
 import { getCollection, formatSteps, postWorkflow } from "./api.js";
 import ModuleToolbar from "./module-toolbar.vue";
 import WorkflowCreate from "./Workflow/workflow-create.vue";
+import ErrorPopups from "./ErrorPopups.vue";
 
+const errorMessage = ref('');
 const router = useRouter();
 const routeTo = (where) => {
     router.push(where);
@@ -59,22 +58,6 @@ const selectedStepsValidation = [
         } return 'Workflow must contain at least one step'
     }
 ];
-
-const parallelStepsValidation = [
-    x => {
- if (x && x.length !== 0) {
-return true;
-} return 'At least one step must be selected'
-}
-]
-
-const numberOfRipsValidation = [
-    x => {
- if (Number(x) > 0 && Number(x) <= 10) {
-return true;
-} return 'Number of Rips must be greater than 0 and less than 10'
-}
-]
 
 const validateCreatedWorkflow = () => {
     const errors = [];
@@ -116,6 +99,7 @@ const getWorkflowSteps = async () => {
             throw new Error(String(response.status));
         }
     } catch (error) {
+        errorMessage.value = "Error fetching list of workflow steps";
         console.log(`Error fetching list of WorkflowSteps: ${error}`);
     }
 }
@@ -130,8 +114,8 @@ const createWorkflow = async () => {
         return false;
     }
     selectedStepsIDs.value = selectedSteps.value.map(stepID => {
-return stepID.id
-})
+        return stepID.id
+    })
     const steps = formatSteps(toRaw(selectedStepsIDs.value));
     const response = await postWorkflow(workflowTitle.value.toString(), steps, enabled.value, parallelSteps.value, Number(numberOfRips.value));
 

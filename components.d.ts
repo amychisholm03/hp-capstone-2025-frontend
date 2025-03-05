@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
+    ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']
     PrintJobCreate: typeof import('./src/components/PrintJob/print-job-create.vue')['default']
     PrintJobs: typeof import('./src/components/PrintJobs.vue')['default']

@@ -1,13 +1,29 @@
 # JavaScript
 node_modules
 package-lock.json
-Icon
-
-# IDE
-.vscode
-
-# GH
-actions-runner
+IconW
 
 # MacOS
 .DS_Store
+
+# Vue
+/dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

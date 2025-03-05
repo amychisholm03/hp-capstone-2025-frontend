@@ -112,7 +112,7 @@
 
 <script setup>
   import { nextTick, ref, onMounted, watch } from "vue";
-  import SimulationReportListItem from "../SimulationReport/simulation-report-list-item.vue";
+  import SimulationReportListItem from "./simulation-report-list-item.vue";
 
   const {
     simulationReports = [],

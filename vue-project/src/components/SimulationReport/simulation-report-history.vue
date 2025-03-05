@@ -136,8 +136,12 @@
   const compareSelections = ref({first: null, second: null,});
 
   const clearSelectedReports = () => {
-      compareSelections.value.first.selected = false;
-      compareSelections.value.second.selected = false;
+      if (compareSelections.value.first) {
+        compareSelections.value.first.selected = false;
+      }
+      if (compareSelections.value.second) {
+        compareSelections.value.second.selected = false;
+      }
       compareSelections.value.first = null;
       compareSelections.value.second = null;
   }
@@ -165,7 +169,10 @@
       return;
     }
     emit('compare-reports', compareSelections.value.first, compareSelections.value.second);
+
+    // reset for next time
     clearSelectedReports();
+    comparing.value = false;
   }
 
   /**
@@ -223,7 +230,6 @@
 
     // If we don't have a second report selected yet, select the second report
     if (!compareSelections.value.second) {
-      console.log(compareSelections.value);
       compareSelections.value.second = report;
       compareSelections.value.second.selected = true;
       return;
@@ -310,7 +316,6 @@
     (newReports) => {
       simulationReportsDisplay.value = newReports;
       filter();
-      console.log("REPORTS!:", simulationReportsDisplay.value);
     },
     { immediate: true }
   );

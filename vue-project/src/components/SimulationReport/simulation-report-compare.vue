@@ -1,12 +1,15 @@
 <template>
-  <v-card v-if="loading" class="pa-0 ma-0">
+  <v-card
+    v-if="loading"
+    class="ma-0 pa-0"
+  >
     <!-- Header -->
     <v-row
-      class="d-flex align-center ma-0"
+      class="align-center d-flex ma-0"
       style="background-color:#555555; color:white; position:fixed; z-index:100; height:40px; width:100%;"
     >
       <v-col
-        class="d-flex justify-center align-center"
+        class="align-center d-flex justify-center"
       >
         <h4 style="font-weight:600;">
           Simulation Report Comparison
@@ -14,7 +17,7 @@
       </v-col>
       <v-col
         style="position:fixed;"
-        class="d-flex justify-end align-center mb-1"
+        class="align-center d-flex justify-end mb-1"
       >
         <v-btn
           class="close-button ma-0 pa-0"
@@ -31,13 +34,23 @@
     </v-row>
 
     <!-- Main Body -->
-    <v-row class="ml-3 mr-5" style="margin-top:40px;">
-      <!-- General Comparison Section -->
-      <v-col no-gutters>
+    <v-row
+      class="ml-3 mr-5"
+      style="margin-top:40px;"
+    >
+      <!-- General Overview Section -->
+      <v-col
+        no-gutters
+        style="max-width:650px;"
+      >
         <v-card
-          class="pa-5"
-          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2)"
+          class="pb-5 pl-5 pr-5"
+          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 600px;"
         >
+          <!-- <v-card-title class="title"> -->
+          <!--   Overview -->
+          <!-- </v-card-title> -->
+          <v-divider class="mb-2" />
           <v-row no-gutters>
             <!-- Simulation Report 1 -->
             <v-col class="mr-2">
@@ -121,51 +134,108 @@
           </v-row>
         </v-card>
       </v-col>
-
       <!-- Workflow Step Comparison Section -->
-      <v-col>
+      <v-col style="max-width:700px;">
         <v-card
-          class="pa-3"
-          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2)"
+          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); height: 100%;"
         >
+          <!-- <v-card-title class="title"> -->
+          <!--   Step Times -->
+          <!-- </v-card-title> -->
+          <v-divider class="mb-2" />
           <v-row no-gutters>
             <v-col no-gutters>
-              <v-data-table
-                :items="stepsReport1"
-                :headers="stepTimeHeaders"
-                hide-default-footer
-              >
-                <template #[`item.time`]="{ item }">
-                  <v-text-field
-                    v-model="item.time"
-                    density="compact"
-                    flat
-                    style="background-color: white; border-color:white; box-shadow: white; outline: white;"
-                    hide-details
-                  ></v-text-field>
-                </template>
-              </v-data-table>
+              <table style="width: 100%; height:100%;">
+                <tr style="text-align:left; font-size: 20px; text-align:center; height:50px;">
+                  <th style="width:50%; font-weight:400;">
+                    Step
+                  </th>
+                  <th style="width:50%; font-weight:400;">
+                    Time
+                  </th>
+                </tr>
+                <tr
+                  v-for="step, i in stepsReport1"
+                  :key="i"
+                  style="text-align:center;"
+                >
+                  <td
+                    style="width:50%; font-size: 18px;"
+                  >
+                    {{ step.Title }}
+                  </td>
+                  <td
+                    :style="`background-color:${ getComparison(i, 1) }; width:50%; font-weight: 600;`"
+                  >
+                    {{ step.time }}s
+                  </td>
+                </tr>
+              </table>
             </v-col>
             <v-divider
               vertical
               class="ml-2 mr-2"
             />
             <v-col class="no-gutters">
-              <v-data-table
-                :items="stepsReport2"
-                :headers="stepTimeHeaders2"
-                hide-default-footer
-              >
-                <template #[`item.time`]="{ item }">
-                  <v-text-field
-                    v-model="item.time"
-                    density="compact"
-                    flat
-                    style="background-color: white; border-color:white; box-shadow: white; outline: white;"
-                    hide-details
-                  ></v-text-field>
-                </template>
-              </v-data-table>
+              <table style="width: 100%; height:100%;">
+                <tr style="text-align:left; font-size: 20px; text-align:center; height:50px;">
+                  <th style="width:50%; font-weight:400;">
+                    Time
+                  </th>
+                  <th style="width:50%; font-weight:400;">
+                    Step
+                  </th>
+                </tr>
+                <tr
+                  v-for="step, i in stepsReport2"
+                  :key="i"
+                  style="text-align:center;"
+                >
+                  <td
+                    :style="`background-color:${ getComparison(i, 2) }; width:50%; font-weight:600;`"
+                  >
+                    {{ step.time }}s
+                  </td>
+                  <td style="width:50%; font-size: 18px;">
+                    {{ step.Title }}
+                  </td>
+                </tr>
+              </table>
+            </v-col>
+          </v-row>
+          <v-divider class="mt-2" />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row
+      no-gutters
+      class="ma-6"
+    >
+      <v-col>
+        <v-card
+          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 1000px;"
+        >
+          <!-- <v-row class="d-flex justify-center"> -->
+          <!--   <v-col> -->
+          <!--     <v-card-title class="title"> -->
+          <!--       Chart -->
+          <!--     </v-card-title> -->
+          <!--   </v-col> -->
+          <!-- </v-row> -->
+          <v-divider />
+          <v-row
+            no-gutters
+            class="d-flex"
+          >
+            <v-col style="max-width: 50%;">
+              <canvas
+                id="canvasChartReport1"
+              />
+            </v-col>
+            <v-col style="max-width: 50%;">
+              <canvas
+                id="canvasChartReport2"
+              />
             </v-col>
           </v-row>
         </v-card>
@@ -175,9 +245,14 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, nextTick, reactive } from "vue";
 import {getPrintJob, getWorkflow, getCollection, getWorkflowTimes } from "../api.js";
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 
+Chart.register(Title, Tooltip, Legend, ArcElement);
+
+const chartCanvas = ref();
+//// Props
 const {
   report1 = null,
   report2 = null,
@@ -188,6 +263,25 @@ defineProps({
   report2: Object,
 });
 
+const chartData = ref({
+  labels: ['Red', 'Blue', 'Yellow'],
+  datasets: [
+    {
+      label: 'Votes',
+      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+      data: [30, 50, 20]
+    }
+  ]
+});
+
+const chartOptions = ref({
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top'
+    }
+  }
+});
 
 const workflowStepsReport1 = ref(null);
 const workflowStepsReport2 = ref(null);
@@ -197,24 +291,74 @@ const viewableReport1 = ref(null);
 const printjobReport1 = ref(null);
 const workflowReport1 = ref(null);
 const stepTimeReport1 = ref(null);
-const stepsReport1 = ref(null);
+const stepsReport1    = ref(null);
 
 const dateTimeReport2 = ref("");
 const viewableReport2 = ref(null);
 const printjobReport2 = ref(null);
 const workflowReport2 = ref(null);
 const stepTimeReport2 = ref(null);
-const stepsReport2 = ref(null);
+const stepsReport2    = ref(null);
 
-const stepTimeHeaders = [
-  { title: "Step", value: "Title"},
-  { title: "Time", value: "time"},
-];
-const stepTimeHeaders2 = [
-  { title: "Time", value: "time"},
-  { title: "Step", value: "Title"},
-];
+const noStepTimesReport1 = computed(() => {
+  stepsReport1.value.forEach((step)=>{
+    if (step.time != 0) {
+      return false;
+    }
+  });
+  return true;
+});
 
+const noStepTimesReport2 = computed(() => {
+  stepsReport2.value.forEach((step)=>{
+    if (step.time != 0) {
+      return false;
+    }
+  });
+  return true;
+});
+
+
+
+const timesReport1 = computed(() => {
+    if (!stepsReport1.value) {
+      return null;
+    }
+    return stepsReport1.value.map((step) => {
+      return step.time;
+    });
+});
+
+const timesReport2 = computed(() => {
+    if (!stepsReport2.value) {
+      return null;
+    }
+    return stepsReport2.value.map((step) => {
+      return step.time;
+    });
+});
+
+
+/**
+* Compare Two Steps, return icon based on which one is bigger.
+*/
+const getComparison = ((index, reportNum) => {
+
+  const good = '#2abf64';
+  const bad = '#db3047';
+  const neutral = '#FFFFFF';
+
+  if (index > stepsReport1.value.length || index > stepsReport2.value.length) {
+    return neutral;
+  }
+  if (stepsReport1.value[index].time > stepsReport2.value[index].time) {
+    return reportNum === 2 ? good : bad;
+  } else if (stepsReport1.value[index].time < stepsReport2.value[index].time) {
+    return reportNum === 2 ? bad : good;
+  } else {
+    return neutral;
+  }
+});
 
 const loading = ref(false);
 
@@ -258,6 +402,64 @@ const addMissingStepsToWorkflowStepArray = (workflowSteps, stepDefinitions) => {
   return allSteps;
 };
 
+  /**
+  * Initalize Chart.js pie charts to show steps.
+  */
+  const initCharts = () => {
+
+    const labelsReport1 = stepsReport1.value.map((step) => {
+      return step.Title;
+    });
+
+    const labelsReport2 = stepsReport2.value.map((step) => {
+      return step.Title;
+    });
+
+    const chartReport1 = document.getElementById('canvasChartReport1');
+    const chartReport2 = document.getElementById('canvasChartReport2');
+
+    const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']
+    const colors = timesReport1.value.map((step) => {
+      if (prepickedColors.length > 0) {
+        return prepickedColors.pop();
+      }
+      return "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
+    });
+
+    new Chart(chartReport1, {
+      type: 'pie',
+      data: {
+        labels: labelsReport1,
+        datasets: [{
+          label: 'Report 1',
+          data: timesReport1.value,
+          backgroundColor: colors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+      }
+    });
+
+    new Chart(chartReport2, {
+      type: 'pie',
+      data: {
+        labels: labelsReport2,
+        datasets: [{
+          label: 'Report 2',
+          data: timesReport2.value,
+          backgroundColor: colors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+      }
+    });
+  }
+
+
+
+
 onMounted(
   async () => {
     dateTimeReport1.value = report1.Date + "  " + report1.Time;
@@ -289,18 +491,16 @@ onMounted(
     const workflowStepDefinitions = response[6].ok ? await response[6].json() : null;
 
     stepsReport1.value = addMissingStepsToWorkflowStepArray(workflowReport1.value.WorkflowSteps, workflowStepDefinitions);
-    console.log("TIMES:", stepTimeReport1.value);
-    console.log("Times2:", stepTimeReport2.value);
     stepsReport1.value = addTimesToWorkflowStepArray(stepsReport1.value, stepTimeReport1.value);
-    console.log("STEPS 1: ", stepsReport1.value);
 
     stepsReport2.value = addMissingStepsToWorkflowStepArray(workflowReport2.value.WorkflowSteps, workflowStepDefinitions);
     stepsReport2.value = addTimesToWorkflowStepArray(stepsReport2.value, stepTimeReport2.value);
-    console.log("STEPS 2: ", stepsReport2.value);
-
-
 
     loading.value=true; // loading done
+
+    await nextTick(); // Load Charts Next Frame
+    initCharts();
+
 });
 </script>
 
@@ -309,16 +509,11 @@ onMounted(
     color: red;
 }
 
-.table-header {
-  font-size: 14px;
-  font-weight: 600;
-  text-align:left;
-}
-
-.table-data {
-  font-size: 14px;
-  text-align:left;
-
+.title {
+  text-align:center;
+  font-weight:500;
+  text-transform:uppercase;
+  font-size: 24px;
 }
 </style>
 

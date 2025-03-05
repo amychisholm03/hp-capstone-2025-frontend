@@ -525,7 +525,6 @@ onMounted(
       // 2. User only provided one report -> Show it.
     } else if (report1 && report2 === null) {
         const result = await prepareReport1(workflowStepDefinitions);
-        console.log(result);
       if (!result) {
         alert("Failed to load data! single");
         return;

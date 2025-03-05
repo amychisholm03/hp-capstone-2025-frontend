@@ -181,7 +181,10 @@
               vertical
               class="ml-2 mr-2"
             />
-            <v-col class="no-gutters" v-if="!singleReport">
+            <v-col
+              v-if="!singleReport"
+              class="no-gutters"
+            >
               <table style="width: 100%; height:100%;">
                 <tr style="text-align:left; font-size: 20px; text-align:center; height:50px;">
                   <th style="width:50%; font-weight:400;">

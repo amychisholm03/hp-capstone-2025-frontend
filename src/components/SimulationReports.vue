@@ -1,35 +1,78 @@
 <template>
   <v-app>
-    <error-popups :error="errorMessage" @clear-error="errorMessage = ''">
+    <error-popups
+      :error="errorMessage"
+      @clear-error="errorMessage = ''"
+    >
     </error-popups>
-    <v-dialog v-model="SimulationReportCompareDialogue" scrollable persistent>
-      <simulation-report-compare style="max-width: 100%; max-height:100%; overflow-y: scroll;" class="detailed-report"
-        :report1="compareReportOne" :report2="compareReportTwo" @exit="clearCompareSimulationReports">
+    <v-dialog
+      v-model="SimulationReportCompareDialogue"
+      scrollable
+      persistent
+    >
+      <simulation-report-compare
+        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
+        class="detailed-report"
+        :report1="compareReportOne"
+        :report2="compareReportTwo"
+        @exit="clearCompareSimulationReports"
+      >
       </simulation-report-compare>
     </v-dialog>
 
-    <v-dialog v-model="SimulationReportViewDialogue" scrollable persistent>
-      <simulation-report-compare style="max-width: 100%; max-height:100%; overflow-y: scroll;" class="detailed-report"
-        :report1="selectedReport" :report2="null" @exit="SimulationReportViewDialogue = false">
+    <v-dialog
+      v-model="SimulationReportViewDialogue"
+      scrollable
+      persistent
+    >
+      <simulation-report-compare
+        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
+        class="detailed-report"
+        :report1="selectedReport"
+        :report2="null"
+        @exit="SimulationReportViewDialogue = false"
+      >
       </simulation-report-compare>
     </v-dialog>
     <v-main class="pa-3">
-      <v-card class="module" style="max-height: 292px; height:auto;">
-        <module-toolbar class="module-toolbar" title="Simulation Report Creation" icon="mdi-test-tube"
-          @minimize="simReportGenMinimized = true" @maximize="simReportGenMinimized = false">
+      <v-card
+        class="module"
+        style="max-height: 292px; height:auto;"
+      >
+        <module-toolbar
+          class="module-toolbar"
+          title="Simulation Report Creation"
+          icon="mdi-test-tube"
+          @minimize="simReportGenMinimized = true"
+          @maximize="simReportGenMinimized = false"
+        >
         </module-toolbar>
-        <simulation-report-generate v-if="!simReportGenMinimized" :print-jobs="printJobs" :workflows="workflows"
-          @create="getSimulationReports"></simulation-report-generate>
+        <simulation-report-generate
+          v-if="!simReportGenMinimized"
+          :print-jobs="printJobs"
+          :workflows="workflows"
+          @create="getSimulationReports"
+        ></simulation-report-generate>
       </v-card>
       <div class="mb-1 mt-1"></div>
       <v-card class="large-module">
-        <module-toolbar class="module-toolbar" title="Simulation Report History" icon="mdi-clipboard-text-clock-outline"
-          @minimize="simReportHistoryMinimized = true;" @maximize="simReportHistoryMinimized = false;">
+        <module-toolbar
+          class="module-toolbar"
+          title="Simulation Report History"
+          icon="mdi-clipboard-text-clock-outline"
+          @minimize="simReportHistoryMinimized = true;"
+          @maximize="simReportHistoryMinimized = false;"
+        >
         </module-toolbar>
-        <simulation-report-history v-if="!simReportHistoryMinimized"
-          style="overflow-x: scroll !important; min-width: 500px;" :print-jobs="printJobs" :workflows="workflows"
-          :simulation-reports="simulationReports" @select-report="selectSimulationReport"
-          @compare-reports="compareSimulationReports">
+        <simulation-report-history
+          v-if="!simReportHistoryMinimized"
+          style="overflow-x: scroll !important; min-width: 500px;"
+          :print-jobs="printJobs"
+          :workflows="workflows"
+          :simulation-reports="simulationReports"
+          @select-report="selectSimulationReport"
+          @compare-reports="compareSimulationReports"
+        >
         </simulation-report-history>
       </v-card>
     </v-main>

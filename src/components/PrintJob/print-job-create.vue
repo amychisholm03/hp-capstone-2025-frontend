@@ -1,31 +1,75 @@
 <template>
-  <v-form fast-fail class="mb-5 mt-5" @submit.prevent="createPrintSettings">
-    <v-text-field v-model="printjob.title" :rules="titleValidation" label="Title" class="ml-2 mr-5"
-      style="text-transform: none; font-weight: 500;" />
-    <v-text-field v-model="printjob.pageCount" :rules="pageCountValidation" label="Page Count" type="number"
-      class="ml-2 mr-5" style="text-transform: none; font-weight: 500;" />
-    <v-select v-model="printjob.RasterizationProfileID" :rules="rasterizationProfileValidation"
-      :items="rasterizationProfiles" label="Rasterization Profile" item-title="title" item-value="id" outlined
-      class="ml-2 mr-5" style="text-transform: none; font-weight: 500;">
+  <v-form
+    fast-fail
+    class="mb-5 mt-5"
+    @submit.prevent="createPrintSettings"
+  >
+    <v-text-field
+      v-model="printjob.title"
+      :rules="titleValidation"
+      label="Title"
+      class="ml-2 mr-5"
+      style="text-transform: none; font-weight: 500;"
+    />
+    <v-text-field
+      v-model="printjob.pageCount"
+      :rules="pageCountValidation"
+      label="Page Count"
+      type="number"
+      class="ml-2 mr-5"
+      style="text-transform: none; font-weight: 500;"
+    />
+    <v-select
+      v-model="printjob.RasterizationProfileID"
+      :rules="rasterizationProfileValidation"
+      :items="rasterizationProfiles"
+      label="Rasterization Profile"
+      item-title="title"
+      item-value="id"
+      outlined
+      class="ml-2 mr-5"
+      style="text-transform: none; font-weight: 500;"
+    >
       <template #item="{ props, item }">
-        <v-list-item v-bind="props" :subtitle="item.raw.profile"></v-list-item>
+        <v-list-item
+          v-bind="props"
+          :subtitle="item.raw.profile"
+        ></v-list-item>
       </template>
     </v-select>
     <v-row style="height:auto;">
       <v-col class="align-end d-flex justify-end">
-        <v-btn v-if="success && !failure" size="x-small" icon type="submit" color="success">
+        <v-btn
+          v-if="success && !failure"
+          size="x-small"
+          icon
+          type="submit"
+          color="success"
+        >
           <v-icon size="medium">
             mdi-check
           </v-icon>
         </v-btn>
-        <v-btn v-if="!success && failure" size="x-small" icon type="submit" color="error">
+        <v-btn
+          v-if="!success && failure"
+          size="x-small"
+          icon
+          type="submit"
+          color="error"
+        >
           <v-icon size="medium">
             mdi-close
           </v-icon>
         </v-btn>
 
-        <v-btn type="submit" class="mr-5" color="secondary" size="large" :disabled="failure || success"
-          style="text-transform: none;">
+        <v-btn
+          type="submit"
+          class="mr-5"
+          color="secondary"
+          size="large"
+          :disabled="failure || success"
+          style="text-transform: none;"
+        >
           Create Print Job
         </v-btn>
       </v-col>

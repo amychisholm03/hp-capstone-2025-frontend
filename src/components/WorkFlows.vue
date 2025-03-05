@@ -1,16 +1,24 @@
 <template>
-    <v-app theme="light">
-        <v-main class="pa-3">
-            <error-popups :error="errorMessage" @clear-error="errorMessage = ''">
-            </error-popups>
-            <v-card class="module">
-                <module-toolbar class="module-toolbar" title="Workflow Creation" icon="mdi-graph"
-                    @minimize="workflowCreateMinimized = true" @maximize="workflowCreateMinimized = false"></module-toolbar>
-                <workflow-create v-if="!workflowCreateMinimized">
-                </workflow-create>
-            </v-card>
-        </v-main>
-    </v-app>
+  <v-app theme="light">
+    <v-main class="pa-3">
+      <error-popups
+        :error="errorMessage"
+        @clear-error="errorMessage = ''"
+      >
+      </error-popups>
+      <v-card class="module">
+        <module-toolbar
+          class="module-toolbar"
+          title="Workflow Creation"
+          icon="mdi-graph"
+          @minimize="workflowCreateMinimized = true"
+          @maximize="workflowCreateMinimized = false"
+        ></module-toolbar>
+        <workflow-create v-if="!workflowCreateMinimized">
+        </workflow-create>
+      </v-card>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>

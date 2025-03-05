@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
-    copy: typeof import('./src/components/SimulationReport/DetailedReport copy.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']
     PrintJobCreate: typeof import('./src/components/PrintJob/print-job-create.vue')['default']
@@ -22,10 +21,7 @@ declare module 'vue' {
     SimulationReports: typeof import('./src/components/SimulationReports.vue')['default']
     SiteDashboard: typeof import('./src/components/SiteDashboard.vue')['default']
     SiteNavigationDrawer: typeof import('./src/components/SiteNavigationDrawer.vue')['default']
-    SubmitJobs: typeof import('./src/components/SubmitJobs.vue')['default']
-    SubmitWorkflows: typeof import('./src/components/SubmitWorkflows.vue')['default']
     WorkflowCreate: typeof import('./src/components/Workflow/workflow-create.vue')['default']
-    Workflows: typeof import('./src/components/Workflows.vue')['default']
     WorkFlows: typeof import('./src/components/WorkFlows.vue')['default']
   }
 }

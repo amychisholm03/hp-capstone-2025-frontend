@@ -260,9 +260,8 @@
 <script setup>
 import { onMounted, ref, computed, nextTick, reactive } from "vue";
 import {getPrintJob, getWorkflow, getCollection, getWorkflowTimes } from "../api.js";
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-
-Chart.register(Title, Tooltip, Legend, ArcElement);
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 const chartCanvas = ref();
 //// Props

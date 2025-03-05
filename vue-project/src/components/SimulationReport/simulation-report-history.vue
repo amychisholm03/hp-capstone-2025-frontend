@@ -3,7 +3,7 @@
     <!-- Header Row -->
     <v-row
       class="ml-4 mr-4 mt-1 pa-0"
-      style="max-height:90px; height:90px; align-content:center;"
+      style="max-height:90px; height:90px; align-content:center; flex-wrap:nowrap;"
       no-gutters
     >
       <v-col
@@ -97,7 +97,10 @@
                 </v-icon>
               </v-col>
               <v-col no-gutters>
-                <simulation-report-list-item :report="report" />
+                <simulation-report-list-item
+                  :report="report"
+                  @click="$emit('select-report', report.id)"
+                />
               </v-col>
             </v-row>
           </v-list-item>

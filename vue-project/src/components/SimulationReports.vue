@@ -19,18 +19,15 @@
       v-model="SimulationReportViewDialogue"
       scrollable
       persistent
-      class="detailed-report"
-      max-width="500px"
-      content-class="overflow-y-auto"
     >
-      <div style="max-height: 60vh; overflow-y: hidden; overflow-x:hidden;">
-        <detailed-report
-          :report="selectedReport"
-          :print-job="selectedPrintJob"
-          :workflow="selectedWorkflow"
-          @exit="SimulationReportViewDialogue = false"
-        ></detailed-report>
-      </div>
+      <simulation-report-compare
+        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
+        class="detailed-report"
+        :report1="selectedReport"
+        :report2="null"
+        @exit="SimulationReportViewDialogue = false"
+      >
+      </simulation-report-compare>
     </v-dialog>
     <v-main class="pa-3">
       <v-card
@@ -66,6 +63,7 @@
         </module-toolbar>
         <simulation-report-history
           v-if="!simReportHistoryMinimized"
+          style="overflow-x: scroll !important; min-width: 500px;"
           :print-jobs="printJobs"
           :workflows="workflows"
           :simulation-reports="simulationReports"

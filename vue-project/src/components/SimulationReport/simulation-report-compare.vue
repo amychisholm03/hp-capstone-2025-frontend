@@ -12,7 +12,12 @@
         class="align-center d-flex justify-center"
       >
         <h4 style="font-weight:600;">
-          Simulation Report Comparison
+          <div v-if="singleReport">
+            Simulation Report Detailed View
+          </div>
+          <div v-else>
+            Simulation Report Comparison
+          </div>
         </h4>
       </v-col>
       <v-col
@@ -93,7 +98,7 @@
             </v-col>
 
             <!-- Simulation Report 2 -->
-            <v-col>
+            <v-col v-if="!singleReport">
               <v-text-field
                 v-model="dateTimeReport2"
                 :readonly="true"
@@ -176,7 +181,7 @@
               vertical
               class="ml-2 mr-2"
             />
-            <v-col class="no-gutters">
+            <v-col class="no-gutters" v-if="!singleReport">
               <table style="width: 100%; height:100%;">
                 <tr style="text-align:left; font-size: 20px; text-align:center; height:50px;">
                   <th style="width:50%; font-weight:400;">
@@ -213,15 +218,23 @@
     >
       <v-col>
         <v-card
+          v-if="singleReport"
+          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 500px;"
+        >
+          <!-- Show A Single Chart -->
+          <v-col style="max-width: 100%;">
+            <canvas
+              id="canvasChartReport1"
+            />
+          </v-col>
+          <v-divider />
+        </v-card>
+
+        <!-- Show Two Charts -->
+        <v-card
+          v-else
           style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 1000px;"
         >
-          <!-- <v-row class="d-flex justify-center"> -->
-          <!--   <v-col> -->
-          <!--     <v-card-title class="title"> -->
-          <!--       Chart -->
-          <!--     </v-card-title> -->
-          <!--   </v-col> -->
-          <!-- </v-row> -->
           <v-divider />
           <v-row
             no-gutters
@@ -261,26 +274,6 @@ const {
 defineProps({
   report1: Object,
   report2: Object,
-});
-
-const chartData = ref({
-  labels: ['Red', 'Blue', 'Yellow'],
-  datasets: [
-    {
-      label: 'Votes',
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-      data: [30, 50, 20]
-    }
-  ]
-});
-
-const chartOptions = ref({
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top'
-    }
-  }
 });
 
 const workflowStepsReport1 = ref(null);
@@ -343,10 +336,13 @@ const timesReport2 = computed(() => {
 * Compare Two Steps, return icon based on which one is bigger.
 */
 const getComparison = ((index, reportNum) => {
-
   const good = '#2abf64';
   const bad = '#db3047';
   const neutral = '#FFFFFF';
+
+  if (singleReport.value) {
+    return neutral;
+  }
 
   if (index > stepsReport1.value.length || index > stepsReport2.value.length) {
     return neutral;
@@ -361,10 +357,10 @@ const getComparison = ((index, reportNum) => {
 });
 
 const loading = ref(false);
+const singleReport = ref(false);
 
-// clone props so we cannot mute them.
-viewableReport1.value = JSON.parse(JSON.stringify(report1));
-viewableReport2.value = JSON.parse(JSON.stringify(report2));
+viewableReport1.value = report1 ? JSON.parse(JSON.stringify(report1)) : null;
+viewableReport2.value = report2 ? JSON.parse(JSON.stringify(report2)) : null;
 
 /**
 * Insert times into the main step array, if they exist.
@@ -405,34 +401,29 @@ const addMissingStepsToWorkflowStepArray = (workflowSteps, stepDefinitions) => {
   /**
   * Initalize Chart.js pie charts to show steps.
   */
-  const initCharts = () => {
+  const initChart = (steps, times, elementID) => {
 
-    const labelsReport1 = stepsReport1.value.map((step) => {
+    const labels = steps.map((step) => {
       return step.Title;
     });
 
-    const labelsReport2 = stepsReport2.value.map((step) => {
-      return step.Title;
-    });
-
-    const chartReport1 = document.getElementById('canvasChartReport1');
-    const chartReport2 = document.getElementById('canvasChartReport2');
+    const chartReport = document.getElementById(elementID);
 
     const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']
-    const colors = timesReport1.value.map((step) => {
+    const colors = times.map((step) => {
       if (prepickedColors.length > 0) {
         return prepickedColors.pop();
       }
       return "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
     });
 
-    new Chart(chartReport1, {
+    new Chart(chartReport, {
       type: 'pie',
       data: {
-        labels: labelsReport1,
+        labels: labels,
         datasets: [{
-          label: 'Report 1',
-          data: timesReport1.value,
+          label: '',
+          data: times,
           backgroundColor: colors,
           borderWidth: 1
         }]
@@ -440,70 +431,118 @@ const addMissingStepsToWorkflowStepArray = (workflowSteps, stepDefinitions) => {
       options: {
       }
     });
+ }
 
-    new Chart(chartReport2, {
-      type: 'pie',
-      data: {
-        labels: labelsReport2,
-        datasets: [{
-          label: 'Report 2',
-          data: timesReport2.value,
-          backgroundColor: colors,
-          borderWidth: 1
-        }]
-      },
-      options: {
-      }
-    });
+const prepareReport1 = async (workflowStepDefinitions) => {
+  dateTimeReport1.value = report1.Date + "  " + report1.Time;
+
+  const response = await Promise.all([
+    getPrintJob(report1.PrintJobID),
+    getWorkflow(report1.WorkflowID),
+    getWorkflowTimes(report1.id),
+  ]);
+
+  for (let i = 0; i < response.length; i++) {
+    if (!response[i].ok) {
+      alert("Error Getting Data!");
+      return false;
+    }
   }
 
+  printjobReport1.value = response[0].ok ? await response[0].json() : null;
+  workflowReport1.value = response[1].ok ? await response[1].json() : null;
+  stepTimeReport1.value = response[2].ok ? await response[2].json() : null;
 
+  stepsReport1.value = addMissingStepsToWorkflowStepArray(workflowReport1.value.WorkflowSteps, workflowStepDefinitions);
+  stepsReport1.value = addTimesToWorkflowStepArray(stepsReport1.value, stepTimeReport1.value);
 
+  return true;
 
+};
+
+const prepareReport2 = async (workflowStepDefinitions) => {
+  dateTimeReport2.value = report2.Date + "  " + report2.Time;
+
+  const response = await Promise.all([
+    getPrintJob(report2.PrintJobID),
+    getWorkflow(report2.WorkflowID),
+    getWorkflowTimes(report2.id),
+  ]);
+
+  for (let i = 0; i < response.length; i++) {
+    if (!response[i].ok) {
+      alert("Error Getting Data!");
+      return false;
+    }
+  }
+
+  printjobReport2.value = response[0].ok ? await response[0].json() : null;
+  workflowReport2.value = response[1].ok ? await response[1].json() : null;
+  stepTimeReport2.value = response[2].ok ? await response[2].json() : null;
+
+  stepsReport2.value = addMissingStepsToWorkflowStepArray(workflowReport2.value.WorkflowSteps, workflowStepDefinitions);
+  stepsReport2.value = addTimesToWorkflowStepArray(stepsReport2.value, stepTimeReport2.value);
+
+  return true;
+};
+
+/**
+* Actions to execute after all data has been loaded.
+*/
+const onLoad = () => {
+  if (report1) {
+    initChart(stepsReport1.value, timesReport1.value, "canvasChartReport1");
+  }
+  if (report2) {
+    initChart(stepsReport2.value, timesReport2.value, "canvasChartReport2");
+  }
+}
+
+/**
+* Actions to execute after DOM has been loaded.
+*/
 onMounted(
   async () => {
-    dateTimeReport1.value = report1.Date + "  " + report1.Time;
-    dateTimeReport2.value = report2.Date + "  " + report2.Time;
 
-    const response = await Promise.all([
-      getPrintJob(report1.PrintJobID),
-      getWorkflow(report1.WorkflowID),
-      getWorkflowTimes(report1.id),
-      getPrintJob(report2.PrintJobID),
-      getWorkflow(report2.WorkflowID),
-      getWorkflowTimes(report2.id),
-      getCollection('WorkflowStep'),
-      ]);
-
-    for (let i = 0; i < response.length; i++) {
-      if (!response[i].ok) {
-        alert("Error Getting Data!");
-        return;
-      }
+    // Get Workflow Step Definitions
+    const wfsResponse = await getCollection('WorkflowStep');
+    const workflowStepDefinitions = wfsResponse.ok ? await wfsResponse.json() : null;
+    if (workflowStepDefinitions === null) {
+      alert("Failed to load data! wfs defs");
+      return;
     }
 
-    printjobReport1.value = response[0].ok ? await response[0].json() : null;
-    workflowReport1.value = response[1].ok ? await response[1].json() : null;
-    stepTimeReport1.value = response[2].ok ? await response[2].json() : null;
-    printjobReport2.value = response[3].ok ? await response[3].json() : null;
-    workflowReport2.value = response[4].ok ? await response[4].json() : null;
-    stepTimeReport2.value = response[5].ok ? await response[5].json() : null;
-    const workflowStepDefinitions = response[6].ok ? await response[6].json() : null;
+    // 1. User provided two reports -> Compare them.
+    if (report1 && report2) {
+      const result = await Promise.all([
+        prepareReport1(workflowStepDefinitions),
+        prepareReport2(workflowStepDefinitions),
+      ]);
+      if (!result[0] || !result[1]) {
+        alert("Failed to load data! both");
+        return;
+      }
+      // 2. User only provided one report -> Show it.
+    } else if (report1 && report2 === null) {
+        const result = await prepareReport1(workflowStepDefinitions);
+        console.log(result);
+      if (!result) {
+        alert("Failed to load data! single");
+        return;
+      }
+      singleReport.value = true;
+    // 3. User didn't provide reports :(
+    } else {
+      alert("Failed to load data! all");
+      return;
+    }
 
-    stepsReport1.value = addMissingStepsToWorkflowStepArray(workflowReport1.value.WorkflowSteps, workflowStepDefinitions);
-    stepsReport1.value = addTimesToWorkflowStepArray(stepsReport1.value, stepTimeReport1.value);
-
-    stepsReport2.value = addMissingStepsToWorkflowStepArray(workflowReport2.value.WorkflowSteps, workflowStepDefinitions);
-    stepsReport2.value = addTimesToWorkflowStepArray(stepsReport2.value, stepTimeReport2.value);
-
-    loading.value=true; // loading done
-
-    await nextTick(); // Load Charts Next Frame
-    initCharts();
+    loading.value=true;
+    await nextTick();
+    onLoad();
 
 });
 </script>
-
 <style scoped>
 .close-button:hover {
     color: red;

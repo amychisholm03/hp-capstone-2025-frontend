@@ -15,7 +15,78 @@ export async function getPrintJob(id) {
   return await fetch(`${API_URL}:${API_PORT}/${'PrintJob'}/${id}`, {
     method: 'GET',
     mode: 'cors'
-  })
+  });
+}
+
+export async function getErrorLogs() {
+  // return await fetch(`${API_URL}:${API_PORT}/${'Logs'}/${'Error'}`, {
+  //   method: 'GET',
+  //   mode: 'cors'
+  // });
+  return [
+    {
+      date: '03/04/2025',
+      status: '402',
+      domain: 'api.wsuv-hp-capstone.com/PrintJobs',
+      request: '(empty)',
+      method: "GET",
+      response: 'Server Error: Endpoint "PrintJobs" does not exist.',
+    },
+    {
+      date: '03/05/2025',
+      status: '401',
+      domain: 'api.wsuv-hp-capstone.com/PrintJob',
+      request: '{...}',
+      method: "POST",
+      response: 'SQL error: no such column: "scrum".',
+    },
+    {
+      date: '03/04/2025',
+      status: '400',
+      domain: 'api.wsuv-hp-capstone.com/Workflow/5',
+      request: '(empty)',
+      method: "GET",
+      response: 'Server Error: Workflow with id 5 not found.',
+    },
+    {
+      date: '03/03/2025',
+      status: '405',
+      domain: 'api.wsuv-hp-capstone.com/SimulationReport',
+      request: '{...}',
+      method: "POST",
+      response: 'SQL error: primary key constraint failed.',
+    },
+    {
+      date: '03/03/2025',
+      method: 'POST',
+      status: '400',
+      domain: 'api.wsuv-hp-capstone.com/PrintJob',
+      request: '{...}',
+      response: 'SQL error: foreign key constraint failed.',
+    },
+    {
+      date: '03/01/2025',
+      status: '400',
+      method: 'GET',
+      domain: 'api.wsuv-hp-capstone.com/Workflowz',
+      request: '(empty)',
+      response: 'Server error: Endpoint "Workflowz" does not exist.',
+    },
+    {
+      date: '03/02/2025',
+      status: '400',
+      method: 'GET',
+      domain: 'api.wsuv-hp-capstone.com/;drop table *;--',
+      request: '(empty)',
+      response: 'Server error: malformed input.',
+    },
+  ];
+
+  // return await fetch(`${API_URL}:${API_PORT}/${'Logs'}/${'API'}`, {
+  //   method: 'GET',
+  //   mode: 'cors'
+  // });
+
 }
 
 export async function getWorkflow(id) {

@@ -210,7 +210,7 @@ onMounted(async () => {
 });
 </script>
 
-<style>
+<style scoped>
 .exit-button {
   border: none;
   padding: 0;
@@ -228,12 +228,16 @@ onMounted(async () => {
   max-width: 400px;
 }
 
-.v-overlay--active .v-overlay__scrim {
+:deep(.v-overlay--active) {
+  display: none;
+}
+
+:deep( .v-overlay__scrim) {
   display: none;
 }
 
 /* style the overlay container as required */
-.v-overlay--active {
+:deep(.v-overlay--active) {
   backdrop-filter: blur(2px);
 }
 </style>

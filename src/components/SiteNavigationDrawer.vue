@@ -62,7 +62,10 @@
       >
         <v-list-item-title>Simulation</v-list-item-title>
       </v-list-item>
-      <v-divider style="margin-top:auto;" class="pb-2" />
+      <v-divider
+        style="margin-top:auto;"
+        class="pb-2"
+      />
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-archive"

@@ -2,7 +2,10 @@
   <v-app theme="light">
     <v-main>
       <v-container class="ma-3 pa-3">
-        <v-card class="module" style="max-height: 600px; height: 600px;">
+        <v-card
+          class="module"
+          style="max-height: 600px; height: 600px; max-width: 1000px; width: 1000px;"
+        >
           <module-toolbar
             class="module-toolbar"
             title="Error Logs"
@@ -39,7 +42,6 @@
   onMounted( async () => {
     // get error logs
     logs.value = await getErrorLogs();
-    logs.value = null;
 
     // Todo: uncomment once api gets setup
     // if (logsResponse.ok) {

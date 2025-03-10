@@ -4,18 +4,20 @@
       <v-container class="ma-3 pa-3">
         <v-card
           class="module"
-          style="max-height: 600px; height: 600px; max-width: 1000px; width: 1000px;"
+          style="max-height: 600px; height: auto; max-width: 1000px; width: 1000px;"
         >
           <module-toolbar
             class="module-toolbar"
             title="Error Logs"
             icon="mdi-skull"
-            style="max-height: 5%; height: 5%;"
+            @minimize="errorLogsMinimized = true"
+            @maximize="errorLogsMinimized = false"
           >
           </module-toolbar>
           <log-viewer
+            v-if="!errorLogsMinimized"
+            style="height:550px;"
             :logs="logs"
-            style="max-height: 95%; height: 95%;"
           ></log-viewer>
         </v-card>
       </v-container>
@@ -37,21 +39,14 @@
 
   //// DATA ////
   const logs = ref(null);
+  const errorLogsMinimized = ref(false);
 
   //// INITIALIZATION ////
   onMounted( async () => {
-    // get error logs
-    logs.value = await getErrorLogs();
-
-    // Todo: uncomment once api gets setup
-    // if (logsResponse.ok) {
-    //   logs.value = await logsResponse.json();
-    //   alert("Success");
-    //   console.log(logs.value);
-    // } else {
-    //   // TODO: turn into snackbar alert.
-    //   alert("Error getting logs!");
-    //   return;
-    // }
+    const response = await getErrorLogs();
+    if (response.ok) {
+      logs.value = await response.json();
+      console.log(logs.value);
+    } // todo: error popup here
   });
 </script>

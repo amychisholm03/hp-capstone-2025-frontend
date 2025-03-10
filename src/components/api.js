@@ -1,7 +1,7 @@
 export const API_URL = "http://api.wsuv-hp-capstone.com"
 export const API_PORT = "80"
-//export const API_URL = "http://localhost"
-//export const API_PORT = "5040"
+// export const API_URL = "http://localhost"
+// export const API_PORT = "5040"
 
 
 export async function getCollection(coll){
@@ -19,74 +19,10 @@ export async function getPrintJob(id) {
 }
 
 export async function getErrorLogs() {
-  // return await fetch(`${API_URL}:${API_PORT}/${'Logs'}/${'Error'}`, {
-  //   method: 'GET',
-  //   mode: 'cors'
-  // });
-  return [
-    {
-      date: 1741306250,
-      status: '402',
-      domain: 'api.wsuv-hp-capstone.com/PrintJobs',
-      request: '',
-      method: "GET",
-      response: 'Server Error: Endpoint "PrintJobs" does not exist.',
-    },
-    {
-      date: 1741206250,
-      status: '401',
-      domain: 'api.wsuv-hp-capstone.com/PrintJob',
-      request: '{Title: "Cowabunga", RasterizationProfileID: "2", PageCount: "50" }',
-      method: "POST",
-      response: 'SQL error: no such column: "scrum".',
-    },
-    {
-      date: 1741246250,
-      status: '400',
-      domain: 'api.wsuv-hp-capstone.com/Workflow/5',
-      request: '',
-      method: "GET",
-      response: 'Server Error: Workflow with id 5 not found.',
-    },
-    {
-      date: 1740246250,
-      status: '405',
-      domain: 'api.wsuv-hp-capstone.com/SimulationReport',
-      request: '{PrintJobID: "5", WorkflowID: "2", RIPs: "1"}',
-      method: "POST",
-      response: 'SQL error: primary key constraint failed.',
-    },
-    {
-      date: 1740555250,
-      method: 'POST',
-      status: '400',
-      domain: 'api.wsuv-hp-capstone.com/PrintJob',
-      request: '{Title: "Multiple Scerlosis", RasterizationProfileID: "-5", PageCount: "50" }',
-      response: 'SQL error: foreign key constraint failed.',
-    },
-    {
-      date: 1740222250,
-      status: '400',
-      method: 'GET',
-      domain: 'api.wsuv-hp-capstone.com/Workflowz',
-      request: '',
-      response: 'Server error: Endpoint "Workflowz" does not exist.',
-    },
-    {
-      date: 1740305880,
-      status: '400',
-      method: 'GET',
-      domain: 'api.wsuv-hp-capstone.com/;drop table *;--',
-      request: '',
-      response: 'Server error: malformed input.',
-    },
-  ];
-
-  // return await fetch(`${API_URL}:${API_PORT}/${'Logs'}/${'API'}`, {
-  //   method: 'GET',
-  //   mode: 'cors'
-  // });
-
+  return fetch(`${API_URL}:${API_PORT}/${'Log'}/${'Error'}`, {
+    method: 'GET',
+    mode: 'cors'
+  });
 }
 
 export async function getWorkflow(id) {

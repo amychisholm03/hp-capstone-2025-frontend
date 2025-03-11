@@ -1,7 +1,7 @@
 export const API_URL = "http://api.wsuv-hp-capstone.com"
 export const API_PORT = "80"
-//export const API_URL = "http://localhost"
-//export const API_PORT = "5040"
+// export const API_URL = "http://localhost"
+// export const API_PORT = "5040"
 
 
 export async function getCollection(coll){
@@ -65,13 +65,23 @@ export async function postWorkflow(Title, WorkflowSteps, Enabled, ParallelSteps,
 // prev step is the one before it in the array, and the next step
 // is the one after it, for compatibility with previous implementation
 export function formatSteps(steps){
-	let output = [];
+	const output = [];
 	for(let i = 0; i < steps.length; i++){
-    console.log(steps[i]);
+    let prev = null;
+    let next = null;
+
+    if (i > 0) {
+      prev = i-1;
+    }
+
+    if (i < steps.length-1) {
+      next = i+1;
+    }
+
 		output.push({
 			WorkflowStepID: steps[i],
-			Prev: [],
-			Next: []
+			Prev: prev === null ? [] : [prev],
+			Next: next === null ? [] : [next],
 		});
 	}
 	return output

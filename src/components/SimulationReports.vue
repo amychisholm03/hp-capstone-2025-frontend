@@ -231,9 +231,4 @@ onMounted(async () => {
 .v-overlay--active .v-overlay__scrim {
   display: none;
 }
-
-/* style the overlay container as required */
-.v-overlay--active {
-  backdrop-filter: blur(2px);
-}
 </style>

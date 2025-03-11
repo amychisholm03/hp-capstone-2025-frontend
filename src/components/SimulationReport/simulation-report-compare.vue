@@ -5,13 +5,13 @@
   >
     <!-- Header -->
     <v-row
-      class="align-center d-flex ma-0"
-      style="background-color:#555555; color:white; position:fixed; z-index:100; height:40px; width:100%;"
+      class="align-center d-flex header-row"
     >
+      <!-- Title -->
       <v-col
         class="align-center d-flex justify-center"
       >
-        <h4 style="font-weight:600;">
+        <h4>
           <div v-if="singleReport">
             Simulation Report Detailed View
           </div>
@@ -20,6 +20,8 @@
           </div>
         </h4>
       </v-col>
+
+      <!-- Exit Button -->
       <v-col
         style="position:fixed;"
         class="align-center d-flex justify-end mb-1"
@@ -43,19 +45,13 @@
       class="ml-3 mr-5"
       style="margin-top:40px;"
     >
-      <!-- General Overview Section -->
+      <!-- General Overview -->
       <v-col
-        no-gutters
         style="max-width:650px;"
       >
         <v-card
-          class="pb-5 pl-5 pr-5"
-          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 600px;"
+          class="overview-card"
         >
-          <!-- <v-card-title class="title"> -->
-          <!--   Overview -->
-          <!-- </v-card-title> -->
-          <v-divider class="mb-2" />
           <v-row no-gutters>
             <!-- Simulation Report 1 -->
             <v-col class="mr-2">
@@ -139,16 +135,14 @@
           </v-row>
         </v-card>
       </v-col>
-      <!-- Workflow Step Comparison Section -->
+
+      <!-- General Comparison Section -->
       <v-col style="max-width:700px;">
         <v-card
-          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); height: 100%;"
+          class="comparison-card"
         >
-          <!-- <v-card-title class="title"> -->
-          <!--   Step Times -->
-          <!-- </v-card-title> -->
-          <v-divider class="mb-2" />
           <v-row no-gutters>
+            <!-- Simulation Report 1 -->
             <v-col no-gutters>
               <table style="width: 100%; height:100%;">
                 <tr style="text-align:left; font-size: 20px; text-align:center; height:50px;">
@@ -177,10 +171,8 @@
                 </tr>
               </table>
             </v-col>
-            <v-divider
-              vertical
-              class="ml-2 mr-2"
-            />
+
+            <!-- Simulation Report 2 -->
             <v-col
               v-if="!singleReport"
               class="no-gutters"
@@ -211,60 +203,65 @@
               </table>
             </v-col>
           </v-row>
-          <v-divider class="mt-2" />
         </v-card>
       </v-col>
     </v-row>
-    <v-row
-      no-gutters
-      class="ma-6"
-    >
+    <v-row>
       <v-col>
-        <v-card
-          v-if="singleReport"
-          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 500px;"
+        <chart-all
+          :data="timesReport1"
+          :labels="labelsReport1"
         >
-          <!-- Show A Single Chart -->
-          <v-col style="max-width: 100%;">
-            <canvas
-              id="canvasChartReport1"
-            />
-          </v-col>
-          <v-divider />
-        </v-card>
-
-        <!-- Show Two Charts -->
-        <v-card
-          v-else
-          style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 1000px;"
-        >
-          <v-divider />
-          <v-row
-            no-gutters
-            class="d-flex"
-          >
-            <v-col style="max-width: 50%;">
-              <canvas
-                id="canvasChartReport1"
-              />
-            </v-col>
-            <v-col style="max-width: 50%;">
-              <canvas
-                id="canvasChartReport2"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
+        </chart-all>
       </v-col>
     </v-row>
+    <!-- <v-row -->
+    <!--   no-gutters -->
+    <!--   class="ma-6" -->
+    <!-- > -->
+    <!--   <v-col> -->
+    <!--     <v-card -->
+    <!--       v-if="singleReport" -->
+    <!--       style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 500px;" -->
+    <!--     > -->
+    <!--       <v-col style="max-width: 100%;"> -->
+    <!--         <canvas -->
+    <!--           id="canvasChartReport1" -->
+    <!--         /> -->
+    <!--       </v-col> -->
+    <!--       <v-divider /> -->
+    <!--     </v-card> -->
+
+    <!--     <v-card -->
+    <!--       v-else -->
+    <!--       style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 1000px;" -->
+    <!--     > -->
+    <!--       <v-divider /> -->
+    <!--       <v-row -->
+    <!--         no-gutters -->
+    <!--         class="d-flex" -->
+    <!--       > -->
+    <!--         <v-col style="max-width: 50%;"> -->
+    <!--           <canvas -->
+    <!--             id="canvasChartReport1" -->
+    <!--           /> -->
+    <!--         </v-col> -->
+    <!--         <v-col style="max-width: 50%;"> -->
+    <!--           <canvas -->
+    <!--             id="canvasChartReport2" -->
+    <!--           /> -->
+    <!--         </v-col> -->
+    <!--       </v-row> -->
+    <!--     </v-card> -->
+    <!--   </v-col> -->
+    <!-- </v-row> -->
   </v-card>
 </template>
 
 <script setup>
 import { onMounted, ref, computed, nextTick, reactive } from "vue";
 import {getPrintJob, getWorkflow, getCollection, getWorkflowTimes } from "../api.js";
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
+import ChartAll from '../Chart/chart-all.vue';
 
 const chartCanvas = ref();
 //// Props
@@ -313,14 +310,18 @@ const noStepTimesReport2 = computed(() => {
   return true;
 });
 
-
-
 const timesReport1 = computed(() => {
     if (!stepsReport1.value) {
       return null;
     }
     return stepsReport1.value.map((step) => {
       return step.time;
+    });
+});
+
+const labelsReport1 = computed(() => {
+    return stepsReport1.value.map((step) => {
+      return step.Title;
     });
 });
 
@@ -333,6 +334,11 @@ const timesReport2 = computed(() => {
     });
 });
 
+const labelsReport2 = computed(() => {
+    return stepsReport2.value.map((step) => {
+      return step.Title;
+    });
+});
 
 /**
 * Compare Two Steps, return icon based on which one is bigger.
@@ -400,41 +406,6 @@ const addMissingStepsToWorkflowStepArray = (workflowSteps, stepDefinitions) => {
   return allSteps;
 };
 
-  /**
-  * Initalize Chart.js pie charts to show steps.
-  */
-  const initChart = (steps, times, elementID) => {
-
-    const labels = steps.map((step) => {
-      return step.Title;
-    });
-
-    const chartReport = document.getElementById(elementID);
-
-    const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']
-    const colors = times.map((step) => {
-      if (prepickedColors.length > 0) {
-        return prepickedColors.pop();
-      }
-      return "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
-    });
-
-    new Chart(chartReport, {
-      type: 'pie',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: '',
-          data: times,
-          backgroundColor: colors,
-          borderWidth: 1
-        }]
-      },
-      options: {
-      }
-    });
- }
-
 const prepareReport1 = async (workflowStepDefinitions) => {
   dateTimeReport1.value = report1.Date + "  " + report1.Time;
 
@@ -489,18 +460,6 @@ const prepareReport2 = async (workflowStepDefinitions) => {
 };
 
 /**
-* Actions to execute after all data has been loaded.
-*/
-const onLoad = () => {
-  if (report1) {
-    initChart(stepsReport1.value, timesReport1.value, "canvasChartReport1");
-  }
-  if (report2) {
-    initChart(stepsReport2.value, timesReport2.value, "canvasChartReport2");
-  }
-}
-
-/**
 * Actions to execute after DOM has been loaded.
 */
 onMounted(
@@ -539,9 +498,6 @@ onMounted(
     }
 
     loading.value=true;
-    await nextTick();
-    onLoad();
-
 });
 </script>
 <style scoped>
@@ -554,6 +510,31 @@ onMounted(
   font-weight:500;
   text-transform:uppercase;
   font-size: 24px;
+}
+
+.header-row{
+  background-color:#555555;
+  color:white;
+  position:fixed;
+  z-index:100;
+  height:40px;
+  width:100%;
+  margin:0;
+}
+
+.overview-card{
+  border-width:1px;
+  border-style:solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  width: 600px;
+  padding:2%;
+}
+
+.comparison-card{
+  border-width:1px;
+  border-style:solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  height: 100%;
 }
 </style>
 

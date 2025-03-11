@@ -7,9 +7,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
+    ChartPie: typeof import('./src/components/Chart/chart-pie.vue')['default']
+    ChartsSimulationReport: typeof import('./src/components/Chart/charts-simulation-report.vue')['default']
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
+    Logs: typeof import('./src/components/Logs.vue')['default']
+    LogViewer: typeof import('./src/components/Log/LogViewer.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']
     PrintJobCreate: typeof import('./src/components/PrintJob/print-job-create.vue')['default']
     PrintJobs: typeof import('./src/components/PrintJobs.vue')['default']

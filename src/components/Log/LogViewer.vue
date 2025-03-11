@@ -1,8 +1,18 @@
 <template>
   <v-main>
+    <!-- NO LOGS -->
+    <div
+      v-if="!tableItems"
+      style="width:100%; height: 100%;"
+      class="align-center d-flex justify-center"
+    >
+      <div class="spinner">
+      </div>
+    </div>
+
     <!-- LOG TABLE -->
     <v-data-table
-      v-if="logs && logs.length !== 0"
+      v-else
       :items="tableItems"
       :headers="headers"
       fixed-header
@@ -93,16 +103,6 @@
         <h4>no errors to show!</h4>
       </template>
     </v-data-table>
-
-    <!-- No Logs To Show... -->
-    <div
-      v-else
-      style="width:100%; height: 100%;"
-      class="align-center d-flex justify-center"
-    >
-      <div class="spinner">
-      </div>
-    </div>
   </v-main>
 </template>
 
@@ -226,6 +226,9 @@
   border-right-color:darkslategray;
   border-right-style: solid;
   border-right-width:1px;
+  border-bottom-color:rgba(100,100,100,0.25);
+  border-bottom-style: solid;
+  border-bottom-width:1px;
   padding-top: 10px !important;
 }
 </style>

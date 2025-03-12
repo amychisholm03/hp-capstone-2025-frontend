@@ -40,6 +40,9 @@
       </v-col>
     </v-row>
 
+    <div id="comparison-top" />
+    <div id="overview-top" />
+
     <!-- Main Body -->
     <v-row
       class="ml-3 mr-5"
@@ -48,6 +51,7 @@
       <!-- General Overview -->
       <v-col
         style="max-width:650px;"
+        @click="scrollToTopOfOverview"
       >
         <v-card
           class="overview-card"
@@ -137,7 +141,10 @@
       </v-col>
 
       <!-- General Comparison Section -->
-      <v-col style="max-width:700px;">
+      <v-col
+        style="max-width:700px;"
+        @click="scrollToTopOfComparison"
+      >
         <v-card
           class="comparison-card"
         >
@@ -206,55 +213,52 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
+    <!-- Charts Row -->
+    <v-row
+      class="ml-3 mr-5"
+      style="margin-top:40px;"
+      @click="scrollToBottomOfCharts"
+    >
       <v-col>
-        <chart-all
-          :data="timesReport1"
-          :labels="labelsReport1"
+        <!-- One Report -->
+        <v-card
+          v-if="singleReport"
+          class="chart-card-single"
         >
-        </chart-all>
-      </v-col>
-    </v-row>
-    <!-- <v-row -->
-    <!--   no-gutters -->
-    <!--   class="ma-6" -->
-    <!-- > -->
-    <!--   <v-col> -->
-    <!--     <v-card -->
-    <!--       v-if="singleReport" -->
-    <!--       style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 500px;" -->
-    <!--     > -->
-    <!--       <v-col style="max-width: 100%;"> -->
-    <!--         <canvas -->
-    <!--           id="canvasChartReport1" -->
-    <!--         /> -->
-    <!--       </v-col> -->
-    <!--       <v-divider /> -->
-    <!--     </v-card> -->
+          <v-card-title class="chart-card-title">
+            CHARTS
+          </v-card-title>
+          <div>
+            <chart-all
+              style="width:auto; height:auto;"
+              :data1="timesReport1"
+              :labels1="labelsReport1"
+              chart-id="report-single"
+            >
+            </chart-all>
+          </div>
+        </v-card>
 
-    <!--     <v-card -->
-    <!--       v-else -->
-    <!--       style="border-width:1px; border-style:solid; border-color: rgba(0, 0, 0, 0.2); width: 1000px;" -->
-    <!--     > -->
-    <!--       <v-divider /> -->
-    <!--       <v-row -->
-    <!--         no-gutters -->
-    <!--         class="d-flex" -->
-    <!--       > -->
-    <!--         <v-col style="max-width: 50%;"> -->
-    <!--           <canvas -->
-    <!--             id="canvasChartReport1" -->
-    <!--           /> -->
-    <!--         </v-col> -->
-    <!--         <v-col style="max-width: 50%;"> -->
-    <!--           <canvas -->
-    <!--             id="canvasChartReport2" -->
-    <!--           /> -->
-    <!--         </v-col> -->
-    <!--       </v-row> -->
-    <!--     </v-card> -->
-    <!--   </v-col> -->
-    <!-- </v-row> -->
+        <!-- Two Reports -->
+        <v-card
+          v-else
+          class="chart-card-double"
+        >
+          <div>
+            <chart-all
+              style="width:auto; height:auto;"
+              :data1="timesReport1"
+              :labels1="labelsReport1"
+              :data2="timesReport2"
+              :labels2="labelsReport2"
+              chart-id="report-double"
+            >
+            </chart-all>
+          </div>
+        </v-card>
+      </v-col>
+      <div id="chart-bottom" />
+    </v-row>
   </v-card>
 </template>
 
@@ -291,6 +295,19 @@ const printjobReport2 = ref(null);
 const workflowReport2 = ref(null);
 const stepTimeReport2 = ref(null);
 const stepsReport2    = ref(null);
+
+const scrollToBottomOfCharts = () => {
+  document.getElementById("chart-bottom").scrollIntoView();
+};
+
+const scrollToTopOfOverview = () => {
+  document.getElementById("overview-top").scrollIntoView();
+};
+
+const scrollToTopOfComparison = () => {
+  document.getElementById("comparison-top").scrollIntoView();
+};
+
 
 const noStepTimesReport1 = computed(() => {
   stepsReport1.value.forEach((step)=>{
@@ -535,6 +552,35 @@ onMounted(
   border-style:solid;
   border-color: rgba(0, 0, 0, 0.2);
   height: 100%;
+}
+
+.chart-card-single {
+  border-style:solid;
+  border-width:1px;
+  border-color: rgba(0, 0, 0, 0.3);
+  flex: 1;
+  flex-direction:column;
+  height: 700px;
+  width: 600px;
+}
+
+.chart-card-double {
+  border-style:solid;
+  border-width:1px;
+  border-color: rgba(0, 0, 0, 0.3);
+  flex: 1;
+  flex-direction:column;
+  height: 700px;
+  width: 1200px;
+}
+
+.chart-card-title{
+  width:100%;
+  background-color:rgba(50,50,50, 0.7);
+  color:white;
+  font-family:'Courier New', Courier, monospace;
+  font-weight:600;
+  text-align:center;
 }
 </style>
 

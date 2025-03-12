@@ -8,7 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
+    ChartBar: typeof import('./src/components/Chart/chart-bar.vue')['default']
     ChartPie: typeof import('./src/components/Chart/chart-pie.vue')['default']
+    ChartRadar: typeof import('./src/components/Chart/chart-radar.vue')['default']
     ChartsSimulationReport: typeof import('./src/components/Chart/charts-simulation-report.vue')['default']
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']

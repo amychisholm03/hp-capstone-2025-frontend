@@ -1,5 +1,5 @@
 <template>
-  <canvas :id="chartId ? `${chartId }-pie-chart` : 'pie-chart'">
+  <canvas :id="chartId ? `${chartId }-chart-bar` : 'chart-bar'">
   </canvas>
 </template>
 <script setup>
@@ -21,7 +21,7 @@ defineProps({
 });
 
 onMounted(() => {
-  const ref = document.getElementById(chartId ? `${chartId }-pie-chart` : 'pie-chart');
+  const ref = document.getElementById(chartId ? `${chartId }-chart-bar` : 'chart-bar');
 
   // get some nice colors picked out.
   const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']
@@ -34,7 +34,7 @@ onMounted(() => {
 
   // instantiate the chart
   new Chart(ref, {
-    type: 'pie',
+    type: 'bar',
     data: {
       labels: labels,
       datasets: [{
@@ -44,6 +44,28 @@ onMounted(() => {
         borderWidth: 1
       }]
     },
+    options: {
+      maintainAspectRatio: false, // Allows height to be controlled by CSS
+      indexAxis: 'y',
+      scales: {
+        x: {
+          ticks: {
+            font: {
+              size: 14, // Adjust font size
+              weight: 'bold' // Adjust font weight
+            }
+          }
+        },
+        y: {
+          ticks: {
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        }
+      },
+    }
   });
 });
 </script>

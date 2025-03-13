@@ -12,7 +12,7 @@
         class="align-center d-flex justify-center"
       >
         <h4>
-          <div v-if="singleReport">
+          <div v-if="reportData.length === 1">
             Simulation Report Detailed View
           </div>
           <div v-else>
@@ -43,146 +43,163 @@
     <div id="comparison-top" />
     <div id="overview-top" />
 
-    <v-row
-      class="ml-3 mr-5"
-      style="margin-top:40px;"
-    >
-      <!-- Overview -->
-      <v-col
-        v-for="{report, printjob, workflow} in reportData"
-        :key="report.id"
-        style="max-width:650px;"
-        @click="scrollToTopOfOverview"
-      >
-        <v-card
-          class="overview-card"
-        >
-          <h5 style="text-align:center; margin-bottom:5px;">
-            {{printjob.Title }} / {{ workflow.Title }}
-          </h5>
-          <v-row no-gutters>
-            <v-col class="mr-2">
-              <v-text-field
-                v-model="report.dateTime"
-                :readonly="true"
-                density="compact"
-                label="Date Created"
-              ></v-text-field>
-              <v-text-field
-                v-model="printjob.Title"
-                :readonly="true"
-                density="compact"
-                label="Print Job Title"
-              ></v-text-field>
-              <v-text-field
-                v-model="printjob.PageCount"
-                :readonly="true"
-                density="compact"
-                label="Page Count"
-              ></v-text-field>
-              <v-text-field
-                v-model="report.RasterizationProfile"
-                :readonly="true"
-                density="compact"
-                label="Rasterization Profile"
-              ></v-text-field>
-              <v-text-field
-                v-model="report.TotalTimeTaken"
-                :readonly="true"
-                density="compact"
-                label="Total Time Taken (secs)"
-              ></v-text-field>
-              <v-text-field
-                v-model="workflow.Title"
-                :readonly="true"
-                density="compact"
-                label="Workflow Title"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-      <!-- End Overview Section -->
-
-      <!-- Comparison Section -->
-      <v-col
-        style="max-width:700px;"
-        @click="scrollToTopOfComparison"
-      >
-        <v-card
-          class="comparison-card"
-        >
-          <v-row no-gutters>
-            <v-col
-              v-for="{report, printjob, workflow, steps } in reportData"
-              :key="report.id"
-              no-gutters
-            >
-              <h5 style="text-align:center; margin-bottom:5px;">
-                {{ printjob.Title }} / {{ workflow.Title }}
-              </h5>
-              <table style="width: 100%; height:100%;">
-                <tr style="text-align:left; font-size: 20px; text-align:center; height:50px;">
-                  <th style="width:50%; font-weight:400;">
-                    Step
-                  </th>
-                  <th style="width:50%; font-weight:400;">
-                    Time
-                  </th>
-                </tr>
-                <tr
-                  v-for="(step) in steps"
-                  :key="step.Title"
-                  style="text-align:center;"
-                >
-                  <td
-                    style="width:50%; font-size: 18px;"
-                  >
-                    {{ step.Title }}
-                  </td>
-                  <td>
-                    {{ step.time }}s
-                  </td>
-                </tr>
-              </table>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-    <!-- End Comparison Section -->
-
-    <!-- Charts Section -->
-    <v-row
-      class="ml-3 mr-5"
-      style="margin-top:40px;"
-      @click="scrollToBottomOfCharts"
-    >
+    <v-row>
       <v-col>
-        <v-card
-          class="chart-card-single"
+
+        <v-row
+          class="ml-3"
+          style="margin-top:40px;"
         >
-          <v-card-title class="chart-card-title">
-            CHARTS
-          </v-card-title>
-          <v-row>
-            <v-col
-              v-for="{ report, times } in reportData"
-              :key="report.id"
+          <!-- Overview -->
+          <v-col>
+            <v-card
+              class="overview-card"
+              :style="`width:${300*reportData.length}px;max-width:${300*reportData.length}px;`"
             >
-              <chart-all
-                style="width:auto; height:auto;"
-                :data="times"
-                :labels="labels"
-                :chart-id="report + report.id"
-              >
-              </chart-all>
-            </v-col>
-          </v-row>
-        </v-card>
+              <v-row>
+                <v-col
+                  v-for="{report, printjob, workflow} in reportData"
+                  :key="report.id"
+                  style="max-width:650px;"
+                  @click="scrollToTopOfOverview"
+                >
+                  <h5 style="text-align:center; margin-bottom:5px;">
+                    {{ printjob.Title }}/{{ workflow.Title }}
+                  </h5>
+                  <v-row no-gutters>
+                    <v-col class="mr-2">
+                      <v-text-field
+                        v-model="report.dateTime"
+                        :readonly="true"
+                        density="compact"
+                        label="Date Created"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="printjob.Title"
+                        :readonly="true"
+                        density="compact"
+                        label="Print Job Title"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="printjob.PageCount"
+                        :readonly="true"
+                        density="compact"
+                        label="Page Count"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="report.RasterizationProfile"
+                        :readonly="true"
+                        density="compact"
+                        label="Rasterization Profile"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="report.TotalTimeTaken"
+                        :readonly="true"
+                        density="compact"
+                        label="Total Time Taken (secs)"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="workflow.Title"
+                        :readonly="true"
+                        density="compact"
+                        label="Workflow Title"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+        <!-- End Overview -->
+
+        <!-- Comparison -->
+        <v-row
+          class="ml-3"
+        >
+          <v-col
+            style="max-width:700px;"
+            @click="scrollToTopOfComparison"
+          >
+            <v-card
+              class="comparison-card"
+              :style="`width:${300*reportData.length}px;max-width:${300*reportData.length}px;`"
+            >
+              <v-row no-gutters>
+                <v-col
+                  v-for="{report, printjob, workflow, steps } in reportData"
+                  :key="report.id"
+                  no-gutters
+                >
+                  <h5 style="text-align:center; margin-bottom:5px;">
+                    {{ printjob.Title }} / {{ workflow.Title }}
+                  </h5>
+                  <table style="width: 100%; height:100%;">
+                    <tr style="text-align:left; font-size: 1.1rem; text-align:center;">
+                      <th style="width:50%; font-weight:500;">
+                        Step
+                      </th>
+                      <th style="width:50%; font-weight:500;">
+                        Time
+                      </th>
+                    </tr>
+                    <tr
+                      v-for="(step) in steps"
+                      :key="step.Title"
+                      style="text-align:center;"
+                    >
+                      <td
+                        style="width:50%; font-size: 1rem;"
+                      >
+                        {{ step.Title }}
+                      </td>
+                      <td>
+                        {{ step.time }}s
+                      </td>
+                    </tr>
+                  </table>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+        <!-- End Comparison Section -->
       </v-col>
-      <!-- End Charts Section -->
-      <div id="chart-bottom" />
+
+      <v-col>
+        <!-- Charts Section -->
+        <v-row
+          class="ml-3 mr-5"
+          style="margin-top:40px;"
+          @click="scrollToBottomOfCharts"
+        >
+          <v-col>
+            <v-card
+              class="chart-card-single"
+            >
+              <v-card-title class="chart-card-title">
+                CHARTS
+              </v-card-title>
+              <v-row>
+                <v-col
+                  v-for="{ report, times } in reportData"
+                  :key="report.id"
+                >
+                  <chart-all
+                    style="width:auto; height:auto;"
+                    :data="times"
+                    :labels="labels"
+                    :chart-id="report + report.id"
+                  >
+                  </chart-all>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+          <!-- End Charts Section -->
+          <div id="chart-bottom" />
+        </v-row>
+      </v-col>
     </v-row>
   </v-card>
 </template>
@@ -372,7 +389,6 @@ onMounted(
   border-width:1px;
   border-style:solid;
   border-color: rgba(0, 0, 0, 0.2);
-  height: 100%;
   padding-left:2%;
   padding-right:2%;
   padding-top:1%;

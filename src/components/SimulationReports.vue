@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div>
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
@@ -11,10 +11,10 @@
       v-model="viewing"
       scrollable
       persistent
+      height="92vh"
     >
       <simulation-report-view
         style="max-width: 100%; max-height:100%; overflow-y: scroll;"
-        class="detailed-report"
         :reports="selectedReports"
         @exit="clearReports"
       >
@@ -66,7 +66,7 @@
         </simulation-report-history>
       </v-card>
     </v-main>
-  </v-app>
+  </div>
 </template>
 
 <script setup>

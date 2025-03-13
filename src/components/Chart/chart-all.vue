@@ -21,6 +21,9 @@
           >
           </v-tab>
         </v-tabs>
+      </v-col>
+
+      <v-col>
         <v-tabs-window
           v-model="tab"
         >

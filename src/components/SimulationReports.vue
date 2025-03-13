@@ -11,10 +11,10 @@
       v-model="viewing"
       scrollable
       persistent
-      height="92vh"
+      height="95vh"
     >
       <simulation-report-view
-        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
+        style="overflow:hidden;"
         :reports="selectedReports"
         @exit="clearReports"
       >

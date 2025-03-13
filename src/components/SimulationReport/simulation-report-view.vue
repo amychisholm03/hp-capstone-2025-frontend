@@ -1,7 +1,7 @@
 <template>
   <v-card
     v-if="!loading"
-    class="ma-0 pa-0"
+    class="ma-0 pa-0 simulation-report-view"
   >
     <!-- Header -->
     <v-row
@@ -40,72 +40,93 @@
       </v-col>
     </v-row>
 
-    <div id="comparison-top" />
-    <div id="overview-top" />
 
-    <v-row>
-      <v-col>
-
-        <v-row
-          class="ml-3"
-          style="margin-top:40px;"
-        >
+    <v-row class="ma-2">
+      <!-- Section 1 -->
+      <v-col class="pa-0 section">
+        <v-row>
           <!-- Overview -->
+          <div id="overview-top" />
           <v-col>
             <v-card
               class="overview-card"
-              :style="`width:${300*reportData.length}px;max-width:${300*reportData.length}px;`"
             >
               <v-row>
-                <v-col
-                  v-for="{report, printjob, workflow} in reportData"
-                  :key="report.id"
-                  style="max-width:650px;"
-                  @click="scrollToTopOfOverview"
+                <v-col class="overview-card-title">
+                  <span> Overview </span>
+                </v-col>
+              </v-row>
+              <v-row
+                ref="overviewScroll"
+                style="flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;"
+              >
+                <div
+                  v-if="comparisonArrow"
+                  class="align-center d-flex justify-center scroll-arrow"
                 >
-                  <h5 style="text-align:center; margin-bottom:5px;">
-                    {{ printjob.Title }}/{{ workflow.Title }}
-                  </h5>
-                  <v-row no-gutters>
-                    <v-col class="mr-2">
-                      <v-text-field
-                        v-model="report.dateTime"
-                        :readonly="true"
-                        density="compact"
-                        label="Date Created"
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="printjob.Title"
-                        :readonly="true"
-                        density="compact"
-                        label="Print Job Title"
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="printjob.PageCount"
-                        :readonly="true"
-                        density="compact"
-                        label="Page Count"
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="report.RasterizationProfile"
-                        :readonly="true"
-                        density="compact"
-                        label="Rasterization Profile"
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="report.TotalTimeTaken"
-                        :readonly="true"
-                        density="compact"
-                        label="Total Time Taken (secs)"
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="workflow.Title"
-                        :readonly="true"
-                        density="compact"
-                        label="Workflow Title"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
+                  <v-icon
+                    size="large"
+                    style="position:absolute; z-index:102;"
+                  >
+                    mdi-circle
+                  </v-icon>
+                  <v-icon
+                    color="white"
+                    style="z-index:103;"
+                  >
+                    mdi-chevron-double-right
+                  </v-icon>
+                </div>
+
+                <v-col
+                  v-for="{report, printjob, workflow, color} in reportData"
+                  :key="report.id"
+                >
+                  <div :style="`width:${ calculateOverviewWidth()};`">
+                    <!-- Title -->
+                    <div class="d-flex justify-center mb-1 mt-2">
+                      <v-chip
+                        :color="color"
+                        tile
+                      >
+                        <span style="color:black; font-weight:bold;">
+                          {{ printjob.Title }}/{{ workflow.Title }}
+                        </span>
+                      </v-chip>
+                    </div>
+
+                    <!-- Data -->
+                    <v-row>
+                      <v-col class="mr-2">
+                        <v-text-field
+                          v-for="header in headersOverview.report"
+                          :key="header.value"
+                          v-model="report[header.value]"
+                          :label="String(header.text)"
+                          class="overview-text-field"
+                          hide-details
+                          readonly
+                        />
+                        <v-text-field
+                          v-for="header in headersOverview.printjob"
+                          :key="header.value"
+                          v-model="printjob[header.value]"
+                          :label="String(header.text)"
+                          class="overview-text-field"
+                          hide-details
+                          readonly
+                        />
+                        <v-text-field
+                          v-for="header in headersOverview.workflow"
+                          :key="header.value"
+                          v-model="workflow[header.value]"
+                          :label="String(header.text)"
+                          class="overview-text-field"
+                          readonly
+                        />
+                      </v-col>
+                    </v-row>
+                  </div>
                 </v-col>
               </v-row>
             </v-card>
@@ -114,79 +135,134 @@
         <!-- End Overview -->
 
         <!-- Comparison -->
-        <v-row
-          class="ml-3"
-        >
-          <v-col
-            style="max-width:700px;"
-            @click="scrollToTopOfComparison"
-          >
+        <div id="comparison-top" />
+        <v-row style="width:fit-content;">
+          <v-col>
             <v-card
               class="comparison-card"
-              :style="`width:${300*reportData.length}px;max-width:${300*reportData.length}px;`"
             >
-              <v-row no-gutters>
-                <v-col
-                  v-for="{report, printjob, workflow, steps } in reportData"
-                  :key="report.id"
-                  no-gutters
+              <v-row>
+                <v-col class="comparison-card-title">
+                  <span> Comparison </span>
+                </v-col>
+              </v-row>
+              <v-row
+                ref="comparisonScroll"
+                class="align-row d-flex"
+                style="flex-wrap:nowrap; overflow-x:scroll; overflow-y:hidden;"
+              >
+                <div
+                  v-if="comparisonArrow"
+                  class="align-center d-flex justify-center scroll-arrow"
                 >
-                  <h5 style="text-align:center; margin-bottom:5px;">
-                    {{ printjob.Title }} / {{ workflow.Title }}
-                  </h5>
-                  <table style="width: 100%; height:100%;">
-                    <tr style="text-align:left; font-size: 1.1rem; text-align:center;">
-                      <th style="width:50%; font-weight:500;">
-                        Step
-                      </th>
-                      <th style="width:50%; font-weight:500;">
-                        Time
-                      </th>
-                    </tr>
-                    <tr
-                      v-for="(step) in steps"
-                      :key="step.Title"
-                      style="text-align:center;"
-                    >
-                      <td
-                        style="width:50%; font-size: 1rem;"
+                  <v-icon
+                    size="large"
+                    style="position:absolute; z-index:102;"
+                  >
+                    mdi-circle
+                  </v-icon>
+                  <v-icon
+                    color="white"
+                    style="z-index:103;"
+                  >
+                    mdi-chevron-double-right
+                  </v-icon>
+                </div>
+                <v-col
+                  cols="auto"
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="comparison-header">
+                          <div class="d-flex justify-center">
+                            <v-chip>
+                              <span style="color:black; font-weight:bold;">
+                                OPERATION
+                              </span>
+                            </v-chip>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <thead>
+                      <tr
+                        v-for="label in labels"
+                        :key="label"
                       >
-                        {{ step.Title }}
-                      </td>
-                      <td>
-                        {{ step.time }}s
-                      </td>
-                    </tr>
+                        <td style="text-align: center;">
+                          {{ label }}
+                        </td>
+                      </tr>
+                    </thead>
+                  </table>
+                </v-col>
+                <v-col
+                  v-for="{report, printjob, workflow, times, color } in reportData"
+                  :key="report.id"
+                  style="border-left-style:solid; border-left-color:grey; border-left-width:1px;"
+                  cols="auto"
+                >
+                  <!-- Data -->
+                  <table
+                    style="width:100%;"
+                  >
+                    <thead>
+                      <tr>
+                        <th class="comparison-header d-flex justify-center">
+                          <v-chip
+                            :color="color"
+                            tile
+                          >
+                            <div style="color:black; font-weight:bold; overflow:hidden; font-size:0.8em; width:50em; max-width:50px;">
+                              <p style="text-overflow:ellipsis; overflow-x:hidden;">
+                                {{ printjob.Title }}
+                              </p>
+                              <p style="text-overflow:ellipsis; overflow-x:hidden;">
+                                {{ workflow.Title }}
+                              </p>
+                            </div>
+                          </v-chip>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(time, i) in times"
+                        :key="i"
+                      >
+                        <td class="d-flex justify-center">
+                          {{ time }}
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </v-col>
               </v-row>
             </v-card>
           </v-col>
         </v-row>
-        <!-- End Comparison Section -->
+        <!-- End Comparison -->
       </v-col>
+      <!-- End Section 1 -->
 
-      <v-col>
-        <!-- Charts Section -->
-        <v-row
-          class="ml-3 mr-5"
-          style="margin-top:40px;"
-          @click="scrollToBottomOfCharts"
-        >
+      <!-- Section 2 -->
+      <v-col class="ml-2 pa-0 section">
+        <!-- Charts -->
+        <v-row>
           <v-col>
-            <v-card
-              class="chart-card-single"
-            >
-              <v-card-title class="chart-card-title">
-                CHARTS
-              </v-card-title>
+            <v-card class="chart-card">
+              <v-row>
+                <v-col class="chart-card-title">
+                  <span> Chart </span>
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col
                   v-for="{ report, times } in reportData"
                   :key="report.id"
                 >
                   <chart-all
-                    style="width:auto; height:auto;"
                     :data="times"
                     :labels="labels"
                     :chart-id="report + report.id"
@@ -196,7 +272,7 @@
               </v-row>
             </v-card>
           </v-col>
-          <!-- End Charts Section -->
+          <!-- End Charts -->
           <div id="chart-bottom" />
         </v-row>
       </v-col>
@@ -219,21 +295,48 @@ defineProps({
   reports: Array,
 });
 
-const workflowSteps = ref([]);
-const printjobs = ref([]);
-const workflows = ref([]);
+///////////////////
+//// DATA
+///////////////////
+
+const comparisonScroll = ref(null);
+const comparisonArrow = ref(false);
+const overviewScroll = ref(null);
+const overviewArrow = ref(false);
+const checkScroll = () => {
+  console.log("BROH");
+  const element = comparisonScroll.value.$el;
+  comparisonArrow.value = element.scrollLeft + element.clientWidth < element.scrollWidth;
+  const element2 = overviewScroll.value.$el;
+  overviewArrow.value = element2.scrollLeft + element2.clientWidth < element2.scrollWidth;
+}
+
+const reportData = ref([]);
 const labels = ref([]);
 const loading = ref(true);
-const singleReport = ref(false);
 
-/* Contains Data For All Reports. */
-const reportData = ref([
-  // reports: [],
-  // steps: [],
-  // times: [],
-  // workflows: [],
-  // printjobs: [],
-]);
+const headersOverview = ref({
+  report: [
+    { text: "Date Created", value: "dateTime" },
+    { text: "Total Time Taken", value: "TotalTimeTaken" },
+    { text: "Rasterization Profile", value: "RasterizationProfile" },
+  ],
+  printjob: [
+    { text: "Page Count", value: "PageCount" },
+    { text: "Print Job Title", value: "Title" },
+  ],
+  workflow: [
+    { text: "Workflow Title", value: "Title" },
+  ],
+});
+
+let colors = [
+  'purple',
+  'orange',
+  'green',
+  'red',
+  'blue',
+];
 
 //////////////////
 //// Navigation
@@ -250,6 +353,30 @@ const scrollToTopOfOverview = () => {
 const scrollToTopOfComparison = () => {
   document.getElementById("comparison-top").scrollIntoView();
 };
+
+///////////////////////
+//// Display
+//////////////////////
+
+/**
+* Calculates how wide each report in the overview should be
+* Based on the assumption each of the two sections (data and graph)
+* takes up roughly have the viewport.
+*/
+const calculateOverviewWidth = () => {
+  const reportCount = reportData.value.length ? reportData.value.length : 1;
+  if (reportCount === 1) {
+    return '100%';
+  }
+  if (reportCount <= 3) {
+    return (45 / reportCount) + 'vw';
+  }
+  return (45 / 3) + 'vw';
+};
+
+///////////////////////
+//// Logic
+//////////////////////
 
 const addTimes = (workflowSteps, stepTimes) => {
   workflowSteps.forEach((step) => {
@@ -330,6 +457,7 @@ const prepareReports = async (workflowStepDefinitions) => {
       steps: steps,
       times: times,
       report: report,
+      color: colors.pop(),
     }
 
     reportData.value.push(all);
@@ -344,6 +472,10 @@ const prepareReports = async (workflowStepDefinitions) => {
 };
 
 //////////////////
+//// Computed
+//////////////////
+
+//////////////////
 //// On Mounted
 //////////////////
 
@@ -351,9 +483,17 @@ onMounted(
   async () => {
     await prepareReports();
     loading.value=false;
+    await nextTick();
+    setTimeout(() => {
+      checkScroll();
+    }, 1000);
 });
 </script>
 <style scoped>
+.simulation-report-view {
+  --title-height: 40px;
+}
+
 .close-button:hover {
     color: red;
 }
@@ -370,57 +510,111 @@ onMounted(
   color:white;
   position:fixed;
   z-index:100;
-  height:40px;
+  height:var(--title-height);
   width:100%;
   margin:0;
 }
 
-.overview-card{
-  border-width:1px;
+.overview-card {
+  border-width: 2px;
   border-style:solid;
-  border-color: rgba(0, 0, 0, 0.2);
-  width: 600px;
-  padding-left:2%;
-  padding-right:2%;
-  padding-top:1%;
+  border-radius:5px;
+  padding:10px;
+  border-color: rgba(0, 0, 0, 1);
+  overflow:hidden;
+  max-width:48vw;
+  max-height:50vh;
+  width:fit-content;
+}
+
+.overview-card-title {
+  width:100%;
+  height:48px;
+  text-align:center;
+  text-justify: center;
+  background-color:black;
+  color:white;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.2em;
 }
 
 .comparison-card{
-  border-width:1px;
+  border-width: 2px;
   border-style:solid;
-  border-color: rgba(0, 0, 0, 0.2);
-  padding-left:2%;
-  padding-right:2%;
-  padding-top:1%;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 1);
+  max-width:35vw;
+  max-height:35vh;
+  padding:10px;
 }
 
-.chart-card-single {
-  border-style:solid;
-  border-width:1px;
-  border-color: rgba(0, 0, 0, 0.3);
-  flex: 1;
-  flex-direction:column;
-  height: 700px;
-  width: 600px;
+.comparison-card-title{
+  width:100%;
+  height:48px;
+  text-align:center;
+  text-justify: center;
+  background-color:black;
+  color:white;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.2em;
 }
 
-.chart-card-double {
+.comparison-header{
+  max-height:35px;
+  height:35px;
+  overflow-y:hidden;
+}
+
+.chart-card{
+  border-width: 2px;
   border-style:solid;
-  border-width:1px;
-  border-color: rgba(0, 0, 0, 0.3);
-  flex: 1;
-  flex-direction:column;
-  height: 700px;
-  width: 1200px;
+  max-width:48vw;
+  max-height:88vh;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 1);
 }
 
 .chart-card-title{
   width:100%;
-  background-color:rgba(50,50,50, 0.7);
-  color:white;
-  font-family:'Courier New', Courier, monospace;
-  font-weight:600;
+  height:48px;
   text-align:center;
+  text-justify: center;
+  background-color:black;
+  color:white;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.section {
+  width:50%;
+  max-width:50%;
+  margin-top: var(--title-height);
+}
+
+@keyframes pop {
+ 0%    { scale: 2.0; }
+ 45%   { scale: 2.0; }
+ 60%   { scale: 2.5; }
+ 75%   { scale: 2.0; }
+ 90%   { scale: 2.0; opacity:1; }
+ 100%  { scale: 2.0; opacity:0; }
+}
+
+.scroll-arrow {
+  position:absolute;
+  right:5%;
+  bottom:40%;
+  animation-name:pop;
+  animation-duration:3s;
+  animation-fill-mode:forwards;
+  color:black;
+  z-index:150;
 }
 </style>
 

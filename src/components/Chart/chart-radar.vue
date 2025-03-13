@@ -9,15 +9,13 @@ Chart.register(...registerables);
 
 //// Props ////
 const {
-  data1 = null,
-  data2 = null,
+  data = null,
   labels = null,
   chartId = null,
 }
 =
 defineProps({
-  data1: Array,
-  data2: Array,
+  data: Array,
   labels: Array,
   chartId: String,
 });
@@ -27,36 +25,24 @@ onMounted(() => {
 
   // get some nice colors picked out.
   const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']
-  const colors = data1.map((step) => {
+  const colors = data.map((step) => {
     if (prepickedColors.length > 0) {
       return prepickedColors.pop();
     }
     return "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
   });
 
-  const dataset1 = {
-        label: (!!data2) ? 'Report 1' : 'Report',
-        data: data1,
+  const dataset = {
+        label: '',
+        data: data,
         backgroundColor: 'red',
       };
-
-  const dataset2 = {
-        label: 'Report 2',
-        data: data2,
-        backgroundColor: 'green', //colors.toReversed(),
-      };
-
-  const datasets = [];
-  datasets.push(dataset1);
-  if (!!data2) {
-    datasets.push(dataset2);
-  }
 
   new Chart(ref, {
     type: 'radar',
     data: {
       labels: labels,
-      datasets: datasets,
+      datasets: [dataset],
     },
     options: {
       plugins: {

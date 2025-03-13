@@ -6,30 +6,16 @@
       style="max-height:90px; height:90px; align-content:center; flex-wrap:nowrap;"
       no-gutters
     >
-      <v-col
-        class="align-center d-flex justify-center pa-0"
-        style="align-content: center;"
-        no-gutters
-        cols="auto"
-      >
-        <v-text-field
-          v-model="searchValue"
-          label="Search"
-          append-inner-icon="mdi-magnify"
-          style="min-width:400px;"
-          class="ml-4 mt-3 pa-0"
-        >
-        </v-text-field>
-      </v-col>
       <v-spacer />
       <v-col
         class="align-center d-flex justify-center pa-0"
         no-gutters
         cols="auto"
       >
+        <!-- Open Comparison View Button -->
         <Transition name="slide-fade">
           <div
-            v-if="comparing && compareSelections.first && compareSelections.second"
+            v-if="comparing && comparePossible"
           >
             <v-btn
               class="mr-4"
@@ -38,7 +24,7 @@
               dark
               style="text-transform: none;"
               color="green-darken-1"
-              @click="compareReports"
+              @click="viewReports"
             >
               <p>
                 Begin Comparison
@@ -47,7 +33,8 @@
             <v-icon>mdi-arrow-left-thick</v-icon>
           </div>
         </Transition>
-        <!-- Compare Reports Button -->
+
+        <!-- Select Reports For Comparison Button -->
         <v-btn
           label="Compare Reports"
           tile
@@ -67,7 +54,7 @@
         </v-btn>
       </v-col>
     </v-row>
-    <!-- Primary Row -->
+
     <v-row
       class="mb-8 ml-8 mr-8"
       no-gutters
@@ -77,7 +64,7 @@
       <v-col>
         <v-list class="ma-0 pa-0">
           <v-list-item
-            v-for="(report, index) in simulationReportsDisplay"
+            v-for="(report, index) in simulationReports"
             :key="index"
             class="ma-0 pa-0"
           >
@@ -90,7 +77,7 @@
                 no-gutters
                 cols="1"
                 :class="`${report.selected ? 'item-selection-selected' : 'item-selection' } align-center d-flex justify-center`"
-                @click="selectReportForComparison(report)"
+                @click="selectReport(report)"
               >
                 <v-icon>
                   mdi-gesture-tap
@@ -99,7 +86,7 @@
               <v-col no-gutters>
                 <simulation-report-list-item
                   :report="report"
-                  @click="$emit('select-report', report.id)"
+                  @click="viewReport(report);"
                 />
               </v-col>
             </v-row>
@@ -111,8 +98,13 @@
 </template>
 
 <script setup>
-  import { nextTick, ref, onMounted, watch } from "vue";
+  import { nextTick, ref, onMounted, watch, computed } from "vue";
   import SimulationReportListItem from "./simulation-report-list-item.vue";
+
+
+  /////////////////
+  // PROPS
+  /////////////////
 
   const {
     simulationReports = [],
@@ -126,208 +118,91 @@
     printJobs: Array,
   });
 
-  const emit = defineEmits(['select-report', 'compare-reports']);
 
-  const simulationReportsDisplay = ref([]);
-  const searchValue = ref('');
-  const drawer = ref(true);
-  const selectedPrintJobs = ref([]);
-  const selectedWorkflows = ref([]);
-  const fromDate = ref(null);
-  const toDate = ref(null);
+  /////////////////
+  // EMISSIONS
+  /////////////////
+
+  const emit = defineEmits(['view-reports']);
+
+  /////////////////
+  // DATA
+  /////////////////
+
+  const COMPARISON_LIMIT = 5;
   const comparing = ref(false);
-  const compareSelections = ref({first: null, second: null,});
+  const selectedReports = ref([]);
+
+  /////////////////
+  //// Computed
+  /////////////////
+
+  const comparePossible = computed(() => {
+    return selectedReports.value.length > 1;
+  });
+
+  /////////////////
+  // Methods
+  /////////////////
 
   const clearSelectedReports = () => {
-      if (compareSelections.value.first) {
-        compareSelections.value.first.selected = false;
-      }
-      if (compareSelections.value.second) {
-        compareSelections.value.second.selected = false;
-      }
-      compareSelections.value.first = null;
-      compareSelections.value.second = null;
-  }
+    selectedReports.value.forEach((report) => {
+      report.selected = false;
+    });
+    selectedReports.value = [];
+  };
 
-  ///////////////////////////////
-  ///// Comparison Functions
-  ///////////////////////////////
-
-  /*
-  * Enable or disable Report Comparison.
-  * Clear selections on disable.
-  */
   const toggleCompareReports = () => {
     if (comparing.value) {
       clearSelectedReports();
     }
     comparing.value = !comparing.value;
-  }
+  };
 
-  /**
-  * Tell our parent to compare two reports
-  */
-  const compareReports = () => {
-    if (!compareSelections.value.first || !compareSelections.value.second) {
-      return;
-    }
-    emit('compare-reports', compareSelections.value.first, compareSelections.value.second);
-
-    // reset for next time
+  const viewReports = () => {
+    emit('view-reports', selectedReports.value);
     clearSelectedReports();
     comparing.value = false;
-  }
+  };
 
-  /**
-  * check if a given report is already selected.
-  */
+  const viewReport = (report) => {
+    emit('view-reports', [report]);
+  };
+
   const alreadySelected = (report) => {
-    const reportJSON = JSON.stringify(report);
-    const report1JSON = JSON.stringify(compareSelections.value.first);
-    const report2JSON = JSON.stringify(compareSelections.value.second);
-    if (reportJSON === report1JSON) {
-      return 1;
-    }
-
-    if (reportJSON === report2JSON) {
-      return 2;
-    }
-
-    return 0;
-
-  }
-
-
-  /**
-  * Select a report for comparison.
-  * User can select up to two reports.
-  * @param {Object} report - Simulation Report
-  * @returns {void}
-  */
-  const selectReportForComparison = (report) => {
-
-    // If report is already seleted, unselect it and return
-    const result = alreadySelected(report);
-    if (result && result === 1) {
-      compareSelections.value.first.selected = false;
-      compareSelections.value.first = null;
-      return;
-    }
-    if (result && result === 2) {
-      compareSelections.value.second.selected = false;
-      compareSelections.value.second = null;
-      return;
-    }
-
-    // If we already have two reports selected. clear both selections...
-    if (compareSelections.value.first && compareSelections.value.second) {
-      clearSelectedReports();
-    }
-
-    // If we don't have a first report selected yet, select the first report
-    if (!compareSelections.value.first) {
-      compareSelections.value.first = report;
-      compareSelections.value.first.selected = true;
-      return;
-    }
-
-    // If we don't have a second report selected yet, select the second report
-    if (!compareSelections.value.second) {
-      compareSelections.value.second = report;
-      compareSelections.value.second.selected = true;
-      return;
-    }
-
-  };
-
-  ///////////////////////////////
-  ///// Filters and Searching
-  ///////////////////////////////
-  const filter = () => {
-    nextTick(() => {
-      simulationReportsDisplay.value = filterSelections(simulationReportsDisplay.value, selectedPrintJobs.value, selectedPrintJobs.value);
-      simulationReportsDisplay.value = filterSearchTerm(simulationReportsDisplay.value, searchValue.value.toLowerCase());
-    });
-  };
-
-  /**
-  * Filter a list of simulation reports based on
-  * whether they are included in the provided list of printjobs or workflows.
-  * @param {Array} list of simulation reports
-  * @param {Array} list of selected print jobs
-  * @param {Array} list of selected workflows
-  * @returns {Array} filtered list of simulation reports
-  */
-  const filterSelections = (reports, selPrintJobs, selWorkflows) => {
-    const printJobLookup = {};
-    const workflowLookup = {};
-
-    selectedPrintJobs.value.forEach( (job) => {
-      printJobLookup[job] = true;
-    });
-
-    selectedWorkflows.value.forEach( (flow) => {
-      workflowLookup[flow] = true;
-    });
-
-    const filteringPrintJobs = (selPrintJobs.length > 0);
-    const filteringWorkflows = (selWorkflows.length > 0);
-
-     return reports.filter( (report) => {
-        if (filteringWorkflows && !workflowLookup[report.WorkflowTitle]){
-          return false;
-        }
-
-        if (filteringPrintJobs && !printJobLookup[report.PrintJobTitle]) {
-          return false;
-        }
-
-        return true;
-      });
-  };
-
-  /**
-  * Filter a list of simulation reports based on a search term.
-  * Reports will be included if a workflow title AND/OR printjob title
-  * matches the search term.
-  * @param {Array} list of simulation reports
-  * @param {string} a search term
-  * @returns {Array} list of filtered simulation reports
-  */
-  const filterSearchTerm = (simulationReports, term) => {
-      if (!term) {
-        return simulationReports;
+    const id = report.id;
+    for (let i = 0; i < selectedReports.value.length; i++) {
+      const reportID = selectedReports.value[i].id;
+      if (id === reportID) {
+        return i;
       }
-
-      return simulationReports.filter((report) => {
-        if ((!report.PrintJobTitle) || (!report.WorkflowTitle)) {
-          return false;
-        }
-
-        const matchPrintJobTitle = report.PrintJobTitle.toLowerCase().includes(term);
-        const matchWorkflowTitle = report.WorkflowTitle.toLowerCase().includes(term);
-
-        return (matchPrintJobTitle || matchWorkflowTitle);
-      });
+    }
+    return -1;
   };
 
-  // Watch list of simulation reports for any changes.
-  watch(
-    () => {
-      return simulationReports
-    },
-    (newReports) => {
-      simulationReportsDisplay.value = newReports;
-      filter();
-    },
-    { immediate: true }
-  );
+  const selectReport = (report) => {
+    const index = alreadySelected(report);
 
-  onMounted( async () => {
-    simulationReportsDisplay.value = simulationReports;
-  });
+    // Already Selected -> Deselect
+    if (index !== -1) {
+      selectedReports.value.splice(index, 1);
+      report.selected = false;
+      console.log(selectedReports.value);
+      return;
+    }
+
+    // Maxed Out -> Return
+    if (selectedReports.value.length === COMPARISON_LIMIT) {
+      console.log(selectedReports.value);
+      return;
+    }
+
+    // Add Report
+    report.selected = true;
+    selectedReports.value.push(report);
+    console.log(selectedReports.value);
+  };
 </script>
-
 <style>
 .report-history-item {
   height:125px;

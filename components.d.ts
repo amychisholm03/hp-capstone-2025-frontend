@@ -27,6 +27,7 @@ declare module 'vue' {
     SimulationReportHistory: typeof import('./src/components/SimulationReport/simulation-report-history.vue')['default']
     SimulationReportListItem: typeof import('./src/components/SimulationReport/simulation-report-list-item.vue')['default']
     SimulationReports: typeof import('./src/components/SimulationReports.vue')['default']
+    SimulationReportView: typeof import('./src/components/SimulationReport/simulation-report-view.vue')['default']
     SiteDashboard: typeof import('./src/components/SiteDashboard.vue')['default']
     SiteNavigationDrawer: typeof import('./src/components/SiteNavigationDrawer.vue')['default']
     WorkflowCreate: typeof import('./src/components/Workflow/workflow-create.vue')['default']

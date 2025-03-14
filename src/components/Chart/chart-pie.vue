@@ -1,5 +1,5 @@
 <template>
-  <canvas :id="chartId ? `${chartId }-pie-chart` : 'pie-chart'">
+  <canvas :id="chartId ? `${chartId }-pie-chart` : 'pie-chart'" style="width:100%; height:100%;">
   </canvas>
 </template>
 <script setup>

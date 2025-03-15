@@ -1,10 +1,10 @@
 <template>
   <v-card
     v-if="!loading"
-    class="ma-0 pa-0 simulation-report-view"
+    class="simulation-report-view"
   >
-    <v-row class="ma-0 pa-0">
-      <v-col class="align-center d-flex justify-end ma-0 pa-0">
+    <v-row no-gutters class="header-bar">
+      <v-col class="align-center d-flex justify-end">
         <v-btn
           class="close-button"
           icon
@@ -19,279 +19,277 @@
       </v-col>
     </v-row>
 
-    <v-row class="ma-0 pa-0">
+    <v-row no-gutters class="main-body">
       <!-- Section 1 -->
       <v-col class="section">
-        <v-row>
-          <!-- Overview -->
+        <v-row class="overview-card" no-gutters>
           <div id="overview-top" />
+          <!-- Overview -->
           <v-col>
-            <v-card
-              class="overview-card"
+            <v-row
+              ref="overviewScroll"
+              no-gutters
+              class="overview-list-container"
             >
-              <!-- Body -->
-              <v-row
-                ref="overviewScroll"
-                no-gutters
-                style="max-height:inherit; width:inherit; height:inherit; display:flex; flex-direction: row; overflow-x:scroll; overflow-y:hidden; flex-wrap:nowrap;"
+              <v-col
+                v-for="{report, printjob, workflow, color} in reportData"
+                :key="report.id"
+                class="overview-list"
+                style=""
               >
-                <v-col
-                  v-for="{report, printjob, workflow, color} in reportData"
-                  :key="report.id"
-                  class="overview-list"
-                  style=""
+                <!-- Data -->
+                <v-row
+                  style="overflow:hidden; height:100%;"
+                  no-gutters
                 >
-                  <!-- Data -->
-                  <v-row
-                    style="overflow:hidden; height:100%;"
-                    no-gutters
-                  >
-                    <v-col style="width:12vw; height:100%; max-height:100%;">
-                      <!-- Simulation Report Title -->
-                      <div
-                        class="overview-list-header"
+                  <v-col style="width:12vw; height:100%; max-height:100%;">
+                    <!-- Simulation Report Title -->
+                    <div
+                      class="overview-list-header"
+                    >
+                      <v-chip
+                        :color="color"
+                        size="x-small"
                       >
-                        <v-chip
-                          :color="color"
-                          size="x-small"
-                        >
-                          {{ printjob.Title }}
-                        </v-chip>
-                        <br />
-                        <v-chip
-                          size="x-small"
-                          :color="color"
-                        >
-                          {{ workflow.Title }}
-                        </v-chip>
-                      </div>
+                        {{ printjob.Title }}
+                      </v-chip>
+                      <br />
+                      <v-chip
+                        size="x-small"
+                        :color="color"
+                      >
+                        {{ workflow.Title }}
+                      </v-chip>
+                    </div>
 
-                      <!-- Simulation Report Labels -->
-                      <div
-                        v-for="header in headersOverview.report"
-                        :key="header.value"
-                        class="overview-list-item"
-                      >
-                        <div class="overview-list-label">
-                          {{ header.text }}
-                        </div>
-                        <div class="overview-list-value">
-                          {{ report[header.value] }}
-                        </div>
-                        <br />
+                    <!-- Simulation Report Labels -->
+                    <div
+                      v-for="header in headersOverview.report"
+                      :key="header.value"
+                      class="overview-list-item"
+                    >
+                      <div class="overview-list-label">
+                        {{ header.text }}
                       </div>
+                      <div class="overview-list-value">
+                        {{ report[header.value] }}
+                      </div>
+                      <br />
+                    </div>
 
-                      <!-- Print Job Labels -->
-                      <div
-                        v-for="header in headersOverview.printjob"
-                        :key="header.value"
-                        class="overview-list-item"
-                      >
-                        <div class="overview-list-label">
-                          {{ header.text }}
-                        </div>
-                        <div class="overview-list-value">
-                          {{ printjob[header.value] }}
-                        </div>
-                        <br />
+                    <!-- Print Job Labels -->
+                    <div
+                      v-for="header in headersOverview.printjob"
+                      :key="header.value"
+                      class="overview-list-item"
+                    >
+                      <div class="overview-list-label">
+                        {{ header.text }}
                       </div>
+                      <div class="overview-list-value">
+                        {{ printjob[header.value] }}
+                      </div>
+                      <br />
+                    </div>
 
-                      <!-- Workflow Labels -->
-                      <div
-                        v-for="header in headersOverview.workflow"
-                        :key="header.value"
-                        class="overview-list-item"
-                      >
-                        <div class="overview-list-label">
-                          {{ header.text }}
-                        </div>
-                        <div class="overview-list-value">
-                          {{ workflow[header.value] }}
-                        </div>
-                        <br />
+                    <!-- Workflow Labels -->
+                    <div
+                      v-for="header in headersOverview.workflow"
+                      :key="header.value"
+                      class="overview-list-item"
+                    >
+                      <div class="overview-list-label">
+                        {{ header.text }}
                       </div>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-card>
+                      <div class="overview-list-value">
+                        {{ workflow[header.value] }}
+                      </div>
+                      <br />
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         <!-- End Overview -->
 
+        <div class="vertical-gap"></div>
+
         <!-- Comparison -->
         <div id="comparison-top" />
-        <v-row style="width:fit-content;">
+        <v-row
+          no-gutters
+          class="comparison-card"
+        >
           <v-col>
-            <v-card
-              class="comparison-card"
+            <v-row
+              class="align-row d-flex"
+              style="flex-wrap:nowrap;"
+              no-gutters
             >
-              <v-row
-                class="align-row d-flex"
-                style="flex-wrap:nowrap;"
+              <v-col
+                cols="auto"
+                style="margin-top:14px;"
               >
-                <v-col
-                  cols="auto"
-                  style="margin-top:14px;"
-                >
-                  <table>
-                    <thead>
-                      <tr>
-                        <th class="comparison-header">
-                          <div class="d-flex justify-center">
-                            <v-chip
-                              tile
-                              color="white"
-                            >
-                              <span style="color:black; font-weight:bold;">
-                                Step
-                              </span>
-                            </v-chip>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <thead>
-                      <tr
-                        v-for="label in labels"
-                        :key="label"
-                      >
-                        <td class="comparison-field">
-                          {{ label }}
-                        </td>
-                      </tr>
-                    </thead>
-                  </table>
-                </v-col>
-                <v-col cols="auto">
-                  <v-row
-                    ref="comparisonScroll"
-                    class="align-row d-flex mb-0 mt-0"
-                    style="flex-wrap:nowrap; overflow-x:scroll; overflow-y:hidden;"
-                  >
-                    <div
-                      v-if="comparisonArrow"
-                      class="align-center d-flex justify-center scroll-arrow"
-                    >
-                      <v-icon
-                        size="large"
-                        style="position:absolute; z-index:102;"
-                      >
-                        mdi-circle
-                      </v-icon>
-                      <v-icon
-                        color="white"
-                        style="z-index:103;"
-                      >
-                        mdi-chevron-double-right
-                      </v-icon>
-                    </div>
-                    <v-col
-                      v-for="{report, printjob, workflow, times, color } in reportData"
-                      :key="report.id"
-                      class="comparison-item"
-                      :style="`width:${ 100 / reportData.length }%;`"
-                      cols="auto"
-                    >
-                      <!-- Data -->
-                      <table
-                        style="width:100%;"
-                      >
-                        <thead>
-                          <tr>
-                            <th class="comparison-header d-flex justify-center">
-                              <v-chip
-                                :color="color"
-                                tile
-                              >
-                                <div style="color:black; font-weight:bold; overflow:hidden; font-size:0.8em; width:50em; max-width:50px;">
-                                  <p style="text-overflow:ellipsis; overflow-x:hidden;">
-                                    {{ printjob.Title }}
-                                  </p>
-                                  <p style="text-overflow:ellipsis; overflow-x:hidden;">
-                                    {{ workflow.Title }}
-                                  </p>
-                                </div>
-                              </v-chip>
-                            </th>
-                          </tr>
-                          <tr>
-                            <div class="divider"></div>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(time, i) in times"
-                            :key="i"
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="comparison-header">
+                        <div class="d-flex justify-center">
+                          <v-chip
+                            tile
+                            color="white"
                           >
-                            <td class="comparison-field d-flex justify-center">
-                              {{ toTimeUnit(time) }}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col
-                  cols="auto"
-                  class="d-flex justify-center"
+                            <span style="color:black; font-weight:bold;">
+                              Step
+                            </span>
+                          </v-chip>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <thead>
+                    <tr
+                      v-for="label in labels"
+                      :key="label"
+                    >
+                      <td class="comparison-field">
+                        {{ label }}
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
+              </v-col>
+              <v-col cols="auto">
+                <v-row
+                  ref="comparisonScroll"
+                  class="align-row d-flex mb-0 mt-0"
+                  style="flex-wrap:nowrap; overflow-x:scroll; overflow-y:hidden;"
                 >
-                  <v-btn-toggle
-                    v-model="secondsOrMinutes"
-                    rounded
-                    outlined
-                    mandatory
+                  <div
+                    v-if="comparisonArrow"
+                    class="align-center d-flex justify-center scroll-arrow"
                   >
-                    <v-btn
-                      size="x-small"
-                      :value="0"
-                      color="green-lighten-3"
+                    <v-icon
+                      size="large"
+                      style="position:absolute; z-index:102;"
                     >
-                      Minutes
-                    </v-btn>
-                    <v-btn
-                      size="x-small"
-                      :value="1"
-                      color="green-lighten-3"
+                      mdi-circle
+                    </v-icon>
+                    <v-icon
+                      color="white"
+                      style="z-index:103;"
                     >
-                      Seconds
-                    </v-btn>
-                  </v-btn-toggle>
-                </v-col>
-              </v-row>
-            </v-card>
+                      mdi-chevron-double-right
+                    </v-icon>
+                  </div>
+                  <v-col
+                    v-for="{report, printjob, workflow, times, color } in reportData"
+                    :key="report.id"
+                    class="comparison-item"
+                    :style="`width:${ 100 / reportData.length }%;`"
+                    cols="auto"
+                  >
+                    <!-- Data -->
+                    <table
+                      style="width:100%;"
+                    >
+                      <thead>
+                        <tr>
+                          <th class="comparison-header d-flex justify-center">
+                            <v-chip
+                              :color="color"
+                              tile
+                            >
+                              <div style="color:black; font-weight:bold; overflow:hidden; font-size:0.8em; width:50em; max-width:50px;">
+                                <p style="text-overflow:ellipsis; overflow-x:hidden;">
+                                  {{ printjob.Title }}
+                                </p>
+                                <p style="text-overflow:ellipsis; overflow-x:hidden;">
+                                  {{ workflow.Title }}
+                                </p>
+                              </div>
+                            </v-chip>
+                          </th>
+                        </tr>
+                        <tr>
+                          <div class="divider"></div>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(time, i) in times"
+                          :key="i"
+                        >
+                          <td class="comparison-field d-flex justify-center">
+                            {{ toTimeUnit(time) }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col
+                cols="auto"
+                class="d-flex justify-center"
+              >
+                <v-btn-toggle
+                  v-model="secondsOrMinutes"
+                  rounded
+                  outlined
+                  mandatory
+                >
+                  <v-btn
+                    size="x-small"
+                    :value="0"
+                    color="green-lighten-3"
+                  >
+                    Minutes
+                  </v-btn>
+                  <v-btn
+                    size="x-small"
+                    :value="1"
+                    color="green-lighten-3"
+                  >
+                    Seconds
+                  </v-btn>
+                </v-btn-toggle>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         <!-- End Comparison -->
       </v-col>
       <!-- End Section 1 -->
 
+      <v-col class="horizontal-gap">
+      </v-col>
+
       <!-- Section 2 -->
       <v-col class="ml-2 pa-0 section">
         <!-- Charts -->
-        <v-row>
+        <v-row class="chart-card" no-gutters>
           <v-col>
-            <v-card class="chart-card">
-              <v-row
-                no-gutters
-                style="max-height:inherit; height:inherit; width:inherit; max-width:inherit; overflow-x:hidden; overflow-y:scroll;"
+            <v-row
+              no-gutters
+              style="max-height:inherit; height:inherit; width:inherit; max-width:inherit; overflow-x:hidden; overflow-y:scroll;"
+            >
+              <v-col
+                v-for="{ report, times } in reportData"
+                :key="report.id"
+                style="flex:0; width:50%; height:50%;"
               >
-                <v-col
-                  v-for="{ report, times } in reportData"
-                  :key="report.id"
-                  style="flex:0; width:50%; height:50%;"
+                <chart-all
+                  style="width:100%; height:100%;"
+                  :data="times"
+                  :labels="labels"
+                  :chart-id="report + report.id"
                 >
-                  <chart-all
-                    style="width:100%; height:100%;"
-                    :data="times"
-                    :labels="labels"
-                    :chart-id="report + report.id"
-                  >
-                  </chart-all>
-                </v-col>
-              </v-row>
-            </v-card>
+                </chart-all>
+              </v-col>
+            </v-row>
           </v-col>
           <!-- End Charts -->
           <div id="chart-bottom" />
@@ -517,6 +515,45 @@ onMounted(
 });
 </script>
 <style scoped>
+.simulation-report-view {
+  --vertical-gap:  1vh;
+  --horizontal-gap:0.25vh;
+  --header-height: 3vh;
+  --overall-height: 96vh;
+  --overall-padding: 1vw;
+  --overall-width: 100%;
+  --section-height: calc((--overall-height) - calc(var(--header-height)) - calc(var(--overall-padding)));
+  --section-width: calc((--overall-width) - calc(var(--overall-padding)) - calc(var(--horizontal-gap)));
+  width: var(--overall-width);
+  height: var(--overall-height);
+}
+
+.header-bar {
+  height: var(--header-height);
+  max-height: var(--header-height);
+  min-height: var(--header-height);
+}
+
+.main-body {
+  padding:var(--overall-padding);
+
+}
+
+.vertical-gap {
+  height:var(--vertical-gap);
+  min-height:var(--vertical-gap);
+  max-height:var(--vertical-gap);
+  padding:0;
+  margin:0;
+}
+.horizontal-gap {
+  width:var(--horizontal-gap);
+  max-width:var(--horizontal-gap);
+  min-width:var(--horizontal-gap);
+  padding:0;
+  margin:0;
+}
+
 .close-button:hover {
   opacity:0.5;
 }
@@ -538,18 +575,58 @@ onMounted(
 }
 
 .section {
-  min-width: 48vw;
-  max-width: 48vw;
+  min-width: calc(var(--section-width) / 2);
+  max-width: calc(var(--section-width) / 2);
+  width: calc(var(--section-width) / 2);
+
+  min-height: var(--section-height);
+  max-height: var(--section-height);
+  height: var(--section-height);
   overflow:hidden;
 }
 
 .overview-card {
+  height: calc((100% - var(--vertical-gap)) / 2);
+
+  max-width:inherit;
+  min-width:inherit;
+
   overflow:hidden;
-  max-width:45vw;
-  width:45vw;
-  max-height:42vh;
-  height: 42vh;
+
   box-shadow: none;
+  border-width: 1px;
+  border-style:solid;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.comparison-card{
+  height: calc((100% - var(--vertical-gap)) / 2);
+
+  max-width:inherit;
+  min-width:inherit;
+
+  padding:10px;
+
+  border-width: 1px;
+  border-style:solid;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow:none;
+}
+
+
+.chart-card{
+  height: 100%;
+
+  max-width:inherit;
+  max-height:inherit;
+
+  border-width: 1px;
+  border-style:solid;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow:none;
 }
 
 .overview-container{
@@ -588,18 +665,6 @@ onMounted(
 
 }
 
-.comparison-card{
-  border-width: 1px;
-  border-style:solid;
-  border-radius:5px;
-  border-color: rgba(0, 0, 0, 0.4);
-  max-width:45vw;
-  min-width:16vw;
-  max-height:35vh;
-  border-radius:0px;
-  padding:10px;
-}
-
 .comparison-card-title{
   height:18px;
   text-align:center;
@@ -622,13 +687,6 @@ onMounted(
 .comparison-field {
   text-align: center;
   font-size: 0.8rem;
-}
-
-.chart-card{
-  max-width:48vw;
-  max-height:88vh;
-  height:88vh;
-  width:48vw;
 }
 
 .chart-card-title{
@@ -698,10 +756,21 @@ onMounted(
   font-size:0.9em;
 }
 
+.overview-list-container {
+  height:100%;
+  display:flex;
+  flex-direction: row;
+  overflow-x:scroll;
+  overflow-y:hidden;
+  flex-wrap:nowrap;
+  flex-grow:1;
+}
+
 .overview-list{
   height:inherit;
   max-height:inherit;
   width:8vw;
+  max-width:8vw;
   border-width:1px;
   border-color:rgba(50,50,50,0.5);
   margin-right:5px;

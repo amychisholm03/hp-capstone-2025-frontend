@@ -9,12 +9,10 @@
     <!-- Viewing Simulation Reports -->
     <v-dialog
       v-model="viewing"
-      scrollable
       persistent
-      height="95vh"
+      height="96vh"
     >
       <simulation-report-view
-        style="overflow:hidden;"
         :reports="selectedReports"
         @exit="clearReports"
       >

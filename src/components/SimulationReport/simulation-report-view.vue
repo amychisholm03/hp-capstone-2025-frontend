@@ -3,8 +3,11 @@
     v-if="!loading"
     class="simulation-report-view"
   >
-    <v-row no-gutters class="header-bar">
-      <v-col class="align-center d-flex justify-end">
+    <v-row
+      no-gutters
+      class="header-bar"
+    >
+      <v-col class="align-center d-flex header-bar justify-end">
         <v-btn
           class="close-button"
           icon
@@ -19,10 +22,17 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters class="main-body">
+    <v-row
+      no-gutters
+      style="flex-wrap: nowrap;"
+      class="align-row d-flex main-body"
+    >
       <!-- Section 1 -->
       <v-col class="section">
-        <v-row class="overview-card" no-gutters>
+        <v-row
+          class="overview-card"
+          no-gutters
+        >
           <div id="overview-top" />
           <!-- Overview -->
           <v-col>
@@ -31,6 +41,25 @@
               no-gutters
               class="overview-list-container"
             >
+              <div
+                v-if="overviewArrow && !scrollArrowConsumed"
+                class="align-center d-flex justify-center scroll-arrow"
+                @click="scrollToEndOfOverview"
+              >
+                <v-icon
+                  size="large"
+                  style="z-index:102; position:absolute;"
+                >
+                  mdi-circle
+                </v-icon>
+                <v-icon
+                  color="white"
+                  style="z-index:103;"
+                >
+                  mdi-chevron-double-right
+                </v-icon>
+              </div>
+
               <v-col
                 v-for="{report, printjob, workflow, color} in reportData"
                 :key="report.id"
@@ -122,17 +151,17 @@
           no-gutters
           class="comparison-card"
         >
-          <v-col>
+          <v-col style="height:100%;">
             <v-row
-              class="align-row d-flex"
-              style="flex-wrap:nowrap;"
               no-gutters
+              class="align-row d-flex"
+              style="flex-wrap: nowrap; height:100%;"
             >
+              <!-- Step Name Column -->
               <v-col
-                cols="auto"
-                style="margin-top:14px;"
+                cols="2"
               >
-                <table>
+                <table height="100%">
                   <thead>
                     <tr>
                       <th class="comparison-header">
@@ -149,23 +178,40 @@
                       </th>
                     </tr>
                   </thead>
-                  <thead>
+                  <tbody>
                     <tr
                       v-for="label in labels"
-                      :key="label"
+                      :key="label.value"
                     >
-                      <td class="comparison-field">
-                        {{ label }}
+                      <td
+                        style="text-align:center;"
+                        class="step-name-selectable"
+                        @click="highlightStep(label.value)"
+                      >
+                        <span
+                          class="comparison-field"
+                        >
+                          <strong v-if="label.value === highlightedStep">
+                            {{ label.title }}
+                          </strong>
+                          <span v-else>
+                            {{ label.title }}
+                          </span>
+                        </span>
                       </td>
                     </tr>
-                  </thead>
+                  </tbody>
                 </table>
               </v-col>
-              <v-col cols="auto">
+
+              <!-- Step Times -->
+              <v-col cols="6">
+                <!-- Scroll Indicator -->
                 <v-row
                   ref="comparisonScroll"
-                  class="align-row d-flex mb-0 mt-0"
-                  style="flex-wrap:nowrap; overflow-x:scroll; overflow-y:hidden;"
+                  no-gutters
+                  class="align-row d-flex"
+                  style="flex-wrap:nowrap; flex-direction:row; overflow-x:scroll; overflow-y:hidden; height:100%; width:100%;"
                 >
                   <div
                     v-if="comparisonArrow"
@@ -184,20 +230,18 @@
                       mdi-chevron-double-right
                     </v-icon>
                   </div>
+
+                  <!-- Steps For A Particular Simulation... -->
                   <v-col
-                    v-for="{report, printjob, workflow, times, color } in reportData"
+                    v-for="{report, printjob, workflow, steps, color } in reportData"
                     :key="report.id"
                     class="comparison-item"
-                    :style="`width:${ 100 / reportData.length }%;`"
-                    cols="auto"
+                    style="width:8vh;"
                   >
-                    <!-- Data -->
-                    <table
-                      style="width:100%;"
-                    >
+                    <table height="100%">
                       <thead>
                         <tr>
-                          <th class="comparison-header d-flex justify-center">
+                          <th class="comparison-header">
                             <v-chip
                               :color="color"
                               tile
@@ -213,17 +257,35 @@
                             </v-chip>
                           </th>
                         </tr>
-                        <tr>
-                          <div class="divider"></div>
-                        </tr>
                       </thead>
                       <tbody>
                         <tr
-                          v-for="(time, i) in times"
+                          v-for="(step, i) in steps"
                           :key="i"
                         >
-                          <td class="comparison-field d-flex justify-center">
-                            {{ toTimeUnit(time) }}
+                          <!-- Highlighting active: highlighted step -->
+                          <td style="text-align:center;">
+                            <span
+                              v-if="i === highlightedStep"
+                              class="comparison-field"
+                            >
+                              {{ toTimeUnit(step.time) }}
+                            </span>
+                            <!-- No Highlighting Active -->
+                            <span
+                              v-else-if="highlightedStep === null"
+                              class="comparison-field"
+                            >
+                              {{ toTimeUnit(step.time) }}
+                            </span>
+                            <!-- Highlighting Active: non-highlighted step -->
+                            <span
+                              v-else
+                              style="opacity:0.2;"
+                              class="comparison-field"
+                            >
+                              {{ toTimeUnit(step.time) }}
+                            </span>
                           </td>
                         </tr>
                       </tbody>
@@ -231,32 +293,85 @@
                   </v-col>
                 </v-row>
               </v-col>
+              <!-- End Step Times Column -->
+
+              <v-spacer></v-spacer>
+
+              <!-- Settings Column -->
               <v-col
-                cols="auto"
-                class="d-flex justify-center"
+                cols="4"
+                style="border-left:solid 1px grey; display:flex; flex-wrap:nowrap; flex-direction: column; row-gap:16px; overflow-y:scroll; overflow-x:hidden; padding-left:2%;"
               >
+                <div class="d-flex justify-center">
+                  <v-btn
+                    rounded
+                    size="small"
+                    color="primary"
+                  >
+                    <v-icon>
+                      mdi-file-delimited-outline
+                    </v-icon>
+                  </v-btn>
+                  <v-btn
+                    rounded
+                    size="small"
+                    color="primary"
+                  >
+                    <v-icon>
+                      mdi-file-pdf-box
+                    </v-icon>
+                  </v-btn>
+                  <v-btn
+                    rounded
+                    size="small"
+                    color="primary"
+                  >
+                    <v-icon>
+                      mdi-email
+                    </v-icon>
+                  </v-btn>
+                </div>
+
+                <v-divider></v-divider>
+
                 <v-btn-toggle
                   v-model="secondsOrMinutes"
-                  rounded
-                  outlined
                   mandatory
+                  base-color="grey-darken-2"
+                  class="d-flex justify-center"
                 >
                   <v-btn
-                    size="x-small"
                     :value="0"
-                    color="green-lighten-3"
+                    color="green-darken-2"
+                    size="x-small"
+                    style="color:white !important; font-weight:900; height:3vh; width:50%;"
                   >
                     Minutes
+                    <v-icon
+                      v-if="!secondsOrMinutes"
+                      class="mb-1 ml-1"
+                    >
+                      mdi-check-circle-outline
+                    </v-icon>
                   </v-btn>
                   <v-btn
+                    color="green-darken-2"
                     size="x-small"
+                    style="color:white !important; font-weight:900; height:3vh; width:50%;"
                     :value="1"
-                    color="green-lighten-3"
                   >
                     Seconds
+                    <v-icon
+                      v-if="secondsOrMinutes"
+                      class="mb-1 ml-1"
+                    >
+                      mdi-check-circle-outline
+                    </v-icon>
                   </v-btn>
                 </v-btn-toggle>
+                <v-spacer></v-spacer>
               </v-col>
+              <!-- End Settings Column -->
             </v-row>
           </v-col>
         </v-row>
@@ -268,32 +383,28 @@
       </v-col>
 
       <!-- Section 2 -->
-      <v-col class="ml-2 pa-0 section">
+      <v-col class="section">
         <!-- Charts -->
-        <v-row class="chart-card" no-gutters>
-          <v-col>
-            <v-row
-              no-gutters
-              style="max-height:inherit; height:inherit; width:inherit; max-width:inherit; overflow-x:hidden; overflow-y:scroll;"
+        <v-row
+          class="chart-card"
+          no-gutters
+        >
+          <v-col
+            v-for="{ report, steps } in reportData"
+            :key="report.id"
+          >
+            <chart-all
+              :data="steps.map((step) => {
+                return step.time;
+              })"
+              :labels="labels"
+              :chart-id="report + report.id"
             >
-              <v-col
-                v-for="{ report, times } in reportData"
-                :key="report.id"
-                style="flex:0; width:50%; height:50%;"
-              >
-                <chart-all
-                  style="width:100%; height:100%;"
-                  :data="times"
-                  :labels="labels"
-                  :chart-id="report + report.id"
-                >
-                </chart-all>
-              </v-col>
-            </v-row>
+            </chart-all>
           </v-col>
-          <!-- End Charts -->
-          <div id="chart-bottom" />
         </v-row>
+        <!-- End Charts -->
+        <div id="chart-bottom" />
       </v-col>
     </v-row>
   </v-card>
@@ -320,7 +431,6 @@ defineProps({
 
 const secondsOrMinutes = ref(0);
 const toTimeUnit = (time) => {
-  console.log(secondsOrMinutes.value);
   if (secondsOrMinutes.value === 0) {
     return (time / 60).toFixed(2);
   }
@@ -330,8 +440,8 @@ const comparisonScroll = ref(null);
 const comparisonArrow = ref(false);
 const overviewScroll = ref(null);
 const overviewArrow = ref(false);
+const scrollArrowConsumed = ref(false);
 const checkScroll = () => {
-  console.log("BROH");
   const element = comparisonScroll.value.$el;
   comparisonArrow.value = element.scrollLeft + element.clientWidth < element.scrollWidth;
   const element2 = overviewScroll.value.$el;
@@ -341,6 +451,7 @@ const checkScroll = () => {
 const reportData = ref([]);
 const labels = ref([]);
 const loading = ref(true);
+const highlightedStep = ref(null);
 
 const headersOverview = ref({
   report: [
@@ -375,13 +486,88 @@ const scrollToTopOfOverview = () => {
   document.getElementById("overview-top").scrollIntoView();
 };
 
+
+const scrollToEndOfOverview = () => {
+  const refval = overviewScroll.value;
+  if (refval) {
+    const el = refval.$el;
+    const max = el.scrollWidth;
+    el.scrollBy(max,0, 'smooth');
+  }
+  scrollArrowConsumed.value = true;
+};
+
 const scrollToTopOfComparison = () => {
   document.getElementById("comparison-top").scrollIntoView();
+};
+
+
+//////////////////////
+//// Logic
+//////////////////////
+
+const generateHeatmap = (steps) => {
+  const maps = [];
+
+  // Loop through each step (eg Rasterization, Lamination etc.)
+  steps.forEach((step) => {
+    const times = [];
+    let index = 0;
+
+    // Loop through each simulation report and get it's time for our current step
+    reportData.value.forEach((report) => {
+      times.push({
+          reportId: index++,
+          time: report.steps[step.value].time
+        });
+    });
+
+
+    // Now that we have all times for this step, sort them.
+    times.sort((a,b)=>{
+      return (a.time > b.time);
+    });
+
+    // Each simulation report will be assigned a score from where it lies in the sorted array.
+    const scores = {};
+    let score = 0;
+    let last_time = times.length ? times[0].time : null;
+    times.forEach((time)=>{
+      scores[time.reportId] = score;
+
+      // we don't want multiple identical times with different colors.
+      if (time.time !== last_time) {
+        score++;
+      }
+
+      last_time = time.time;
+
+    });
+
+    maps.push({
+      stepId: step.value,
+      scores,
+    });
+
+  });
+
+  console.log(maps);
+
+  return maps;
+
 };
 
 ///////////////////////
 //// Display
 //////////////////////
+
+const highlightStep = (index) => {
+  if (index === highlightedStep.value) {
+    highlightedStep.value = null;
+  } else {
+    highlightedStep.value = index;
+  }
+}
 
 /**
 * Calculates how wide each report in the overview should be
@@ -421,6 +607,7 @@ const addMissing = (workflowSteps, stepDefinitions) => {
     // If we have this step, join it with it's definition info
     const s = stepExists[definedStep.id];
     definedStep.time = 0;
+
     if (s) {
       allSteps.push({...definedStep, ...s });
     // If we don't have this step, include only the definition
@@ -449,8 +636,11 @@ const prepareReports = async (workflowStepDefinitions) => {
     return JSON.parse(JSON.stringify(report));
   });
 
+
+  let index = 0;
+
   // Get peripheral info about each report
-  mutableReports.forEach( async (report) => {
+  for (const report of mutableReports) {
 
     report.dateTime = report.Date + " " + report.Time;
 
@@ -472,8 +662,9 @@ const prepareReports = async (workflowStepDefinitions) => {
     const stepTime = response[2].ok ? await response[2].json() : null;
     const steps = addTimes(addMissing(workflow.WorkflowSteps, genericSteps), stepTime);
     const times = steps.map((step)=> {
-      return step.time;
+      return { title: step.Title, time: step.time }
     });
+
 
     const all = {
       printjob: printjob,
@@ -483,16 +674,22 @@ const prepareReports = async (workflowStepDefinitions) => {
       times: times,
       report: report,
       color: colors.pop(),
+      index
     }
 
     reportData.value.push(all);
 
-  });
+    index++;
+
+  }
 
   // Get labels for our charts
+  let i = 0;
   labels.value = genericSteps.map((step) => {
-    return step.Title;
+    return {title: step.Title, value: i++ }
   });
+
+  generateHeatmap(labels.value);
 
 };
 
@@ -517,15 +714,16 @@ onMounted(
 <style scoped>
 .simulation-report-view {
   --vertical-gap:  1vh;
-  --horizontal-gap:0.25vh;
+  --horizontal-gap: 4vw;
   --header-height: 3vh;
   --overall-height: 96vh;
   --overall-padding: 1vw;
   --overall-width: 100%;
-  --section-height: calc((--overall-height) - calc(var(--header-height)) - calc(var(--overall-padding)));
+  --section-height: calc(100% - var(--overall-padding));
   --section-width: calc((--overall-width) - calc(var(--overall-padding)) - calc(var(--horizontal-gap)));
   width: var(--overall-width);
   height: var(--overall-height);
+  border-radius:10px !important;
 }
 
 .header-bar {
@@ -536,7 +734,10 @@ onMounted(
 
 .main-body {
   padding:var(--overall-padding);
-
+  height: var(--section-height);
+  max-height: var(--section-height);
+  min-height: var(--section-height);
+  overflow:hidden;
 }
 
 .vertical-gap {
@@ -575,6 +776,8 @@ onMounted(
 }
 
 .section {
+  display:block;
+
   min-width: calc(var(--section-width) / 2);
   max-width: calc(var(--section-width) / 2);
   width: calc(var(--section-width) / 2);
@@ -582,11 +785,13 @@ onMounted(
   min-height: var(--section-height);
   max-height: var(--section-height);
   height: var(--section-height);
+
   overflow:hidden;
 }
 
 .overview-card {
-  height: calc((100% - var(--vertical-gap)) / 2);
+  display:block;
+  height: calc((var(--section-height) - var(--vertical-gap)) / 2);
 
   max-width:inherit;
   min-width:inherit;
@@ -594,19 +799,19 @@ onMounted(
   overflow:hidden;
 
   box-shadow: none;
-  border-width: 1px;
-  border-style:solid;
-  border-radius:5px;
-  border-color: rgba(0, 0, 0, 0.4);
 }
 
 .comparison-card{
-  height: calc((100% - var(--vertical-gap)) / 2);
+  background:white;
+  display:block;
+  height: calc((var(--section-height) - var(--vertical-gap)) / 2);
 
   max-width:inherit;
   min-width:inherit;
 
   padding:10px;
+
+  overflow:hidden;
 
   border-width: 1px;
   border-style:solid;
@@ -617,11 +822,12 @@ onMounted(
 
 
 .chart-card{
+  background:white;
+  display:block;
   height: 100%;
-
+  max-height: var(--section-height);
+  min-height: var(--section-height);
   max-width:inherit;
-  max-height:inherit;
-
   border-width: 1px;
   border-style:solid;
   border-radius:5px;
@@ -642,8 +848,6 @@ onMounted(
 }
 
 .overview-item{
-  border-right-style:solid;
-  border-left-style:solid;
   border-width:1px;
   margin:0;
   padding:0;
@@ -679,14 +883,20 @@ onMounted(
 }
 
 .comparison-header{
-  max-height:35px;
   height:35px;
+  max-height:35px;
+  min-height:35px;
   overflow-y:hidden;
 }
 
 .comparison-field {
-  text-align: center;
   font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 1vw;
+  max-width: 1vw;
+  min-width: 1vw;
+  aspect-ratio: 2/1;
 }
 
 .chart-card-title{
@@ -704,8 +914,11 @@ onMounted(
 
 @keyframes pop {
  0%    { scale: 2.0; }
- 45%   { scale: 2.0; }
- 60%   { scale: 2.5; }
+ 10%   { scale: 2.5; }
+ 20%   { scale: 2.0; }
+ 30%   { scale: 2.5; }
+ 40%   { scale: 2.0; }
+ 50%   { scale: 2.5; }
  75%   { scale: 2.0; }
  90%   { scale: 2.0; opacity:1; }
  100%  { scale: 2.0; opacity:0; }
@@ -758,6 +971,7 @@ onMounted(
 
 .overview-list-container {
   height:100%;
+  position:relative;
   display:flex;
   flex-direction: row;
   overflow-x:scroll;
@@ -767,10 +981,11 @@ onMounted(
 }
 
 .overview-list{
+  background:white;
   height:inherit;
   max-height:inherit;
-  width:8vw;
-  max-width:8vw;
+  width:14vw;
+  max-width:14vw;
   border-width:1px;
   border-color:rgba(50,50,50,0.5);
   margin-right:5px;
@@ -778,21 +993,33 @@ onMounted(
   border-style:groove;
 }
 
-.comparison-item {
-  border-right-style:solid;
-  border-right-color:grey;
-  border-right-width:1px;
-}
-
 .scroll-arrow {
   position:absolute;
   right:5%;
-  bottom:40%;
+  bottom:50%;
   animation-name:pop;
-  animation-duration:3s;
+  animation-duration:6s;
   animation-fill-mode:forwards;
   color:black;
   z-index:150;
+}
+
+.scroll-arrow:hover {
+  opacity: 0.5;
+}
+
+.v-btn-toggle .v-btn {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+.v-btn-toggle {
+  margin-left: 5px !important;
+}
+
+.step-name-selectable:hover {
+  opacity:0.5;
+  cursor:pointer;
 }
 </style>
 

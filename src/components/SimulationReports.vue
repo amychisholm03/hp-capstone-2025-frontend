@@ -189,13 +189,6 @@ const getWorkflows = async () => {
 }
 </script>
 <style>
-.exit-button {
-  border: none;
-  padding: 0;
-  box-shadow: none;
-  background: transparent;
-}
-
 .dashboard-component {
   border: 1px;
   width: 400px;

@@ -1,11 +1,14 @@
 <template>
   <div style="width:100%; height:100%;">
-    <v-row no-gutters style="width:100%; height:10%;">
+    <v-row
+      no-gutters
+      style="width:100%; height:10%;"
+    >
       <v-col>
         <v-tabs
           v-model="tab"
           color="red"
-          class="d-flex align-center"
+          class="align-center d-flex"
         >
           <v-tab
             value="0"
@@ -32,7 +35,10 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters style="width:100%; height:90%;">
+    <v-row
+      no-gutters
+      style="width:100%; height:90%;"
+    >
       <v-col style="height:90%;">
         <v-tabs-window
           v-model="tab"

@@ -67,11 +67,10 @@ export async function postWorkflow(Title, WorkflowSteps, Enabled, ParallelSteps,
 export function formatSteps(steps){
 	let output = [];
 	for(let i = 0; i < steps.length; i++){
-    console.log(steps[i]);
 		output.push({
 			WorkflowStepID: steps[i],
-			Prev: [],
-			Next: []
+			Prev: i > 0 ? [i-1] : [],
+			Next: i < steps.length-1 ? [i+1] : [],
 		});
 	}
 	return output

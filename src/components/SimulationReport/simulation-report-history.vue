@@ -187,20 +187,17 @@
     if (index !== -1) {
       selectedReports.value.splice(index, 1);
       report.selected = false;
-      console.log(selectedReports.value);
       return;
     }
 
     // Maxed Out -> Return
     if (selectedReports.value.length === COMPARISON_LIMIT) {
-      console.log(selectedReports.value);
       return;
     }
 
     // Add Report
     report.selected = true;
     selectedReports.value.push(report);
-    console.log(selectedReports.value);
   };
 </script>
 <style>

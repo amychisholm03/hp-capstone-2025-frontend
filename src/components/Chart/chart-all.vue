@@ -110,10 +110,6 @@ defineProps({
   chartId: String,
 });
 
-console.log(data);
-console.log(labels);
-console.log(chartId);
-
 //// Data ////
 
 const tab = ref('0');

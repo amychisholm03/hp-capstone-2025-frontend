@@ -417,18 +417,31 @@
           class="chart-card"
           no-gutters
         >
-          <v-col
-            v-for="{ report, steps } in reportData"
-            :key="report.id"
-          >
-            <chart-all
-              :data="steps.map((step) => {
-                return step.time;
-              })"
-              :labels="labels"
-              :chart-id="report + report.id"
+          <v-col style="display:flex; flex-direction:column;">
+            <v-tabs
+              v-model="selectedChart"
+              fixed-tabs
+              color="red"
             >
-            </chart-all>
+              <v-tab
+                v-for="report in reportData"
+                :key="report.reportId"
+                :value="report.reportId"
+                style="max-width:unset;"
+              >
+                {{ report.printjob.Title }}
+                <br>
+                {{ report.workflow.Title }}
+              </v-tab>
+            </v-tabs>
+
+            <v-tabs-window style="flex-grow:1;" v-model="selectedChart">
+              <v-tabs-window-item :value="selectedChart">
+                <!-- <chart-all -->
+                <!-- > -->
+                <!-- </chart-all> -->
+              </v-tabs-window-item>
+            </v-tabs-window>
           </v-col>
         </v-row>
         <!-- End Charts -->
@@ -459,6 +472,8 @@ defineProps({
 
 const secondsOrMinutes = ref(0);
 const showHeatMap = ref(0);
+const selectedChart = ref(null);
+
 const toTimeUnit = (time) => {
   if (secondsOrMinutes.value === 0) {
     return (time / 60).toFixed(2);

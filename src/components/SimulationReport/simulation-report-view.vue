@@ -150,6 +150,7 @@
         <v-row
           no-gutters
           class="comparison-card"
+          style="position:relative;"
         >
           <v-col>
             <v-row
@@ -296,84 +297,56 @@
 
               <!-- Settings Column -->
               <v-col
-                style="display:flex; flex-wrap:nowrap; flex-direction: column; row-gap:10px; overflow-y:scroll; overflow-x:hidden; padding-left:2%; max-width:25%;"
+                style="display:flex; flex-wrap:nowrap; flex-direction: column; row-gap:10px; overflow-y:scroll; overflow-x:hidden; padding-left:2%;"
               >
-                <div class="d-flex justify-start">
-                  <v-btn
-                    rounded
-                    size="small"
-                    color="primary"
-                  >
-                    <v-icon>
-                      mdi-file-delimited-outline
-                    </v-icon>
-                  </v-btn>
-                  <v-btn
-                    rounded
-                    size="small"
-                    color="primary"
-                  >
-                    <v-icon>
-                      mdi-file-pdf-box
-                    </v-icon>
-                  </v-btn>
-                  <v-btn
-                    rounded
-                    size="small"
-                    color="primary"
-                  >
-                    <v-icon>
-                      mdi-email
-                    </v-icon>
-                  </v-btn>
-                </div>
-
-                <v-divider></v-divider>
-
-                <h5>Heat Map</h5>
+                <h3>Heat Map</h3>
                 <v-btn-toggle
                   v-model="showHeatMap"
                   mandatory
-                  style="height:fit-content;"
                 >
                   <v-btn
                     :value="1"
-                    size="small"
+                    size="large"
+                    class="pl-2 pr-2"
+                    style="font-size:0.8em;"
                     border
                   >
                     Show
                     <v-icon
                       v-if="showHeatMap"
-                      class="mb-1 ml-1"
+                      class="ml-1 mb-1"
                     >
                       mdi-check-circle-outline
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    size="small"
+                    size="large"
                     :value="0"
-                      border
+                    style="font-size:0.8em;"
+                    class="pl-3 pr-4"
+                    border
                   >
                     Hide
                     <v-icon
                       v-if="!showHeatMap"
-                      class="mb-1 ml-1"
+                      class="ml-1 mb-1"
                     >
                       mdi-check-circle-outline
                     </v-icon>
                   </v-btn>
                 </v-btn-toggle>
 
-                <h5>Units</h5>
+                <h3> Time Units </h3>
                 <v-btn-toggle
                   v-model="secondsOrMinutes"
                   mandatory
-                  style="height:fit-content; width:100%;"
                 >
                   <v-btn
                     :value="0"
                     border
-                    size="x-small"
+                    style="font-size:0.7em;"
+                    class="pa-2"
+                    size="small"
                   >
                     Minutes
                     <v-icon
@@ -384,8 +357,10 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    size="x-small"
                     border
+                    class="pa-2"
+                    style="font-size:0.7em;"
+                    size="small"
                     :value="1"
                   >
                     Seconds
@@ -402,6 +377,18 @@
               <!-- End Settings Column -->
             </v-row>
           </v-col>
+          <div class="d-flex justify-start" style="position:absolute; right:0; bottom:5px;">
+            <v-btn
+              icon
+              color="primary"
+              size="large"
+              @click="handleCSV"
+            >
+              <v-icon>
+                mdi-file-delimited-outline
+              </v-icon>
+            </v-btn>
+          </div>
         </v-row>
         <!-- End Comparison -->
       </v-col>
@@ -635,6 +622,35 @@ const generateHeatmap = (steps) => {
 
   });
   return maps;
+};
+
+//////////////////////
+//// Handlers
+/////////////////////
+
+const handleCSV = () => {
+
+  const headers = labels.value.map((label)=>{
+    console.log(label);
+    return label.title;
+  }).join(",");
+
+  const data = reportData.value.map((report) => {
+    const stepTimesInReport = [];
+    report.steps.forEach((step)=>{
+      stepTimesInReport.push(step.time);
+    });
+    const string = stepTimesInReport.join(",");
+    return string + '\n';
+  }).join('');
+
+  const csv = headers + '\n' + data;
+  const blob = new Blob([csv], { type: "text/csv"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = 'simulation-report-times.csv';
+  document.body.appendChild(link);
+  link.click();
 };
 
 ///////////////////////

@@ -1,5 +1,6 @@
 <template>
   <v-app theme="light">
+    <LiveChatWidget license="12332502" group="0" />
     <v-toolbar class="toolbar">
       <v-toolbar-title class="header">
         Dashboard
@@ -46,6 +47,7 @@
 <script setup>
   import { ref, onMounted } from "vue";
   import { useRouter } from 'vue-router';
+  import { LiveChatWidget } from '@livechat/widget-vue'
 
   const router = useRouter();
 

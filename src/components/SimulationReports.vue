@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <LiveChatWidget license="12332502" group="0" />
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
@@ -88,6 +89,7 @@ import SimulationReportCompare from './SimulationReport/simulation-report-compar
 import ModuleToolbar from './module-toolbar.vue';
 import { getCollection } from "./api.js";
 import ErrorPopups from "./ErrorPopups.vue";
+import { LiveChatWidget } from '@livechat/widget-vue'
 
 const errorMessage = ref('');
 const workflows = ref([]);

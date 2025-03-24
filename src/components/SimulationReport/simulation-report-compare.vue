@@ -455,7 +455,7 @@ const prepareReport1 = async (workflowStepDefinitions) => {
   workflowReport1.value = response[1].ok ? await response[1].json() : null;
   stepTimeReport1.value = response[2].ok ? await response[2].json() : null;
 
-  stepsReport1.value = addMissingStepsToWorkflowStepArray(workflowReport1.value.WorkflowSteps, workflowStepDefinitions);
+  stepsReport1.value = addMissingStepsToWorkflowStepArray(workflowReport1.value.Steps, workflowStepDefinitions);
   stepsReport1.value = addTimesToWorkflowStepArray(stepsReport1.value, stepTimeReport1.value);
 
   return true;

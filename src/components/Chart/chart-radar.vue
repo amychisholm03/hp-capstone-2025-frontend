@@ -1,5 +1,5 @@
 <template>
-  <canvas :id="chartId ? `${chartId }-chart-radar` : 'chart-radar'">
+  <canvas :id="chartId !== null ? `${chartId }-chart-radar` : 'chart-radar'">
   </canvas>
 </template>
 <script setup>
@@ -21,7 +21,7 @@ defineProps({
 });
 
 onMounted(() => {
-  const ref = document.getElementById(chartId ? `${chartId }-chart-radar` : 'chart-radar');
+  const ref = document.getElementById(chartId !== null ? `${chartId }-chart-radar` : 'chart-radar');
 
   // get some nice colors picked out.
   const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']

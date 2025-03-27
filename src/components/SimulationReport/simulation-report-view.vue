@@ -187,13 +187,19 @@
                       :key="label.value"
                     >
                       <td
-                        class="step-name-selectable comparison-table-step-names"
+                        class="comparison-table-step-names step-name-selectable"
                         @click="highlightStep(label.value)"
                       >
-                        <strong  class="comparison-field" v-if="label.value === highlightedStep">
+                        <strong
+                          v-if="label.value === highlightedStep"
+                          class="comparison-field"
+                        >
                           {{ label.title }}
                         </strong>
-                        <span class="comparison-field" v-else>
+                        <span
+                          v-else
+                          class="comparison-field"
+                        >
                           {{ label.title }}
                         </span>
                       </td>
@@ -314,7 +320,7 @@
                     Show
                     <v-icon
                       v-if="showHeatMap"
-                      class="ml-1 mb-1"
+                      class="mb-1 ml-1"
                     >
                       mdi-check-circle-outline
                     </v-icon>
@@ -329,7 +335,7 @@
                     Hide
                     <v-icon
                       v-if="!showHeatMap"
-                      class="ml-1 mb-1"
+                      class="mb-1 ml-1"
                     >
                       mdi-check-circle-outline
                     </v-icon>
@@ -377,7 +383,10 @@
               <!-- End Settings Column -->
             </v-row>
           </v-col>
-          <div class="d-flex justify-start" style="position:absolute; right:0; bottom:5px;">
+          <div
+            class="d-flex justify-start"
+            style="position:absolute; right:0; bottom:5px;"
+          >
             <v-btn
               icon
               color="primary"
@@ -422,11 +431,22 @@
               </v-tab>
             </v-tabs>
 
-            <v-tabs-window style="flex-grow:1;" v-model="selectedChart">
-              <v-tabs-window-item :value="selectedChart">
-                <!-- <chart-all -->
-                <!-- > -->
-                <!-- </chart-all> -->
+            <v-tabs-window
+              v-model="selectedChart"
+              style="flex-grow:1;"
+            >
+              <v-tabs-window-item
+                v-for="report in reportData"
+                :key="report.reportId"
+                :value="selectedChart"
+              >
+                <chart-all
+                  :key="selectedChart"
+                  :data="selectedChartData"
+                  :labels="selectedChartLabels"
+                  :chartId="'chart'+selectedChart"
+                >
+                </chart-all>
               </v-tabs-window-item>
             </v-tabs-window>
           </v-col>
@@ -460,6 +480,23 @@ defineProps({
 const secondsOrMinutes = ref(0);
 const showHeatMap = ref(0);
 const selectedChart = ref(null);
+const selectedChartData = computed(() => {
+  console.log(selectedChart.value);
+  if (selectedChart.value === null) {
+    return [];
+  }
+  const report = reportData.value[selectedChart.value];
+  return report.steps.map((step)=>{
+    return step.time;
+
+  });
+});
+
+const selectedChartLabels = computed(() => {
+  return labels.value.map((label)=>{
+    return label.title;
+  })
+});
 
 const toTimeUnit = (time) => {
   if (secondsOrMinutes.value === 0) {

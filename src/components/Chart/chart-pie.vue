@@ -1,6 +1,6 @@
 <template>
   <canvas
-    :id="chartId ? `${chartId }-pie-chart` : 'pie-chart'"
+    :id="chartId !== null ? `${chartId}-pie-chart` : 'pie-chart'"
     style="width:100%; height:100%;"
   >
   </canvas>
@@ -22,9 +22,10 @@ defineProps({
   labels: Array,
   chartId: String,
 });
+console.log(chartId);
 
 onMounted(() => {
-  const ref = document.getElementById(chartId ? `${chartId }-pie-chart` : 'pie-chart');
+  const ref = document.getElementById(chartId !== null ? `${chartId }-pie-chart` : 'pie-chart');
 
   // get some nice colors picked out.
   const prepickedColors = ['#db3047','#9575CD', '#F06292', '#E57373','#64B5F6','#4DD0E1', '#60C381', '#FFD54F', '#4DB6AC']

@@ -1,5 +1,5 @@
-export const API_URL = "http://api.wsuv-hp-capstone.com"
-export const API_PORT = "80"
+export const API_URL = "https://api.wsuv-hp-capstone.com"
+export const API_PORT = "443"
 // export const API_URL = "http://localhost"
 // export const API_PORT = "5040"
 
@@ -61,7 +61,7 @@ export async function postPrintJob(Title, PageCount, RasterizationProfileID) {
  * Posts a new workflow.
  * @param {string} Title - The title of the workflow
  * @param {Array} WorkflowSteps - The array of workflow steps after formatting
- * @returns 
+ * @returns
  */
 export async function postWorkflow(Title, WorkflowSteps) {
   return await postNewDocument("Workflow", {
@@ -71,10 +71,10 @@ export async function postWorkflow(Title, WorkflowSteps) {
 }
 
 
-/** 
+/**
  * Adds step IDs to an array of Workflow Steps
  * with additional attributes if necessary
- * 
+ *
  * @param {Array} steps - Array of step IDs
  * @param {Number} numOfRIPs - Number of RIPs to use
  * @returns {Array} - Array of objects with step IDs and additional attributes (e.g. NumCores)

@@ -1,5 +1,5 @@
 export const API_URL = "https://api.wsuv-hp-capstone.com"
-export const API_PORT = "80"
+export const API_PORT = "443"
 // export const API_URL = "http://localhost"
 // export const API_PORT = "5040"
 

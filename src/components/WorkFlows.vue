@@ -1,17 +1,25 @@
 <template>
-    <v-app theme="light">
-        <v-main class="pa-3">
-            <error-popups :error="errorMessage" @clear-error="errorMessage = ''">
-            </error-popups>
-            <v-card class="module">
-                <module-toolbar class="module-toolbar" title="Workflow Creation" icon="mdi-graph"
-                    @minimize="workflowCreateMinimized = true"
-                    @maximize="workflowCreateMinimized = false"></module-toolbar>
-                <workflow-create v-if="!workflowCreateMinimized">
-                </workflow-create>
-            </v-card>
-        </v-main>
-    </v-app>
+  <v-app theme="light">
+    <LiveChatWidget license="12332502" group="0" />
+    <v-main class="pa-3">
+      <error-popups
+        :error="errorMessage"
+        @clear-error="errorMessage = ''"
+      >
+      </error-popups>
+      <v-card class="module">
+        <module-toolbar
+          class="module-toolbar"
+          title="Workflow Creation"
+          icon="mdi-graph"
+          @minimize="workflowCreateMinimized = true"
+          @maximize="workflowCreateMinimized = false"
+        ></module-toolbar>
+        <workflow-create v-if="!workflowCreateMinimized">
+        </workflow-create>
+      </v-card>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
@@ -21,6 +29,7 @@ import { getCollection, formatSteps, postWorkflow } from "./api.js";
 import ModuleToolbar from "./module-toolbar.vue";
 import WorkflowCreate from "./Workflow/workflow-create.vue";
 import ErrorPopups from "./ErrorPopups.vue";
+import { LiveChatWidget } from '@livechat/widget-vue'
 
 const errorMessage = ref('');
 const router = useRouter();

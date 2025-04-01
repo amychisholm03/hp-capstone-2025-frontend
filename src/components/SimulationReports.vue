@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <v-app>
+    <LiveChatWidget license="12332502" group="0" />
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
@@ -76,6 +77,7 @@ import SimulationReportGenerate from './SimulationReport/simulation-report-gener
 import SimulationReportView from './SimulationReport/simulation-report-view.vue';
 import ModuleToolbar from './module-toolbar.vue';
 import ErrorPopups from "./ErrorPopups.vue";
+import { LiveChatWidget } from '@livechat/widget-vue'
 
 ///////////////////////
 //// DATA
@@ -188,7 +190,15 @@ const getWorkflows = async () => {
   return true;
 }
 </script>
-<style>
+
+<style scoped>
+.exit-button {
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
 .dashboard-component {
   border: 1px;
   width: 400px;
@@ -199,12 +209,16 @@ const getWorkflows = async () => {
   max-width: 400px;
 }
 
-.v-overlay--active .v-overlay__scrim {
+:deep(.v-overlay--active) {
+  display: none;
+}
+
+:deep( .v-overlay__scrim) {
   display: none;
 }
 
 /* style the overlay container as required */
-.v-overlay--active {
+:deep(.v-overlay--active) {
   backdrop-filter: blur(2px);
 }
 </style>

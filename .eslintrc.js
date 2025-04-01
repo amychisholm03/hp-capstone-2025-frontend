@@ -29,6 +29,8 @@ module.exports = {
     //   version: '^2.7.0',
     //   ignores: [],
     // }],
+    'vue/valid-v-slot': 0,
+    'vue/no-useless-template-attributes': 0,
     'vue/static-class-names-order': 'error',
     'vue/no-useless-v-bind': 'error',
     'vue/no-useless-mustaches': 'error',

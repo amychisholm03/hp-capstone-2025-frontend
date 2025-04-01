@@ -1,21 +1,28 @@
-// export const API_URL = "http://api.wsuv-hp-capstone.com"
-// export const API_PORT = "80"
-export const API_URL = "http://localhost"
-export const API_PORT = "5040"
+export const API_URL = "https://api.wsuv-hp-capstone.com"
+export const API_PORT = "443"
+// export const API_URL = "http://localhost"
+// export const API_PORT = "5040"
 
 
-export async function getCollection(coll){
-	return await fetch(`${API_URL}:${API_PORT}/${coll}`, {
-		method: 'GET',
-		mode: 'cors'
-	});
+export async function getCollection(coll) {
+  return await fetch(`${API_URL}:${API_PORT}/${coll}`, {
+    method: 'GET',
+    mode: 'cors'
+  });
 }
 
 export async function getPrintJob(id) {
   return await fetch(`${API_URL}:${API_PORT}/${'PrintJob'}/${id}`, {
     method: 'GET',
     mode: 'cors'
-  })
+  });
+}
+
+export async function getErrorLogs() {
+  return fetch(`${API_URL}:${API_PORT}/${'Log'}/${'Error'}`, {
+    method: 'GET',
+    mode: 'cors'
+  });
 }
 
 export async function getWorkflow(id) {
@@ -32,32 +39,35 @@ export async function getWorkflowTimes(id) {
   })
 }
 
-async function postNewDocument(coll, doc){
-	return await fetch(`${API_URL}:${API_PORT}/${coll}`, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(doc)
-    });
+async function postNewDocument(coll, doc) {
+  return await fetch(`${API_URL}:${API_PORT}/${coll}`, {
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(doc)
+  });
 }
 
 
-export async function postPrintJob(Title, PageCount, RasterizationProfileID){
-	return await postNewDocument("PrintJob", {
-		Title: Title,
-		PageCount: PageCount,
-		RasterizationProfileID: RasterizationProfileID
-	});
+export async function postPrintJob(Title, PageCount, RasterizationProfileID) {
+  return await postNewDocument("PrintJob", {
+    Title: Title,
+    PageCount: PageCount,
+    RasterizationProfileID: RasterizationProfileID
+  });
 }
 
-
-export async function postWorkflow(Title, WorkflowSteps, Enabled, ParallelSteps, NumberOfRips){
-	return await postNewDocument("Workflow", {
-        Title: Title,
-        WorkflowSteps: WorkflowSteps,
-		Parallelizable: Enabled,
-		numOfRIPs: NumberOfRips
-    });
+/**
+ * Posts a new workflow.
+ * @param {string} Title - The title of the workflow
+ * @param {Array} WorkflowSteps - The array of workflow steps after formatting
+ * @returns
+ */
+export async function postWorkflow(Title, WorkflowSteps) {
+  return await postNewDocument("Workflow", {
+    Title: Title,
+    WorkflowSteps: WorkflowSteps
+  });
 }
 
 
@@ -77,8 +87,8 @@ export function formatSteps(steps){
 }
 
 
-export async function postSimulationReport(PrintJobID, WorkFlowID){
-	return await postNewDocument("SimulationReport", {
+export async function postSimulationReport(PrintJobID, WorkFlowID) {
+  return await postNewDocument("SimulationReport", {
     PrintJobID: PrintJobID,
     WorkflowID: WorkFlowID
   });

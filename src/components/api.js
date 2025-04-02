@@ -70,22 +70,31 @@ export async function postWorkflow(Title, WorkflowSteps) {
   });
 }
 
-
-// Takes a list of steps and formats them as a graph, where each step's
-// prev step is the one before it in the array, and the next step
-// is the one after it, for compatibility with previous implementation
-export function formatSteps(steps){
-	let output = [];
-	for(let i = 0; i < steps.length; i++){
-		output.push({
-			WorkflowStepID: steps[i],
-			Prev: i > 0 ? [i-1] : [],
-			Next: i < steps.length-1 ? [i+1] : [],
-		});
-	}
-	return output
+/**
+ * Adds step IDs to an array of Workflow Steps
+ * with additional attributes if necessary
+ *
+ * @param {Array} steps - Array of step IDs
+ * @param {Number} numOfRIPs - Number of RIPs to use
+ * @returns {Array} - Array of objects with step IDs and additional attributes (e.g. NumCores)
+*/
+export function formatSteps(steps, numOfRIPs) {
+  let output = [];
+  for (let i = 0; i < steps.length; i++) {
+    // If step is Rasterization, add num_cores field
+    if (steps[i] === 5) {
+      output.push({
+        WorkflowStepID: steps[i],
+        NumCores: numOfRIPs
+      });
+    } else {
+      output.push({
+        WorkflowStepID: steps[i]
+      });
+    }
+  }
+  return output
 }
-
 
 export async function postSimulationReport(PrintJobID, WorkFlowID) {
   return await postNewDocument("SimulationReport", {

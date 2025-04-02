@@ -390,7 +390,7 @@
             <v-btn
               icon
               color="primary"
-              size="large"
+              size="x-small"
               @click="handleCSV"
             >
               <v-icon>
@@ -413,42 +413,42 @@
           class="chart-card"
           no-gutters
         >
-          <v-col style="display:flex; flex-direction:column;">
+          <v-col
+            style="display:flex; flex-direction:column; overflow:hidden; height:100%;"
+          >
             <v-tabs
               v-model="selectedChart"
               fixed-tabs
-              color="red"
             >
               <v-tab
-                v-for="report in reportData"
-                :key="report.reportId"
-                :value="report.reportId"
+                v-for="{ index, printjob, workflow } in reportData"
+                :key="index"
+                :value="index"
+                color="white"
+                :class="index === selectedChart ? 'tab-selected' : 'tab-unselected'"
                 style="max-width:unset;"
               >
-                {{ report.printjob.Title }}
-                <br>
-                {{ report.workflow.Title }}
+                {{ printjob.Title }} - {{ workflow.Title }}
               </v-tab>
             </v-tabs>
 
-            <v-tabs-window
-              v-model="selectedChart"
-              style="flex-grow:1;"
-            >
-              <v-tabs-window-item
-                v-for="report in reportData"
-                :key="report.reportId"
-                :value="selectedChart"
+            <!-- Chart Canvas -->
+            <div class="d-flex justify-center align-center pa-3" style="height:100%; width:100%;">
+              <canvas
+                id="chart-canvas"
+                style="max-width:600px; max-height:600px; display:block;"
               >
-                <chart-all
-                  :key="selectedChart"
-                  :data="selectedChartData"
-                  :labels="selectedChartLabels"
-                  :chartId="'chart'+selectedChart"
-                >
-                </chart-all>
-              </v-tabs-window-item>
-            </v-tabs-window>
+              </canvas>
+            </div>
+
+            <!-- Chart Selector -->
+            <chart-all
+              v-if="chartCanvas"
+              style="margin-top:auto;"
+              :chart-info="{data: selectedChartData, labels: selectedChartLabels }"
+              :canvas="chartCanvas"
+            >
+            </chart-all>
           </v-col>
         </v-row>
         <!-- End Charts -->
@@ -463,7 +463,6 @@ import { onMounted, ref, computed, nextTick, reactive } from "vue";
 import {getPrintJob, getWorkflow, getCollection, getWorkflowTimes } from "../api.js";
 import ChartAll from '../Chart/chart-all.vue';
 
-const chartCanvas = ref();
 //// Props
 const {
   reports = [],
@@ -477,51 +476,23 @@ defineProps({
 //// DATA
 ///////////////////
 
+//// Master Data
+const loading = ref(true);
+const reportData = ref([]);
+
+//// Step Time Comparison Data
+const heatmap = ref(null);
 const secondsOrMinutes = ref(0);
 const showHeatMap = ref(0);
-const selectedChart = ref(null);
-const selectedChartData = computed(() => {
-  console.log(selectedChart.value);
-  if (selectedChart.value === null) {
-    return [];
-  }
-  const report = reportData.value[selectedChart.value];
-  return report.steps.map((step)=>{
-    return step.time;
-
-  });
-});
-
-const selectedChartLabels = computed(() => {
-  return labels.value.map((label)=>{
-    return label.title;
-  })
-});
-
-const toTimeUnit = (time) => {
-  if (secondsOrMinutes.value === 0) {
-    return (time / 60).toFixed(2);
-  }
-  return time;
-};
-const comparisonScroll = ref(null);
-const comparisonArrow = ref(false);
-const overviewScroll = ref(null);
-const overviewArrow = ref(false);
-const scrollArrowConsumed = ref(false);
-const checkScroll = () => {
-  const element = comparisonScroll.value.$el;
-  comparisonArrow.value = element.scrollLeft + element.clientWidth < element.scrollWidth;
-  const element2 = overviewScroll.value.$el;
-  overviewArrow.value = element2.scrollLeft + element2.clientWidth < element2.scrollWidth;
-}
-
-const reportData = ref([]);
-const heatmap = ref(null);
-const labels = ref([]);
-const loading = ref(true);
 const highlightedStep = ref(null);
+const genericSteps = ref(null);
 
+//// Step Time Chart Data
+const selectedChart = ref(null);
+const labels = ref([]);
+const chartCanvas = ref(null);
+
+////
 const headersOverview = ref({
   report: [
     { text: "Date Created", value: "dateTime" },
@@ -535,13 +506,38 @@ const headersOverview = ref({
   ],
 });
 
-let colors = [
-  'purple',
-  'orange',
-  'green',
-  'red',
-  'blue',
-];
+//// Scroll Data
+const comparisonScroll = ref(null);
+const comparisonArrow = ref(false);
+const overviewScroll = ref(null);
+const overviewArrow = ref(false);
+const scrollArrowConsumed = ref(false);
+const checkScroll = () => {
+  const element = comparisonScroll.value.$el;
+  comparisonArrow.value = element.scrollLeft + element.clientWidth < element.scrollWidth;
+  const element2 = overviewScroll.value.$el;
+  overviewArrow.value = element2.scrollLeft + element2.clientWidth < element2.scrollWidth;
+}
+
+//////////////////
+//// COMPUTED
+//////////////////
+
+const selectedChartData = computed(() => {
+  if (selectedChart.value === null) {
+    return [];
+  }
+  const report = reportData.value[selectedChart.value];
+  return report.steps.map((step)=>{
+    return step.time;
+  });
+});
+
+const selectedChartLabels = computed(() => {
+  return labels.value.map((label)=>{
+    return label.title;
+  })
+});
 
 //////////////////
 //// Navigation
@@ -554,7 +550,6 @@ const scrollToBottomOfCharts = () => {
 const scrollToTopOfOverview = () => {
   document.getElementById("overview-top").scrollIntoView();
 };
-
 
 const scrollToEndOfOverview = () => {
   const refval = overviewScroll.value;
@@ -570,24 +565,16 @@ const scrollToTopOfComparison = () => {
   document.getElementById("comparison-top").scrollIntoView();
 };
 
-
 //////////////////////
 //// Logic
 //////////////////////
 
-const lerp = (start, end, amount) => {
-  return (1-amount) * start + amount * end;
-}
-
-const clamp = (number, floor, ceil) => {
-  if (number < floor) {
-    return floor;
+const toTimeUnit = (time) => {
+  if (secondsOrMinutes.value === 0) {
+    return (time / 60).toFixed(2);
   }
-  if (number > ceil) {
-    return ceil;
-  }
-  return number;
-}
+  return time;
+};
 
 const getHeatmapColor = (step) => {
 
@@ -595,22 +582,18 @@ const getHeatmapColor = (step) => {
     return 'white';
   }
 
-  const map = heatmap.value[step.stepId];
-  const score = map.scores[step.reportId];
+  const map = heatmap.value[step.stepid];
+  const score = map.scores[step.reportid];
+  const scores_total = score.length;
+  const high_score = map.high_score ? map.high_score : 1;
+  const mid_score  = map.high_score / 2;
 
-  if (score === map.low_score) {
-    return `rgba(0,255,0,0.5)`;
-  }
-  if (score === map.high_score) {
-    return `rgba(255,0,0,0.7)`;
-  }
-  if (score >= ((map.high_score - map.low_score) / 2)) {
-    const midpoint = (map.high_score_value - map.low_score_value) / 2;
-    return `rgba(255,0,0,calc(0.7 + ${(step.time - midpoint) / (map.high_score_value - midpoint)}));`
-  }
-  if (score < ((map.high_score - map.low_score) / 2)) {
-    const midpoint = (map.high_score_value - map.low_score_value) / 2;
-    return `rgba(0,255,0,calc(${(step.time - map.low_score_value) / (midpoint - map.low_score_value)}));`
+  if (score > (mid_score)) {
+    return `rgba(255,0,0,${score / high_score});`
+  } else if (score < (mid_score)) {
+    return `rgba(0,255,0,calc(${1 - (score/high_score)}));`
+  } else {
+    return 'yellow';
   }
 }
 
@@ -625,38 +608,33 @@ const generateHeatmap = (steps) => {
     // Loop through each simulation report and get it's time for our current step
     reportData.value.forEach((report) => {
       times.push({
-          reportId: index++,
+          reportid: report.report.id,
           time: report.steps[step.value].time
         });
     });
-
 
     // Now that we have all times for this step, sort them.
     times.sort((a,b)=>{
       return (a.time > b.time);
     });
 
+
     // Each simulation report will be assigned a score from where it lies in the sorted array.
     const scores = {};
     let prev_time = times[0].time;
     let score = 0;
     times.forEach((time) => {
-      if (prev_time != time.time) {
+      if (prev_time !== time.time) {
         score++;
       }
       prev_time = time.time;
-      scores[time.reportId] = score;
+      scores[time.reportid] = score;
     });
-
     maps.push({
       stepId: step.value,
-      low_score: 0,
-      low_score_value: times[0].time,
-      high_score: score,
-      high_score_value: times[times.length-1].time,
       scores,
+      high_score: score,
     });
-
   });
   return maps;
 };
@@ -668,7 +646,6 @@ const generateHeatmap = (steps) => {
 const handleCSV = () => {
 
   const headers = labels.value.map((label)=>{
-    console.log(label);
     return label.title;
   }).join(",");
 
@@ -762,28 +739,39 @@ const getGenericWorkflowSteps = async () => {
   return [];
 };
 
-const prepareReports = async (workflowStepDefinitions) => {
-  const genericSteps = await getGenericWorkflowSteps();
+/**
+* Create Step
+* @return {object} formatted step object
+*/
+const createStep = (reportId, stepId, stepTitle, timePerPage, setupTime, totalTime, isPlaceholder = false) => {
+  return {
+    reportid: reportId,
+    stepid: stepId,
+    title: stepTitle,
+    setuptime: setupTime,
+    timeperpage: timePerPage,
+    time: totalTime,
+    placeholder: isPlaceholder,
+  }
+}
 
-  // Get a local copy of all reports.
+
+const prepareReports = async (workflowStepDefinitions) => {
+  //// 1. Copy Reports
   const mutableReports = reports.map((report)=>{
     return JSON.parse(JSON.stringify(report));
   });
 
-
+  //// 2. Insert information into reports
+  //// Todo: Make asynchrnous?
   let index = 0;
-
-  // Get peripheral info about each report
   for (const report of mutableReports) {
-
-    report.dateTime = report.Date + " " + report.Time;
 
     const response = await Promise.all([
       getPrintJob(report.PrintJobID),
       getWorkflow(report.WorkflowID),
       getWorkflowTimes(report.id),
     ]);
-
     for (let i = 0; i < response.length; i++) {
       if (!response[i].ok) {
         alert("Error Getting Data!");
@@ -791,44 +779,45 @@ const prepareReports = async (workflowStepDefinitions) => {
       }
     }
 
-    const printjob = response[0].ok ? await response[0].json() : null;
-    const workflow = response[1].ok ? await response[1].json() : null;
-    const stepTime = response[2].ok ? await response[2].json() : null;
+    const printjob = await response[0].json();
+    const workflow = await response[1].json();
+    const stepTime = await response[2].json();
     const steps = [];
-    const stepsAccounted = {};
+    const stepsAccountedFor = {};
 
-    // Add each step we have accounted a time for.
-    for (let i = 0; i < workflow.WorkflowSteps.length; i++) {
-      const step = workflow.WorkflowSteps[i];
-      const def  = genericSteps[step.WorkflowStepID];
-      const time = (stepTime[step.id] !== undefined) ? stepTime[step.id] : 0;
-      steps.push({
-        reportId: index,
-        stepId: def.id,
-        Title: def.Title,
-        SetupTime: def.SetupTime,
-        TimePerPage: def.TimePerPage,
-        time: time,
-        placeholder: (!!stepTime[step.id]),
-      });
-      stepsAccounted[step.WorkflowStepID] = true;
+
+
+    //// Add formatted time to report
+    report.dateTime = report.Date + " " + report.Time;
+
+    //// Add each workflow step we have accounted a time for.
+    for (let i = 0; i < workflow.Steps.length; i++) {
+      const { id, setup_time, time_per_page, title } = workflow.Steps[i].data;
+      const time = stepTime[id] ? stepTime[id] : 0;
+      steps.push(
+        createStep(report.id, id, title, time_per_page, setup_time, time)
+      );
+      stepsAccountedFor[id] = true;
     }
 
-    // Add any steps we are missing as placeholders.
-    for (let i = 0; i < genericSteps.length; i++) {
-      if (!stepsAccounted[i]) {
-        const def = genericSteps[i];
-        steps.push({
-          reportId: index,
-          stepId: def.id,
-          Title: def.Title,
-          SetupTime: def.SetupTime,
-          TimePerPage: def.TimePerPage,
-          time: 0,
-          placeholder: true,
-        });
+    //// Add any workflow steps we are missing time for as placeholders.
+    for (let i = 0; i < genericSteps.value.length; i++) {
+      if (!stepsAccountedFor[i]) {
+        const { id, Title, SetupTime, TimePerPage } = genericSteps.value[i];
+        steps.push(
+          createStep(report.id, id, Title, TimePerPage, SetupTime, 0, true)
+        );
+        stepsAccountedFor[id] = false;
       }
     }
+
+    let colors = [
+      'purple',
+      'orange',
+      'green',
+      'red',
+      'blue',
+    ];
 
     const all = {
       printjob: printjob,
@@ -844,15 +833,14 @@ const prepareReports = async (workflowStepDefinitions) => {
 
   }
 
-  // Get labels for our charts
+  //// 3. Get labels for our charts
   let i = 0;
-  labels.value = genericSteps.map((step) => {
+  labels.value = genericSteps.value.map((step) => {
     return {title: step.Title, value: i++ }
   });
 
-  heatmap.value = generateHeatmap(labels.value);
-
 };
+
 
 //////////////////
 //// Computed
@@ -864,11 +852,15 @@ const prepareReports = async (workflowStepDefinitions) => {
 
 onMounted(
   async () => {
+    genericSteps.value = await getGenericWorkflowSteps();
     await prepareReports();
+    heatmap.value = generateHeatmap(labels.value);
+
     loading.value=false;
     await nextTick();
     setTimeout(() => {
       checkScroll();
+      chartCanvas.value = document.getElementById("chart-canvas");
     }, 1000);
 });
 </script>
@@ -885,6 +877,7 @@ onMounted(
   width: var(--overall-width);
   height: var(--overall-height);
   border-radius:10px !important;
+  overflow: hidden !important;
 }
 
 .header-bar {
@@ -1055,6 +1048,7 @@ onMounted(
   padding-right:10%;
   text-wrap:nowrap;
   overflow:hidden;
+  font-weight:500;
 }
 
 .comparison-table-step-names{
@@ -1192,6 +1186,17 @@ onMounted(
 .step-name-selectable:hover {
   opacity:0.5;
   cursor:pointer;
+}
+
+.tab-selected {
+  color: #000000 !important;
+  font-weight:600;
+  font-size:1.0em;
+}
+
+.tab-unselected {
+  font-weight:400;
+  font-size:0.8em;
 }
 </style>
 

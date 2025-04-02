@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div>
     <LiveChatWidget license="12332502" group="0" />
     <error-popups
       :error="errorMessage"

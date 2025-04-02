@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <div>
     <!-- Header Row -->
     <v-row
       class="ml-4 mr-4 mt-1 pa-0"
@@ -56,9 +56,8 @@
     </v-row>
 
     <v-row
-      class="mb-8 ml-8 mr-8"
       no-gutters
-      style="max-height: 500px; overflow-y:auto; border-width: 2px; border-color: rgba(0, 0, 0, 0.15); border-style: solid;"
+      class="mb-8 ml-8 mr-8 report-list-container"
     >
       <!-- Simulation Report List Column -->
       <v-col>
@@ -94,7 +93,7 @@
         </v-list>
       </v-col>
     </v-row>
-  </v-main>
+  </div>
 </template>
 
 <script setup>
@@ -260,6 +259,14 @@
   border-left-style:solid;
   border-right-style:solid;
   border-bottom-style:solid;
+}
+
+.report-list-container{
+  max-height: 500px;
+  overflow-y:auto;
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0.15);
+  border-style: solid;
 }
 
 .item-selection:hover{

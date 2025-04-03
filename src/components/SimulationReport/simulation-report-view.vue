@@ -150,7 +150,6 @@
         <v-row
           no-gutters
           class="comparison-card"
-          style="position:relative;"
         >
           <v-col>
             <v-row
@@ -209,7 +208,7 @@
               </v-col>
 
               <!-- Step Times Column -->
-              <v-col style="border-style:groove; border-width:3px; border-color:white; max-width:60%; min-width:60%;">
+              <v-col style="border-style:groove; border-width:3px; border-color:white; max-width:60%; min-width:60%; position:relative;">
                 <!-- Scroll Indicator -->
                 <v-row
                   ref="comparisonScroll"

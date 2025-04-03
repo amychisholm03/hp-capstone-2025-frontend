@@ -9,7 +9,8 @@ We were tasked with creating a full-stack cloud application that supports [Indus
 Locally
 
 ```sh
-# Double check API consts in src/components/api.js
+cp env.sample .env
+# Double check env variables
 npm install
 npm run dev
 ```
@@ -17,7 +18,8 @@ npm run dev
 For Production
 
 ```sh
-# Double check API consts in src/components/api.js
+cp env.sample .env
+# Double check env variables
 npm install
 npm run build
 ```

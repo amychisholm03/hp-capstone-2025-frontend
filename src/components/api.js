@@ -1,8 +1,5 @@
-// export const API_URL = "https://api.wsuv-hp-capstone.com"
-// export const API_PORT = "443"
-export const API_URL = "http://localhost"
-export const API_PORT = "5040"
-
+export const API_URL = import.meta.env.API_URL
+export const API_PORT = import.meta.env.API_PORT
 
 export async function getCollection(coll) {
   return await fetch(`${API_URL}:${API_PORT}/${coll}`, {

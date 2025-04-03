@@ -12,7 +12,6 @@ declare module 'vue' {
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
-    LiveChatWidget: typeof import('./src/components/ChatBot/ChatWidget.vue')['default']
     Logs: typeof import('./src/components/Logs.vue')['default']
     LogViewer: typeof import('./src/components/Log/LogViewer.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']

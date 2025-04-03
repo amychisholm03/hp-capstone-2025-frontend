@@ -271,7 +271,9 @@ const refreshChart = () =>{
 
 //// Refresh Chart On Prop Update
 watch(
-  () => props.chartInfo,
+  () => {
+return props.chartInfo
+},
   (value) => {
   if (value.labels && value.data) {
     const l = value.labels;

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <LiveChatWidget license="12332502" group="0" />
+    <LiveChatWidget
+      license="12332502"
+      group="0"
+    />
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
@@ -71,13 +74,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getCollection } from "./api.js";
+import { LiveChatWidget } from '@livechat/widget-vue'
 import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';
 import SimulationReportView from './SimulationReport/simulation-report-view.vue';
 import ModuleToolbar from './module-toolbar.vue';
 import ErrorPopups from "./ErrorPopups.vue";
-import { LiveChatWidget } from '@livechat/widget-vue'
 
 ///////////////////////
 //// DATA
@@ -120,7 +123,6 @@ const clearReports = () => {
 * View One Or More Simulation Report
 */
 const viewReports = (reports) => {
-  console.log(reports);
   selectedReports.value = reports;
   viewing.value = true;
 };

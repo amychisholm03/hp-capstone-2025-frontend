@@ -128,7 +128,7 @@
   // DATA
   /////////////////
 
-  const COMPARISON_LIMIT = 5;
+  const COMPARISON_LIMIT = 12;
   const comparing = ref(false);
   const selectedReports = ref([]);
 

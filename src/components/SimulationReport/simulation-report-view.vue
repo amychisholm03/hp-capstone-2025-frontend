@@ -433,7 +433,10 @@
             </v-tabs>
 
             <!-- Chart Canvas -->
-            <div class="d-flex justify-center align-center pa-3" style="height:100%; width:100%;">
+            <div
+              class="align-center d-flex justify-center pa-3"
+              style="height:100%; width:100%;"
+            >
               <canvas
                 id="chart-canvas"
                 style="max-width:600px; max-height:600px; display:block;"

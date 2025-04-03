@@ -1,40 +1,92 @@
 <template>
   <v-main>
-    <error-popups :error="errorMessage" @clear-error="errorMessage = ''">
+    <error-popups
+      :error="errorMessage"
+      @clear-error="errorMessage = ''"
+    >
     </error-popups>
-    <v-form fast-fail class="mb-5 mt-5" @submit.prevent="createWorkflow">
-      <v-text-field v-model="workflowTitle" :rules="workflowTitleValidation" label="Workflow Title" class="ml-2 mr-5" />
-      <v-select v-model="selectedSteps" :rules="selectedStepsValidation" :items="workflowSteps"
-        label="Select Workflow Steps" item-title="Title" return-object class="ml-2 mr-5" multiple>
+    <v-form
+      fast-fail
+      class="mb-5 mt-5"
+      @submit.prevent="createWorkflow"
+    >
+      <v-text-field
+        v-model="workflowTitle"
+        :rules="workflowTitleValidation"
+        label="Workflow Title"
+        class="ml-2 mr-5"
+      />
+      <v-select
+        v-model="selectedSteps"
+        :rules="selectedStepsValidation"
+        :items="workflowSteps"
+        label="Select Workflow Steps"
+        item-title="Title"
+        return-object
+        class="ml-2 mr-5"
+        multiple
+      >
         <template #selection="{ item, index }">
           <v-chip v-if="index < 2">
             <span>{{ item.title }}</span>
           </v-chip>
-          <span v-if="index === 2" class="align-self-center text-caption text-grey">
+          <span
+            v-if="index === 2"
+            class="align-self-center text-caption text-grey"
+          >
             (+{{ selectedSteps.length - 2 }} others)
           </span>
         </template>
       </v-select>
       <v-row>
-        <v-col cols="100" class="align-center d-flex">
-          <v-text-field v-model="numberOfRips" class="custom-field ml-2 mr-5" :rules="numberOfRipsValidation"
-            label="Number of RIPs" />
+        <v-col
+          cols="100"
+          class="align-center d-flex"
+        >
+          <v-text-field
+            v-model="numberOfRips"
+            class="custom-field ml-2 mr-5"
+            :rules="numberOfRipsValidation"
+            label="Number of RIPs"
+          />
         </v-col>
       </v-row>
-      <v-row class="height:auto; mb-3 mr-1 pa-0" no-gutters>
+      <v-row
+        class="height:auto; mb-3 mr-1 pa-0"
+        no-gutters
+      >
         <v-col class="align-end d-flex justify-end mr-2">
-          <v-btn v-if="success && !failure" size="x-small" icon type="submit" class="mb-2" color="success">
+          <v-btn
+            v-if="success && !failure"
+            size="x-small"
+            icon
+            type="submit"
+            class="mb-2"
+            color="success"
+          >
             <v-icon size="medium">
               mdi-check
             </v-icon>
           </v-btn>
-          <v-btn v-if="!success && failure" size="x-small" icon type="submit" class="mb-2" color="error">
+          <v-btn
+            v-if="!success && failure"
+            size="x-small"
+            icon
+            type="submit"
+            class="mb-2"
+            color="error"
+          >
             <v-icon size="medium">
               mdi-close
             </v-icon>
           </v-btn>
-          <v-btn type="submit" size="large" color="secondary" :disabled="failure || success"
-            style="text-transform: none;">
+          <v-btn
+            type="submit"
+            size="large"
+            color="secondary"
+            :disabled="failure || success"
+            style="text-transform: none;"
+          >
             Create Workflow
           </v-btn>
         </v-col>

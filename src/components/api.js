@@ -1,7 +1,7 @@
-export const API_URL = "https://api.wsuv-hp-capstone.com"
-export const API_PORT = "443"
-// export const API_URL = "http://localhost"
-// export const API_PORT = "5040"
+// export const API_URL = "https://api.wsuv-hp-capstone.com"
+// export const API_PORT = "443"
+export const API_URL = "http://localhost"
+export const API_PORT = "5040"
 
 
 export async function getCollection(coll) {
@@ -70,7 +70,6 @@ export async function postWorkflow(Title, WorkflowSteps) {
   });
 }
 
-
 /**
  * Adds step IDs to an array of Workflow Steps
  * with additional attributes if necessary
@@ -88,8 +87,7 @@ export function formatSteps(steps, numOfRIPs) {
         WorkflowStepID: steps[i],
         NumCores: numOfRIPs
       });
-    }
-    else {
+    } else {
       output.push({
         WorkflowStepID: steps[i]
       });
@@ -97,7 +95,6 @@ export function formatSteps(steps, numOfRIPs) {
   }
   return output
 }
-
 
 export async function postSimulationReport(PrintJobID, WorkFlowID) {
   return await postNewDocument("SimulationReport", {

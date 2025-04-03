@@ -1,41 +1,31 @@
 <template>
-  <v-app>
-    <LiveChatWidget license="12332502" group="0" />
+  <div>
+    <LiveChatWidget
+      license="12332502"
+      group="0"
+    />
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
     >
     </error-popups>
+
+    <!-- Viewing Simulation Reports -->
     <v-dialog
-      v-model="SimulationReportCompareDialogue"
-      scrollable
+      v-model="viewing"
       persistent
+      height="96vh"
     >
-      <simulation-report-compare
-        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
-        class="detailed-report"
-        :report1="compareReportOne"
-        :report2="compareReportTwo"
-        @exit="clearCompareSimulationReports"
+      <simulation-report-view
+        :reports="selectedReports"
+        @exit="clearReports"
       >
-      </simulation-report-compare>
+      </simulation-report-view>
     </v-dialog>
 
-    <v-dialog
-      v-model="SimulationReportViewDialogue"
-      scrollable
-      persistent
-    >
-      <simulation-report-compare
-        style="max-width: 100%; max-height:100%; overflow-y: scroll;"
-        class="detailed-report"
-        :report1="selectedReport"
-        :report2="null"
-        @exit="SimulationReportViewDialogue = false"
-      >
-      </simulation-report-compare>
-    </v-dialog>
+    <!-- Main -->
     <v-main class="pa-3">
+      <!-- Create Simulation Reports -->
       <v-card
         class="module"
         style="max-height: 292px; height:auto;"
@@ -56,6 +46,8 @@
         ></simulation-report-generate>
       </v-card>
       <div class="mb-1 mt-1"></div>
+
+      <!-- View a List of Simulation Reports -->
       <v-card class="large-module">
         <module-toolbar
           class="module-toolbar"
@@ -71,70 +63,85 @@
           :print-jobs="printJobs"
           :workflows="workflows"
           :simulation-reports="simulationReports"
-          @select-report="selectSimulationReport"
-          @compare-reports="compareSimulationReports"
+          @view-reports="viewReports"
         >
         </simulation-report-history>
       </v-card>
     </v-main>
-  </v-app>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { getCollection } from "./api.js";
+import { LiveChatWidget } from '@livechat/widget-vue'
 import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';
-import SimulationReportCompare from './SimulationReport/simulation-report-compare.vue';
+import SimulationReportView from './SimulationReport/simulation-report-view.vue';
 import ModuleToolbar from './module-toolbar.vue';
-import { getCollection } from "./api.js";
 import ErrorPopups from "./ErrorPopups.vue";
-import { LiveChatWidget } from '@livechat/widget-vue'
 
-const errorMessage = ref('');
-const workflows = ref([]);
-const printJobs = ref([]);
-const simulationReports = ref([]);
-const SimulationReportViewDialogue = ref(false);
-const SimulationReportCompareDialogue = ref(false);
-
-const selectedReport = ref(null)
-const selectedPrintJob = ref(null)
-const selectedWorkflow = ref(null)
+///////////////////////
+//// DATA
+///////////////////////
 
 const simReportGenMinimized = ref(false);
 const simReportHistoryMinimized = ref(false);
+const viewing = ref(false);
+const workflows = ref([]);
+const printJobs = ref([]);
+const simulationReports = ref([]);
+const selectedReports = ref([]);
+const errorMessage = ref('');
 
-const compareReportOne = ref(false);
-const compareReportTwo = ref(false);
+///////////////////////
+//// On Mounted
+///////////////////////
+
+onMounted(async () => {
+  await Promise.all([
+    getPrintJobs(),
+    getWorkflows(),
+    getSimulationReports(),
+  ]);
+});
 
 //////////////////////
 //// User Actions
 //////////////////////
 
-const clearCompareSimulationReports = () => {
-  compareReportOne.value = null;
-  compareReportTwo.value = null;
-  SimulationReportCompareDialogue.value = false;
+/**
+* Clear Selected Simulation Reports
+*/
+const clearReports = () => {
+  selectedReports.value = [];
+  viewing.value = false;
 }
 
-const compareSimulationReports = (report1, report2) => {
-  compareReportOne.value = report1;
-  compareReportTwo.value = report2;
-  SimulationReportCompareDialogue.value = true;
+/**
+* View One Or More Simulation Report
+*/
+const viewReports = (reports) => {
+  selectedReports.value = reports;
+  viewing.value = true;
 };
 
-const selectSimulationReport = (id) => {
-  selectedReport.value = simulationReports.value.find(item => {
-    return item.id === id
+////////////////////////
+//// Helper Functions
+////////////////////////
+
+const addTimeProperty = (reports) => {
+  reports.forEach((report) => {
+    const d = new Date(report.CreationTime * 1000);
+    const month = d.getMonth() + 1;
+    const day   = d.getDate();
+    const year  = d.getFullYear();
+    const hours = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+    const minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
+    report.Date = month + "/" + day + "/" + year;
+    report.Time = hours + ":" + minutes;
   });
-  selectedPrintJob.value = printJobs.value.find(item => {
-    return item.id === selectedReport.value.PrintJobID
-  });
-  selectedWorkflow.value = workflows.value.find(item => {
-    return item.id === selectedReport.value.WorkflowID
-  });
-  SimulationReportViewDialogue.value = true;
 }
 
 ///////////////////
@@ -145,71 +152,45 @@ const selectSimulationReport = (id) => {
 * Get a list of simulation reports
 */
 const getSimulationReports = async () => {
-  //TODO: Fix formatting
-  try {
-    const response = await getCollection("SimulationReport");
-    if (response.ok) {
-      simulationReports.value = await response.json();
-      console.log(simulationReports.value);
-      simulationReports.value.forEach((report) => {
-
-        // parse the creation time to a human readable format
-        const dateObj = new Date(report.CreationTime * 1000);
-        report.Date = dateObj.getMonth() + 1 + "/" + dateObj.getDate() + "/" + dateObj.getFullYear();
-        let hours = dateObj.getHours().toString();
-        let minutes = dateObj.getMinutes().toString();
-        if (hours.length == 1) {
-          hours = '0' + hours;
-        }
-        if (minutes.length == 1) {
-          minutes = '0' + minutes;
-        }
-        report.Time = hours + ":" + minutes;
-
-      });
-    } else {
-      errorMessage.value = "Error fetching list of simulation reports";
-      console.log("Error fetching data. Response from server: " + String(response.status));
-    }
-  } catch (error) {
+  const response = await getCollection("SimulationReport");
+  if (response.ok) {
+    simulationReports.value = await response.json();
+    addTimeProperty(simulationReports.value);
+  } else {
     errorMessage.value = "Error fetching list of simulation reports";
-    console.log(`Error fetching list of simulation reports: ${error}`);
+    return false;
   }
+  return true;
 }
 
+/**
+* Get a list of print jobs
+*/
 const getPrintJobs = async () => {
-  try {
-    const response = await getCollection("PrintJob");
-    if (response.ok) {
-      printJobs.value = await response.json();
-    } else {
-      throw new Error(String(response.status));
-    }
-  } catch (error) {
+  const response = await getCollection("PrintJob");
+  if (response.ok) {
+    printJobs.value = await response.json();
+  } else {
+    throw new Error(String(response.status));
     errorMessage.value = "Error fetching list of print jobs";
-    console.log(`Error fetching list of PrintJobs: ${error}`);
+    return false;
   }
+  return true;
 }
 
+/**
+* Get a list of workflows
+*/
 const getWorkflows = async () => {
-  try {
-    const response = await getCollection("Workflow");
-    if (response.ok) {
-      workflows.value = await response.json();
-    } else {
-      throw new Error(String(response.status));
-    }
-  } catch (error) {
+  const response = await getCollection("Workflow");
+  if (response.ok) {
+    workflows.value = await response.json();
+  } else {
     errorMessage.value = "Error fetching list of workflows";
-    console.log(`Error fetching list of Workflows: ${error}`);
+    return false;
   }
+  return true;
 }
-
-onMounted(async () => {
-  await getPrintJobs();
-  await getWorkflows();
-  await getSimulationReports();
-});
 </script>
 
 <style scoped>

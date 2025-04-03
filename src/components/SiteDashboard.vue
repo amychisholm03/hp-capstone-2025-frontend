@@ -1,6 +1,9 @@
 <template>
   <v-app theme="light">
-    <LiveChatWidget license="12332502" group="0" />
+    <LiveChatWidget
+      license="12332502"
+      group="0"
+    />
     <v-toolbar class="toolbar">
       <v-toolbar-title class="header">
         Dashboard

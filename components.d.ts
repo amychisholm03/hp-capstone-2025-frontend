@@ -7,6 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
+    ChartBar: typeof import('./src/components/Chart/chart-bar.vue')['default']
+    ChartPie: typeof import('./src/components/Chart/chart-pie.vue')['default']
+    ChartRadar: typeof import('./src/components/Chart/chart-radar.vue')['default']
+    ChartsSimulationReport: typeof import('./src/components/Chart/charts-simulation-report.vue')['default']
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
@@ -22,6 +27,7 @@ declare module 'vue' {
     SimulationReportHistory: typeof import('./src/components/SimulationReport/simulation-report-history.vue')['default']
     SimulationReportListItem: typeof import('./src/components/SimulationReport/simulation-report-list-item.vue')['default']
     SimulationReports: typeof import('./src/components/SimulationReports.vue')['default']
+    SimulationReportView: typeof import('./src/components/SimulationReport/simulation-report-view.vue')['default']
     SiteDashboard: typeof import('./src/components/SiteDashboard.vue')['default']
     SiteNavigationDrawer: typeof import('./src/components/SiteNavigationDrawer.vue')['default']
     WorkflowCreate: typeof import('./src/components/Workflow/workflow-create.vue')['default']

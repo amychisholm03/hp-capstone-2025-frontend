@@ -8,13 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
-    ChartBar: typeof import('./src/components/Chart/chart-bar.vue')['default']
-    ChartPie: typeof import('./src/components/Chart/chart-pie.vue')['default']
-    ChartRadar: typeof import('./src/components/Chart/chart-radar.vue')['default']
-    ChartsSimulationReport: typeof import('./src/components/Chart/charts-simulation-report.vue')['default']
+    ChatWidget: typeof import('./src/components/ChatBot/ChatWidget.vue')['default']
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
+    LiveChatWidget: typeof import('./src/components/ChatBot/ChatWidget.vue')['default']
     Logs: typeof import('./src/components/Logs.vue')['default']
     LogViewer: typeof import('./src/components/Log/LogViewer.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']
@@ -22,7 +20,6 @@ declare module 'vue' {
     PrintJobs: typeof import('./src/components/PrintJobs.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SimulationReportCompare: typeof import('./src/components/SimulationReport/simulation-report-compare.vue')['default']
     SimulationReportGenerate: typeof import('./src/components/SimulationReport/simulation-report-generate.vue')['default']
     SimulationReportHistory: typeof import('./src/components/SimulationReport/simulation-report-history.vue')['default']
     SimulationReportListItem: typeof import('./src/components/SimulationReport/simulation-report-list-item.vue')['default']

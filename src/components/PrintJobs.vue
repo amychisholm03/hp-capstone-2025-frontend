@@ -1,9 +1,6 @@
 <template>
   <v-app theme="light">
-    <LiveChatWidget
-      license="12332502"
-      group="0"
-    />
+    <ChatWidget />
     <v-main class="pa-3">
       <error-popups
         :error="errorMessage"
@@ -32,7 +29,7 @@ import { useRouter } from 'vue-router';
 import ModuleToolbar from "./module-toolbar.vue";
 import PrintJobCreate from "./PrintJob/print-job-create.vue";
 import ErrorPopups from "./ErrorPopups.vue";
-import { LiveChatWidget } from '@livechat/widget-vue'
+import ChatWidget from './ChatBot/ChatWidget.vue';
 
 const errorMessage = ref('');
 const router = useRouter();

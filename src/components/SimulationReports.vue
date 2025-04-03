@@ -1,9 +1,6 @@
 <template>
   <div>
-    <LiveChatWidget
-      license="12332502"
-      group="0"
-    />
+    <ChatWidget />
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
@@ -74,7 +71,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getCollection } from "./api.js";
-import { LiveChatWidget } from '@livechat/widget-vue'
+import ChatWidget from './ChatBot/ChatWidget.vue';
 import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';

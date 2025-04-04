@@ -35,17 +35,16 @@
       style="height: 90%; width:100%; display: flex; flex-direction:column;"
     >
 
-      <v-list-item>
-        <v-btn
-          class="login-btn"
-          variant="outlined"
-          rounded
-          color="primary"
-          style="max-width: 280px; margin: 10px auto;"
-          @click="routeTo('/Login')"
-        >
-          Log in / Create account
-        </v-btn>
+      <v-list-item @click="routeTo('/Login')">
+      <v-btn
+        class="login-btn"
+        variant="outlined"
+        rounded
+        color="primary"
+        style="max-width: 280px; margin: 10px auto;"
+      >
+        {{ userStore.email ? `Hello, ${userStore.email}` : 'Log in / Create account' }}
+      </v-btn>
       </v-list-item>
 
       <v-list-item
@@ -96,6 +95,7 @@
 <script setup>
   import { ref, onMounted, watch } from "vue";
   import { useRouter } from 'vue-router';
+  import { useUserStore } from '@/stores/user';
 
   const router = useRouter();
   const disabled = ref(false);
@@ -104,6 +104,8 @@
   const routeTo = (where) => {
     router.push(where);
   };
+
+  const userStore = useUserStore();
 </script>
 
 <style>

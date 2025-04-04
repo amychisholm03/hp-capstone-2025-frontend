@@ -14,19 +14,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref } from "vue";
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
-const routeTo = (where) => {
-  router.push(where);
-};
+const email = ref('');
+const password = ref('');
 
-const email = ref('')
-const password = ref('')
+const userStore = useUserStore();
 
 const submit = () => {
+  userStore.setEmail(email.value)
   console.log('Login with:', email.value, password.value)
+  router.push('/')  // redirect to dashboard or home
 }
 </script>
-  

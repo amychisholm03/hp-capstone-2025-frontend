@@ -12,6 +12,7 @@ Locally
 
 ```sh
 # Double check API consts in src/components/api.js
+npm install pinia
 npm install
 npm run dev
 ```
@@ -20,6 +21,7 @@ For Production
 
 ```sh
 # Double check API consts in src/components/api.js
+npm install pinia
 npm install
 npm run build
 ```

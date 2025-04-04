@@ -7,6 +7,7 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
+import Login from '@/components/Login.vue'
 import SiteDashboard from '@/components/SiteDashboard.vue'
 import PrintJobs from '@/components/PrintJobs.vue'
 import WorkFlows from '@/components/WorkFlows.vue'
@@ -14,6 +15,7 @@ import SimulationReports from '@/components/SimulationReports.vue'
 import Logs from '@/components/Logs.vue'
 
 const routes = [
+  { path: '/Login', component: Login},
 	{ path: '/', component: SiteDashboard},
 	{ path: '/PrintJobs', component: PrintJobs},
   { path: '/WorkFlows', component: WorkFlows},

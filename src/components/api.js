@@ -1,5 +1,5 @@
-export const API_URL = import.meta.env.API_URL
-export const API_PORT = import.meta.env.API_PORT
+export const API_URL = import.meta.env.VITE_API_URL
+export const API_PORT = import.meta.env.VITE_API_PORT
 
 export async function getCollection(coll) {
   return await fetch(`${API_URL}:${API_PORT}/${coll}`, {

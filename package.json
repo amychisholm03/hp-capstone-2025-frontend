@@ -17,7 +17,8 @@
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vue-chart-3": "^3.1.8",
-    "vuetify": "^3.6.11"
+    "vuetify": "^3.6.11",
+    "pinia": "^3.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",

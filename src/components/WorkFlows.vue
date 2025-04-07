@@ -1,9 +1,6 @@
 <template>
   <v-app theme="light">
-    <LiveChatWidget
-      license="12332502"
-      group="0"
-    />
+    <ChatWidget />
     <v-main class="pa-3">
       <error-popups
         :error="errorMessage"
@@ -32,7 +29,7 @@ import { getCollection, formatSteps, postWorkflow } from "./api.js";
 import ModuleToolbar from "./module-toolbar.vue";
 import WorkflowCreate from "./Workflow/workflow-create.vue";
 import ErrorPopups from "./ErrorPopups.vue";
-import { LiveChatWidget } from '@livechat/widget-vue'
+import ChatWidget from './ChatBot/chat-widget.vue';
 
 const errorMessage = ref('');
 const router = useRouter();

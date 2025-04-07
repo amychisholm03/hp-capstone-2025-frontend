@@ -1,12 +1,44 @@
 <template>
-  <v-app theme="light">
-    <site-navigation-drawer class="sidebar"></site-navigation-drawer>
-    <router-view class="content"></router-view>
+  <v-app theme="light" class="main-app">
+    <v-toolbar>
+      <v-btn
+        large
+        @click="drawer=!drawer"
+      >
+        <v-icon>
+          mdi-menu
+        </v-icon>
+      </v-btn>
+    </v-toolbar>
+    <site-navigation-drawer
+      class="sidebar"
+      :open="drawer"
+    >
+    </site-navigation-drawer>
+    <router-view
+      :class="mobile ? 'content-mobile' : 'content'"
+    >
+    </router-view>
   </v-app>
 </template>
 
 <script setup>
+  import { ref, computed } from "vue"
+  import { useDisplay } from "vuetify"
   import SiteNavigationDrawer from './components/SiteNavigationDrawer.vue';
+
+  ////////////////////////////
+  //// Data
+  ////////////////////////////
+  const drawer = ref(false);
+
+  ////////////////////////////
+  //// Computed
+  ////////////////////////////
+  const { name } = useDisplay();
+  const mobile = computed(() => {
+    return name.value === 'xs';
+  });
 </script>
 
 <style>
@@ -17,11 +49,20 @@
 .sidebar{
   position:fixed;
   width: var(--drawer-size);
+  max-height: 100vh;
   z-index:99;
+}
+
+.main-app{
+  overflow:hidden;
 }
 
 .content{
   margin-left: var(--drawer-size);
+}
+
+.content-mobile{
+  margin-left: 0;
 }
 
 .header{

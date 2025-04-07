@@ -1,15 +1,13 @@
 <template>
   <v-navigation-drawer
-    style="min-width: 300px; height: 100%;"
-    class="main-drawer"
-    :rail="disabled"
-    :model-value="true"
-    permanent
+    :model-value="open"
+    :permanent="!mobile"
+    :class="mobile ? 'main-drawer-mobile' : 'main-drawer'"
+    :persistent="true"
     theme="light"
   >
     <v-row
       no-gutters
-      style="height: 10%;"
     >
       <v-col
         cols="3"
@@ -30,9 +28,9 @@
         <span> Print OS </span>
       </v-col>
     </v-row>
-    <v-divider></v-divider>
+    <v-divider class="ma-0 pa-0"></v-divider>
     <v-list
-      style="height: 90%; width:100%; display: flex; flex-direction:column;"
+      style="display: flex; flex-direction:column;"
     >
       <v-list-item
         class="menu-item"
@@ -62,10 +60,7 @@
       >
         <v-list-item-title>Simulation</v-list-item-title>
       </v-list-item>
-      <v-divider
-        style="margin-top:auto;"
-        class="pb-2"
-      />
+      <v-divider style="margin-top:auto;"/>
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-archive"
@@ -78,11 +73,24 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, watch } from "vue";
+  import { ref, computed, onMounted, watch } from "vue";
+  import { useDisplay } from "vuetify"
   import { useRouter } from 'vue-router';
 
   const router = useRouter();
   const disabled = ref(false);
+  const { name } = useDisplay();
+
+  const mobile = computed(() => {
+    return name.value === 'xs';
+  });
+
+  defineProps({
+    open: {
+      type: Boolean,
+      required: true,
+    }
+  });
 
   //// ROUTING ////
   const routeTo = (where) => {
@@ -111,7 +119,15 @@
     font-weight:bold;
   }
 
+  .main-drawer {
+    min-width:300px;
+  }
+
   .main-drawer .v-navigation-drawer__content {
-    overflow: hidden;
+    overflow: hidden !important;
+  }
+
+  .main-drawer-mobile .v-navigation-drawer__content {
+    overflow: hidden !important;
   }
 </style>

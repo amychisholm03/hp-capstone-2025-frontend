@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
-    ChatWidget: typeof import('./src/components/ChatBot/ChatWidget.vue')['default']
+    ChatWidget: typeof import('./src/components/ChatBot/chat-widget.vue')['default']
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']

@@ -71,7 +71,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getCollection } from "./api.js";
-import ChatWidget from './ChatBot/ChatWidget.vue';
+import ChatWidget from './ChatBot/chat-widget.vue';
 import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';

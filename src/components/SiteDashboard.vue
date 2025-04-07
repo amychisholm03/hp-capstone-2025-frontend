@@ -47,7 +47,7 @@
 <script setup>
   import { ref, onMounted } from "vue";
   import { useRouter } from 'vue-router';
-  import ChatWidget from './ChatBot/ChatWidget.vue';
+  import ChatWidget from './ChatBot/chat-widget.vue';
 
   const router = useRouter();
 

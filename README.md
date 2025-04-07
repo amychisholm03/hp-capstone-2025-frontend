@@ -10,18 +10,16 @@ We were tasked with creating a full-stack cloud application that supports [Indus
 
 Locally
 
-```sh
+```bash
 # Double check API consts in src/components/api.js
-npm install pinia
 npm install
 npm run dev
 ```
 
 For Production
 
-```sh
+```bash
 # Double check API consts in src/components/api.js
-npm install pinia
 npm install
 npm run build
 ```

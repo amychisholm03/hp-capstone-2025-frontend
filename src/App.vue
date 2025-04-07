@@ -1,11 +1,20 @@
 <template>
-  <v-app theme="light" class="main-app">
-    <v-toolbar>
+  <v-app
+    theme="light"
+    class="main-app"
+  >
+    <v-toolbar
+      v-if="mobile"
+      class="align-center d-flex"
+    >
       <v-btn
-        large
+        class="ml-1 pl-3"
+        size="medium"
         @click="drawer=!drawer"
       >
-        <v-icon>
+        <v-icon
+          size="large"
+        >
           mdi-menu
         </v-icon>
       </v-btn>
@@ -13,6 +22,7 @@
     <site-navigation-drawer
       class="sidebar"
       :open="drawer"
+      @close="drawer=!drawer"
     >
     </site-navigation-drawer>
     <router-view

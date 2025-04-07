@@ -8,6 +8,7 @@
   >
     <v-row
       no-gutters
+      class="align-center d-flex"
     >
       <v-col
         cols="3"
@@ -26,6 +27,24 @@
         class="align-center d-flex justify-start"
       >
         <span> Print OS </span>
+      </v-col>
+      <v-col
+        v-if="mobile"
+        cols="auto"
+      >
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="white"
+        >
+          <v-icon
+            size="x-large"
+            @click="$emit('close')"
+          >
+            mdi-chevron-left
+          </v-icon>
+        </v-btn>
       </v-col>
     </v-row>
     <v-divider class="ma-0 pa-0"></v-divider>
@@ -60,7 +79,7 @@
       >
         <v-list-item-title>Simulation</v-list-item-title>
       </v-list-item>
-      <v-divider style="margin-top:auto;"/>
+      <v-divider style="margin-top:auto;" />
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-archive"

@@ -1,6 +1,6 @@
 <template>
     <LiveChatWidget license="19113362" group="0" visibility="minimized" customer-name=""
-    :customer-email="name" />
+    :customer-email="email" />
 </template>
 
 <script setup>
@@ -10,9 +10,9 @@
     } from '@livechat/widget-vue'
     import { useUserStore } from '@/stores/user';
     const userStore = useUserStore();
-    const name = ref('');
+    const email = ref('');
 
-    watch(userStore.name, (newName) => {
-       name.value = newName;
+    watch(userStore.email, (newEmail) => {
+       email.value = newEmail;
     }, { immediate: true });
 </script>

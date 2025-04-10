@@ -4,7 +4,7 @@
     group="0" 
     visibility="minimized" 
     customer-name="John Coke"
-    customer-email="john@cocacola.com" 
+    :customer-email="userStore.name"
     @change-group="handleChangeGroup"
     @new-event="handleNewEvent" 
     @form-submitted="handleFormSubmitted"
@@ -22,6 +22,8 @@ import {
     useWidgetGreeting,
     useWidgetCustomerData,
 } from '@livechat/widget-vue'
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 
 export default {
     name: 'chat-widget', 

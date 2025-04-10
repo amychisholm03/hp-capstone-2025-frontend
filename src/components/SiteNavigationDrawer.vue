@@ -34,6 +34,19 @@
     <v-list
       style="height: 90%; width:100%; display: flex; flex-direction:column;"
     >
+
+      <v-list-item @click="routeTo('/Login')">
+      <v-btn
+        class="login-btn"
+        variant="outlined"
+        rounded
+        color="primary"
+        style="max-width: 280px; margin: 10px auto;"
+      >
+        {{ userStore.email ? `Hello, ${userStore.email}` : 'Log in / Create account' }}
+      </v-btn>
+      </v-list-item>
+
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-view-dashboard"
@@ -41,6 +54,7 @@
       >
         <v-list-item-title>Dashboard</v-list-item-title>
       </v-list-item>
+
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-printer-pos-plus"
@@ -62,6 +76,7 @@
       >
         <v-list-item-title>Simulation</v-list-item-title>
       </v-list-item>
+
       <v-divider
         style="margin-top:auto;"
         class="pb-2"
@@ -80,6 +95,7 @@
 <script setup>
   import { ref, onMounted, watch } from "vue";
   import { useRouter } from 'vue-router';
+  import { useUserStore } from '@/stores/user';
 
   const router = useRouter();
   const disabled = ref(false);
@@ -88,6 +104,8 @@
   const routeTo = (where) => {
     router.push(where);
   };
+
+  const userStore = useUserStore();
 </script>
 
 <style>

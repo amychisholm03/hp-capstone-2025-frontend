@@ -33,7 +33,10 @@ jobs:
             username: ${{ secrets.EC2_USER}}
             key: ${{ secrets.EC2_SSH_KEY }}
             script: |
+                  sudo chown builder:web /var/www/html
+                  sudo chown -R builder:builder /var/www/html/*
+                  sudo chown -R builder:builder /var/www/html/.*
+                  sudo su builder
                   cd /var/www/html
-                  sudo rm -rf node_modules
-                  sudo npm install
-                  sudo npm run build
+                  npm install
+                  npm run build

@@ -7,7 +7,6 @@ We were tasked with creating a full-stack cloud application that supports [Indus
 ## Running the Application
 
 Locally
-
 ```sh
 cp env.sample .env
 # Double check env variables
@@ -16,7 +15,6 @@ npm run dev
 ```
 
 For Production
-
 ```sh
 cp env.sample .env
 # Double check env variables

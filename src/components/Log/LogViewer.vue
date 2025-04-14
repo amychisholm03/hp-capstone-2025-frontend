@@ -208,7 +208,7 @@
 }
 
 :deep(.v-data-table-header__content) {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   line-height: 0.9;
   font-weight: 600;
   font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', monospace;

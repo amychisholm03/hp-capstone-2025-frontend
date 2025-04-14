@@ -55,8 +55,7 @@
       class="mt-1 mx-4 options pa-0"
       no-gutters
     >
-      <v-spacer>
-      </v-spacer>
+      <v-spacer></v-spacer>
       <v-col
         class="align-center d-flex justify-center pa-0"
         no-gutters
@@ -271,6 +270,15 @@
   border-top-width:1px;
 }
 
+.report-history-item-mobile {
+  height:64px;
+  border-width:1px;
+  border-left-width:0px;
+  border-right-width:0px;
+  border-top-width:1px;
+  margin-right:4px;
+}
+
 .report-history-table {
   border-width:1px;
   border-style:solid;
@@ -292,6 +300,7 @@
   border-width:2px;
   border-color:lightgray;
   margin-bottom:16px;
+  box-shadow: none;
 }
 
 .slide-fade-enter-active {
@@ -344,7 +353,7 @@
   max-height: 50vh;
   margin-left: 8px !important;
   margin-right: 8px !important;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
   overflow-y: auto;
   overflow-x:hidden;
   border-style:none !important;

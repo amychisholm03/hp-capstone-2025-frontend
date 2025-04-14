@@ -4,7 +4,6 @@
       <v-container class="ma-3 pa-3">
         <v-card
           class="module"
-          style="max-height: 600px; height: auto; max-width: 1000px; width: 1000px;"
         >
           <module-toolbar
             class="module-toolbar"

@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="report-history-item"
+    :class="mobile ? 'report-history-item-mobile' : 'report-history-item'"
     @click="$emit('select-report', report.id)"
   >
     <v-row
@@ -8,14 +8,15 @@
       no-gutters
     >
       <v-col
-        :cols="mobile ? '5' : '4'"
+        :cols="mobile ? '5' : 'auto'"
         class="align-center d-flex pl-3"
         :class="mobile ? 'justify-center' : ''"
       >
         <v-chip
           variant="elevated"
-          :size="mobile ? 'x-small' : 'small'"
-          tile
+          size="small"
+          class="align-center d-flex justify-center"
+          style="box-shadow:none;"
         >
           <v-card-text
             :class="mobile ? 'mobile-item-val' : 'item-val'"
@@ -27,7 +28,7 @@
 
       <v-col
         v-if="!mobile"
-        cols="1"
+        cols="auto"
         class="align-center d-flex"
         :class="mobile ? 'justify-center' : ''"
       >
@@ -43,14 +44,14 @@
       </v-col>
 
       <v-col
-        :cols="mobile ? '6' : '4'"
+        :cols="mobile ? '6' : 'auto'"
         class="align-center d-flex"
-        :class="mobile ? 'justify-center pr-6' : ''"
+        :class="mobile ? 'justify-center pr-3' : ''"
       >
         <v-chip
-          :size="mobile ? 'x-small' : 'small'"
+          size="small"
           variant="elevated"
-          tile
+          style="box-shadow:none;"
         >
           <v-card-text
             :class="mobile ? 'mobile-item-val' : 'item-val'"
@@ -67,7 +68,7 @@
       <v-col
         v-if="!mobile"
         cols="auto"
-        class="mr-4"
+        class="align-center d-flex mr-4"
       >
         <v-card-text
           class="item-val-time"
@@ -105,15 +106,16 @@ const {report = null} = defineProps({
 	max-width: 400px;
 }
 
-.item-val{
+.item-val {
   font-weight:bold;
-  font-size:1.8em;
+  font-size:1.1em;
   font-family:'Courier New', Courier, monospace;
+  margin-inline: 4px;
 }
 
 .mobile-item-val{
   font-weight:bold;
-  font-size:1.3em;
+  font-size:0.8em;
   font-family:'Courier New', Courier, monospace;
 }
 

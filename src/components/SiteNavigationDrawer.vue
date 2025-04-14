@@ -1,9 +1,9 @@
 <template>
   <v-navigation-drawer
-    :model-value="open"
+    :model-value="open || !mobile"
     :permanent="!mobile"
-    :class="mobile ? 'main-drawer-mobile' : 'main-drawer'"
     :persistent="true"
+    class="main-drawer"
     theme="light"
   >
     <v-row
@@ -51,23 +51,22 @@
     <v-list
       style="display: flex; flex-direction:column;"
     >
-
-      <v-list-item @click="routeTo('/Login')">
-      <v-btn
-        class="login-btn"
-        variant="outlined"
-        rounded
-        color="primary"
-        style="max-width: 280px; margin: 10px auto;"
-      >
-        {{ userStore.email ? `Hello, ${userStore.email}` : 'Log in / Create account' }}
-      </v-btn>
+      <v-list-item @click.native.stop="routeTo('/Login')">
+        <v-btn
+          class="login-btn"
+          variant="outlined"
+          rounded
+          color="primary"
+          style="max-width: 280px; margin: 10px auto;"
+        >
+          {{ userStore.email ? `Hello, ${userStore.email}` : 'Log in / Create account' }}
+        </v-btn>
       </v-list-item>
 
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-view-dashboard"
-        @click="routeTo('/')"
+        @click.native.stop="routeTo('/')"
       >
         <v-list-item-title>Dashboard</v-list-item-title>
       </v-list-item>
@@ -75,21 +74,21 @@
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-printer-pos-plus"
-        @click="routeTo('/PrintJobs')"
+        @click.native.stop="routeTo('/PrintJobs')"
       >
         <v-list-item-title>Print Jobs</v-list-item-title>
       </v-list-item>
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-sitemap"
-        @click="routeTo('/Workflows')"
+        @click.native.stop="routeTo('/Workflows')"
       >
         <v-list-item-title>Workflows</v-list-item-title>
       </v-list-item>
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-test-tube"
-        @click="routeTo('/SimulationReports')"
+        @click.native.stop="routeTo('/SimulationReports')"
       >
         <v-list-item-title>Simulation</v-list-item-title>
       </v-list-item>
@@ -97,7 +96,7 @@
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-archive"
-        @click="routeTo('/Logs')"
+        @click.native.stop="routeTo('/Logs')"
       >
         <v-list-item-title>Logging</v-list-item-title>
       </v-list-item>
@@ -110,15 +109,16 @@
   import { useDisplay } from "vuetify"
   import { useRouter } from 'vue-router';
   import { useUserStore } from '@/stores/user';
-
   const router = useRouter();
   const disabled = ref(false);
   const { name } = useDisplay();
 
-  const mobile = computed(() => {
-    return name.value === 'xs';
-  });
+  const userStore = useUserStore();
 
+  //// EMITS ////
+  const emit = defineEmits(['close']);
+
+  //// PROPS ////
   defineProps({
     open: {
       type: Boolean,
@@ -129,9 +129,13 @@
   //// ROUTING ////
   const routeTo = (where) => {
     router.push(where);
+    emit('close');
   };
 
-  const userStore = useUserStore();
+  //// COMPUTED ////
+  const mobile = computed(() => {
+    return name.value === 'xs';
+  });
 </script>
 
 <style>
@@ -155,15 +159,13 @@
     font-weight:bold;
   }
 
-  .main-drawer {
-    min-width:300px;
+  .main-drawer{
+    position: fixed;
+    max-height:100vh;
+    z-index:99;
   }
 
   .main-drawer .v-navigation-drawer__content {
-    overflow: hidden !important;
-  }
-
-  .main-drawer-mobile .v-navigation-drawer__content {
     overflow: hidden !important;
   }
 </style>

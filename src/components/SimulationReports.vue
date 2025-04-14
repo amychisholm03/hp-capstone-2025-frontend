@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ChatWidget />
     <error-popups
       :error="errorMessage"
       @clear-error="errorMessage = ''"
@@ -39,7 +38,7 @@
           v-if="!simReportGenMinimized"
           :print-jobs="printJobs"
           :workflows="workflows"
-          @create="getSimulationReports"
+          @create="refresh()"
         ></simulation-report-generate>
       </v-card>
       <div class="mb-1 mt-1"></div>
@@ -83,14 +82,16 @@ import ErrorPopups from "./ErrorPopups.vue";
 //// DATA
 ///////////////////////
 
-const simReportGenMinimized = ref(false);
-const simReportHistoryMinimized = ref(false);
-const viewing = ref(false);
-const workflows = ref([]);
-const printJobs = ref([]);
+const workflows         = ref([]);
+const printJobs         = ref([]);
 const simulationReports = ref([]);
-const selectedReports = ref([]);
-const errorMessage = ref('');
+
+const selectedReports   = ref([]);
+const viewing           = ref(false);
+
+const simReportGenMinimized     = ref(false);
+const simReportHistoryMinimized = ref(false);
+const errorMessage              = ref('');
 
 ///////////////////////
 //// On Mounted
@@ -98,11 +99,23 @@ const errorMessage = ref('');
 
 onMounted(async () => {
   await Promise.all([
-    getPrintJobs(),
-    getWorkflows(),
-    getSimulationReports(),
   ]);
 });
+
+//////////////////////
+//// Init / Refresh
+//////////////////////
+const refresh = async () => {
+  const response = await Promise.all([
+      getPrintJobs(),
+      getWorkflows(),
+      getSimulationReports(),
+  ]);
+  printjobs.value         = response[0];
+  workflows.value         = response[1];
+  simulationReports.value = addTime(response[2]);
+};
+
 
 //////////////////////
 //// User Actions
@@ -117,7 +130,7 @@ const clearReports = () => {
 }
 
 /**
-* View One Or More Simulation Report
+* View one or more Simulation Reports
 */
 const viewReports = (reports) => {
   selectedReports.value = reports;
@@ -128,7 +141,7 @@ const viewReports = (reports) => {
 //// Helper Functions
 ////////////////////////
 
-const addTimeProperty = (reports) => {
+const addTime = (reports) => {
   reports.forEach((report) => {
     const d = new Date(report.CreationTime * 1000);
     const month = d.getMonth() + 1;
@@ -151,13 +164,12 @@ const addTimeProperty = (reports) => {
 const getSimulationReports = async () => {
   const response = await getCollection("SimulationReport");
   if (response.ok) {
-    simulationReports.value = await response.json();
-    addTimeProperty(simulationReports.value);
+    return response.json();
   } else {
     errorMessage.value = "Error fetching list of simulation reports";
-    return false;
+    return [];
   }
-  return true;
+  return [];
 }
 
 /**
@@ -166,13 +178,12 @@ const getSimulationReports = async () => {
 const getPrintJobs = async () => {
   const response = await getCollection("PrintJob");
   if (response.ok) {
-    printJobs.value = await response.json();
+    return response.json();
   } else {
-    throw new Error(String(response.status));
-    errorMessage.value = "Error fetching list of print jobs";
-    return false;
+    errorMessage.value = String("response.status");
+    return [];
   }
-  return true;
+  return [];
 }
 
 /**
@@ -181,12 +192,12 @@ const getPrintJobs = async () => {
 const getWorkflows = async () => {
   const response = await getCollection("Workflow");
   if (response.ok) {
-    workflows.value = await response.json();
+    return response.json();
   } else {
     errorMessage.value = "Error fetching list of workflows";
-    return false;
+    return [];
   }
-  return true;
+  return [];
 }
 </script>
 

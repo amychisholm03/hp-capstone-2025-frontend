@@ -1,11 +1,10 @@
 <template>
   <v-app theme="light">
-    <ChatWidget />
     <v-toolbar class="toolbar">
       <v-toolbar-title class="header">
         Dashboard
       </v-toolbar-title>
-    </v-toolbar> 
+    </v-toolbar>
     <v-main>
       <v-container class="ma-3 pa-3">
         <v-row>
@@ -47,7 +46,6 @@
 <script setup>
   import { ref, onMounted } from "vue";
   import { useRouter } from 'vue-router';
-  import ChatWidget from './ChatBot/chat-widget.vue';
 
   const router = useRouter();
 

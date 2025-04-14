@@ -3,6 +3,7 @@
     theme="light"
     class="main-app"
   >
+    <ChatWidget />
     <v-toolbar
       v-if="mobile"
       class="align-center d-flex"
@@ -20,9 +21,9 @@
       </v-btn>
     </v-toolbar>
     <site-navigation-drawer
-      class="sidebar"
+      :style="`width:${calcDrawerWidth}`"
       :open="drawer"
-      @close="drawer=!drawer"
+      @close="closeDrawer()"
     >
     </site-navigation-drawer>
     <router-view
@@ -35,10 +36,17 @@
 <script setup>
   import { ref, computed } from "vue"
   import { useDisplay } from "vuetify"
+  import ChatWidget from './components/ChatBot/chat-widget.vue';
   import SiteNavigationDrawer from './components/SiteNavigationDrawer.vue';
 
   ////////////////////////////
-  //// Data
+  //// Static Data
+  ////////////////////////////
+  const drawerWidth = '300px';
+  const drawerWidthMobile = '100vw';
+
+  ////////////////////////////
+  //// Reactive Data
   ////////////////////////////
   const drawer = ref(false);
 
@@ -49,20 +57,26 @@
   const mobile = computed(() => {
     return name.value === 'xs';
   });
+
+  const closeDrawer = () => {
+    console.log("closed");
+    drawer.value = false;
+  };
+
+  const calcDrawerWidth = computed(() => {
+    const isMobile = mobile.value;
+    const isOpen = drawer.value;
+    if (isMobile && isOpen) {
+      return drawerWidthMobile;
+    }
+    if (!isMobile) {
+      return drawerWidth;
+    }
+    return '0px';
+  });
 </script>
 
 <style>
-:root{
-  --drawer-size:300px;
- }
-
-.sidebar{
-  position:fixed;
-  width: var(--drawer-size);
-  max-height: 100vh;
-  z-index:99;
-}
-
 .main-app{
   overflow:hidden;
 }

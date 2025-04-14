@@ -1,6 +1,5 @@
 <template>
   <v-app theme="light">
-    <ChatWidget />
     <v-main class="pa-3">
       <error-popups
         :error="errorMessage"
@@ -29,7 +28,6 @@ import { useRouter } from 'vue-router';
 import ModuleToolbar from "./module-toolbar.vue";
 import PrintJobCreate from "./PrintJob/print-job-create.vue";
 import ErrorPopups from "./ErrorPopups.vue";
-import ChatWidget from './ChatBot/chat-widget.vue';
 
 const errorMessage = ref('');
 const router = useRouter();

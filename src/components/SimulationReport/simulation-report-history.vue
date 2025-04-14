@@ -1,12 +1,61 @@
 <template>
   <div>
-    <!-- Header Row -->
+    <!-- Header Row (Mobile) -->
     <v-row
-      class="ml-4 mr-4 mt-1 pa-0"
-      style="max-height:90px; height:90px; align-content:center; flex-wrap:nowrap;"
+      v-if="mobile"
+      class="options px-2"
       no-gutters
     >
-      <v-spacer />
+      <v-col
+        class="align-center d-flex justify-center pa-0"
+        no-gutters
+        cols="auto"
+      >
+        <!-- Select Reports For Comparison Button -->
+        <v-btn
+          tile
+          dark
+          style="text-transform: none;"
+          :color="comparing ? 'error' : 'grey-darken-1'"
+          @click="toggleCompareReports"
+        >
+          <p v-if="!comparing">
+            Compare
+          </p>
+          <p v-if="comparing">
+            Cancel
+          </p>
+        </v-btn>
+
+        <!-- Open Comparison View Button -->
+        <div
+          v-if="comparing && comparePossible"
+        >
+          <v-icon>mdi-arrow-right-thick</v-icon>
+          <v-btn
+            class="mr-4"
+            rounded
+            dark
+            style="text-transform: none;"
+            color="green-darken-1"
+            @click="viewReports"
+          >
+            <p>
+              Begin!
+            </p>
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
+
+    <!-- Header Row (Desktop) -->
+    <v-row
+      v-else
+      class="mt-1 mx-4 options pa-0"
+      no-gutters
+    >
+      <v-spacer>
+      </v-spacer>
       <v-col
         class="align-center d-flex justify-center pa-0"
         no-gutters
@@ -36,7 +85,6 @@
 
         <!-- Select Reports For Comparison Button -->
         <v-btn
-          label="Compare Reports"
           tile
           class="mr-4"
           size="large"
@@ -55,51 +103,36 @@
       </v-col>
     </v-row>
 
-    <v-row
+    <!-- Simulation Report List -->
+    <div
       no-gutters
-      class="mb-8 ml-8 mr-8 report-list-container"
+      :class="mobile ? 'report-list-container-mobile' : 'report-list-container'"
+      :style="comparing ? 'border-style: none;' : 'border-style: solid;'"
     >
-      <!-- Simulation Report List Column -->
-      <v-col>
-        <v-list class="ma-0 pa-0">
-          <v-list-item
-            v-for="(report, index) in simulationReports"
-            :key="index"
-            class="ma-0 pa-0"
-          >
-            <v-row
-              no-gutters
-              width="100%"
-            >
-              <v-col
-                v-if="comparing"
-                no-gutters
-                cols="1"
-                :class="`${report.selected ? 'item-selection-selected' : 'item-selection' } align-center d-flex justify-center`"
-                @click="selectReport(report)"
-              >
-                <v-icon>
-                  mdi-gesture-tap
-                </v-icon>
-              </v-col>
-              <v-col no-gutters>
-                <simulation-report-list-item
-                  :report="report"
-                  @click="viewReport(report);"
-                />
-              </v-col>
-            </v-row>
-          </v-list-item>
-        </v-list>
-      </v-col>
-    </v-row>
+      <v-list class="ma-0 pa-0">
+        <v-list-item
+          v-for="(report, index) in simulationReports"
+          :key="index"
+          class="ma-0 pa-0"
+        >
+          <simulation-report-list-item
+            :mobile="mobile"
+            :report="report"
+            :style="`background-color: ${calcReportColor(report)};`"
+            :class="comparing ? 'report-history-item-comparing' : ''"
+            @click="comparing ? selectReport(report) : viewReport(report);"
+          />
+        </v-list-item>
+      </v-list>
+    </div>
+    <!-- End Simulation Report List -->
   </div>
 </template>
 
 <script setup>
   import { nextTick, ref, onMounted, watch, computed } from "vue";
+  import { useDisplay } from 'vuetify';
   import SimulationReportListItem from "./simulation-report-list-item.vue";
-
 
   /////////////////
   // PROPS
@@ -140,6 +173,11 @@
     return selectedReports.value.length > 1;
   });
 
+  const { name } = useDisplay();
+  const mobile = computed(() => {
+    return name.value === 'xs';
+  });
+
   /////////////////
   // Methods
   /////////////////
@@ -160,8 +198,8 @@
 
   const viewReports = () => {
     emit('view-reports', selectedReports.value);
-    clearSelectedReports();
-    comparing.value = false;
+    setTimeout(clearSelectedReports, 500); // wait a sec so user doesn't see it clear.
+    setTimeout(() => { comparing.value = false; }, 500);
   };
 
   const viewReport = (report) => {
@@ -177,6 +215,16 @@
       }
     }
     return -1;
+  };
+
+  const calcReportColor = (report) => {
+    if (report.selected) {
+      return 'rgba(150,150,150, 0); border-style:inset; border-bottom-color:green; border-bottom-width:5px;'
+    }
+    if (comparing.value) {
+      return 'rgba(0,0,0,0);'
+    }
+    return 'rgba(0,0,0,0);'
   };
 
   const selectReport = (report) => {
@@ -200,8 +248,14 @@
   };
 </script>
 <style>
+.options {
+  height:90px;
+  align-content:center;
+  flex-wrap:nowrap;
+}
+
 .report-history-item {
-  height:125px;
+  height:64px;
   border-width:1px;
   border-left-width:0px;
   border-right-width:0px;
@@ -222,6 +276,13 @@
   border-color: lightgray;
   border-width: 2px;
 	cursor: pointer;
+}
+
+.report-history-item-comparing {
+  border-style:groove;
+  border-width:2px;
+  border-color:lightgray;
+  margin-bottom:16px;
 }
 
 .slide-fade-enter-active {
@@ -264,9 +325,19 @@
 .report-list-container{
   max-height: 500px;
   overflow-y:auto;
+  margin-bottom: 32px !important;
+  margin-left: 32px !important;
+  margin-right: 32px !important;
   border-width: 2px;
   border-color: rgba(0, 0, 0, 0.15);
-  border-style: solid;
+}
+.report-list-container-mobile{
+  max-height: 50vh;
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+  overflow-y: auto;
+  overflow-x:hidden;
+  border-style:none !important;
 }
 
 .item-selection:hover{

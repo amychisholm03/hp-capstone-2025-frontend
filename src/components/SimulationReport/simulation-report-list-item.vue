@@ -4,64 +4,66 @@
     @click="$emit('select-report', report.id)"
   >
     <v-row
-      style="height:100%;"
+      style="height:100%; width:100%; display:flex; flex-wrap:nowrap;"
       no-gutters
     >
       <v-col
-        style="height: 100%;"
+        :cols="mobile ? '6' : '4'"
+        class="align-center d-flex pl-3"
       >
-        <v-card-text class="item-desc">
-          Print Job:
-        </v-card-text>
-        <v-card-text class="item-desc">
-          Workflow:
-        </v-card-text>
+        <v-chip
+          variant="elevated"
+          :size="mobile ? 'x-small' : 'small'"
+          tile
+        >
+          <v-card-text
+            class="item-val"
+          >
+            {{ report.WorkflowTitle ? report.WorkflowTitle : 'N/A' }}
+          </v-card-text>
+        </v-chip>
       </v-col>
 
       <v-col
-        cols="3"
+        v-if="!mobile"
+        cols="1"
+        class="align-center d-flex justify-left"
       >
-        <v-card-text
-          class="item-val"
-        >
-          {{ report.PrintJobTitle ? report.PrintJobTitle : 'N/A' }}
-        </v-card-text>
-        <v-card-text
-          class="item-val"
-        >
-          {{ report.WorkflowTitle ? report.WorkflowTitle : 'N/A' }}
-        </v-card-text>
+        <v-icon>
+          mdi-plus
+        </v-icon>
       </v-col>
 
       <v-col
-        cols="3"
+        :cols="mobile ? '6' : '4'"
+        class="align-center d-flex"
       >
-        <v-card-text>
-          Total Time:
-        </v-card-text>
+        <v-chip
+          :size="mobile ? 'x-small' : 'small'"
+          variant="elevated"
+          tile
+        >
+          <v-card-text
+            class="item-val"
+          >
+            {{ report.PrintJobTitle ? report.PrintJobTitle : 'N/A' }}
+          </v-card-text>
+        </v-chip>
       </v-col>
+
+      <v-spacer v-if="!mobile">
+      </v-spacer>
+
+      <!-- Simulation Report Date and Time (Desktop only) -->
       <v-col
-        cols="3"
+        v-if="!mobile"
+        cols="auto"
+        class="mr-4"
       >
-        <v-card-text>
-          {{ report.TotalTimeTaken ? report.TotalTimeTaken : 'N/A' }}
-          secs.
-        </v-card-text>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="3"
-      >
-        <v-card-text>
-          Created:
-        </v-card-text>
-      </v-col>
-      <v-col
-        cols="3"
-      >
-        <v-card-text>
-          {{ report.Date }} @ {{ report.Time }}
+        <v-card-text
+          class="item-val-time"
+        >
+          {{ report.Date ? report.Date : '---' }}
         </v-card-text>
       </v-col>
     </v-row>
@@ -72,6 +74,7 @@
 import { ref, onMounted } from "vue";
 const {report = null} = defineProps({
   report: Object,
+  mobile: Boolean
 });
 </script>
 
@@ -91,5 +94,17 @@ const {report = null} = defineProps({
 
 .dashboard-container {
 	max-width: 400px;
+}
+
+.item-val{
+  font-weight:bold;
+  font-size:1.8em;
+  font-family:'Courier New', Courier, monospace;
+}
+
+.item-val-time{
+  font-weight:600;
+  font-size:0.9em;
+  font-family:'Courier New', Courier, monospace;
 }
 </style>

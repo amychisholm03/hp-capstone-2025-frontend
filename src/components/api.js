@@ -8,6 +8,8 @@ async function fetchWrapper(url, options) {
 }
 
 export async function getCollection(coll) {
+  console.log(API_URL);
+  console.log(API_PORT);
   return fetchWrapper(`${API_URL}:${API_PORT}/${coll}`, {
     method: 'GET',
     mode: 'cors'

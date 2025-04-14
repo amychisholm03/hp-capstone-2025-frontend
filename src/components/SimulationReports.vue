@@ -44,7 +44,7 @@
       <div class="mb-1 mt-1"></div>
 
       <!-- View a List of Simulation Reports -->
-      <v-card class="large-module">
+      <v-card class="skinny-module">
         <module-toolbar
           class="module-toolbar"
           title="Simulation Report History"
@@ -55,7 +55,7 @@
         </module-toolbar>
         <simulation-report-history
           v-if="!simReportHistoryMinimized"
-          style="overflow-x: scroll !important; min-width: 500px;"
+          style="overflow-x: scroll !important;"
           :print-jobs="printJobs"
           :workflows="workflows"
           :simulation-reports="simulationReports"
@@ -93,15 +93,6 @@ const simReportGenMinimized     = ref(false);
 const simReportHistoryMinimized = ref(false);
 const errorMessage              = ref('');
 
-///////////////////////
-//// On Mounted
-///////////////////////
-
-onMounted(async () => {
-  await Promise.all([
-  ]);
-});
-
 //////////////////////
 //// Init / Refresh
 //////////////////////
@@ -111,10 +102,19 @@ const refresh = async () => {
       getWorkflows(),
       getSimulationReports(),
   ]);
-  printjobs.value         = response[0];
+  printJobs.value         = response[0];
   workflows.value         = response[1];
+  console.log(response[2]);
   simulationReports.value = addTime(response[2]);
 };
+
+///////////////////////
+//// On Mounted
+///////////////////////
+
+onMounted(async () => {
+  refresh()
+});
 
 
 //////////////////////
@@ -152,6 +152,7 @@ const addTime = (reports) => {
     report.Date = month + "/" + day + "/" + year;
     report.Time = hours + ":" + minutes;
   });
+  return reports;
 }
 
 ///////////////////

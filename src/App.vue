@@ -27,7 +27,7 @@
     >
     </site-navigation-drawer>
     <router-view
-      :class="mobile ? 'content-mobile' : 'content'"
+      :style="`margin-left: ${calcContentMargin}`"
     >
     </router-view>
   </v-app>
@@ -74,15 +74,19 @@
     }
     return '0px';
   });
+
+  const calcContentMargin = computed(() => {
+    const isMobile = mobile.value;
+    if (isMobile) {
+      return '';
+    }
+    return drawerWidth;
+  });
 </script>
 
 <style>
 .main-app{
   overflow:hidden;
-}
-
-.content{
-  margin-left: var(--drawer-size);
 }
 
 .content-mobile{
@@ -110,7 +114,15 @@
   border-color: darkgray;
 }
 .large-module{
-  max-width:1100px;
+  max-width:800px;
+  max-height: 800px;
+  border-width:1px;
+  border-color: darkgray;
+}
+
+
+.skinny-module{
+  max-width:700px;
   max-height: 800px;
   border-width:1px;
   border-color: darkgray;

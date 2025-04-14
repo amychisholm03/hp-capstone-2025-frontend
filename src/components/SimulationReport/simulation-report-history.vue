@@ -3,7 +3,8 @@
     <!-- Header Row (Mobile) -->
     <v-row
       v-if="mobile"
-      class="options px-2"
+      class="px-2"
+      :class="mobile ? 'mobile-options' : 'options'"
       no-gutters
     >
       <v-col
@@ -199,7 +200,9 @@
   const viewReports = () => {
     emit('view-reports', selectedReports.value);
     setTimeout(clearSelectedReports, 500); // wait a sec so user doesn't see it clear.
-    setTimeout(() => { comparing.value = false; }, 500);
+    setTimeout(() => {
+ comparing.value = false;
+}, 500);
   };
 
   const viewReport = (report) => {
@@ -249,7 +252,13 @@
 </script>
 <style>
 .options {
-  height:90px;
+  height:70px;
+  align-content:center;
+  flex-wrap:nowrap;
+}
+
+.mobile-options{
+  height:60px;
   align-content:center;
   flex-wrap:nowrap;
 }
@@ -333,8 +342,9 @@
 }
 .report-list-container-mobile{
   max-height: 50vh;
-  margin-left: 4px !important;
-  margin-right: 4px !important;
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+  margin-bottom: 8px;
   overflow-y: auto;
   overflow-x:hidden;
   border-style:none !important;

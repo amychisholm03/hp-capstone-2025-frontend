@@ -8,8 +8,9 @@
       no-gutters
     >
       <v-col
-        :cols="mobile ? '6' : '4'"
+        :cols="mobile ? '5' : '4'"
         class="align-center d-flex pl-3"
+        :class="mobile ? 'justify-center' : ''"
       >
         <v-chip
           variant="elevated"
@@ -17,7 +18,7 @@
           tile
         >
           <v-card-text
-            class="item-val"
+            :class="mobile ? 'mobile-item-val' : 'item-val'"
           >
             {{ report.WorkflowTitle ? report.WorkflowTitle : 'N/A' }}
           </v-card-text>
@@ -27,7 +28,8 @@
       <v-col
         v-if="!mobile"
         cols="1"
-        class="align-center d-flex justify-left"
+        class="align-center d-flex"
+        :class="mobile ? 'justify-center' : ''"
       >
         <v-icon>
           mdi-plus
@@ -35,8 +37,15 @@
       </v-col>
 
       <v-col
+        v-else
+        cols="1"
+      >
+      </v-col>
+
+      <v-col
         :cols="mobile ? '6' : '4'"
         class="align-center d-flex"
+        :class="mobile ? 'justify-center pr-6' : ''"
       >
         <v-chip
           :size="mobile ? 'x-small' : 'small'"
@@ -44,7 +53,7 @@
           tile
         >
           <v-card-text
-            class="item-val"
+            :class="mobile ? 'mobile-item-val' : 'item-val'"
           >
             {{ report.PrintJobTitle ? report.PrintJobTitle : 'N/A' }}
           </v-card-text>
@@ -99,6 +108,12 @@ const {report = null} = defineProps({
 .item-val{
   font-weight:bold;
   font-size:1.8em;
+  font-family:'Courier New', Courier, monospace;
+}
+
+.mobile-item-val{
+  font-weight:bold;
+  font-size:1.3em;
   font-family:'Courier New', Courier, monospace;
 }
 

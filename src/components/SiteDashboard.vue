@@ -10,14 +10,12 @@
         <v-row>
           <v-card
             class="dashboard-component ma-3"
-            style="width: 425px; height: 305px;"
           >
             <v-img src="/src/assets/image1.png"></v-img>
           </v-card>
 
           <v-card
             class="dashboard-component ma-3"
-            style="width: 425px; height: 305px;"
           >
             <v-img src="/src/assets/image2.png"></v-img>
           </v-card>
@@ -26,14 +24,12 @@
         <v-row>
           <v-card
             class="dashboard-component ma-3"
-            style="width: 425px; height: 305px;"
           >
             <v-img src="/src/assets/image4.png"></v-img>
           </v-card>
 
           <v-card
             class="dashboard-component ma-3"
-            style="width: 425px; height: 305px;"
           >
             <v-img src="/src/assets/image3.png"></v-img>
           </v-card>
@@ -64,8 +60,8 @@
   }
 
   .dashboard-component {
-    width: 400px;
-    height: 400px;
+    max-width: 300px;
+    max-height: 230px;
   }
 
   .dashboard-container {

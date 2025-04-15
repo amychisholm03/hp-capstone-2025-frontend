@@ -3,7 +3,7 @@
     <v-main>
       <v-container class="ma-3 pa-3">
         <v-card
-          class="module"
+          class="logs-module ma-3"
         >
           <module-toolbar
             class="module-toolbar"
@@ -15,7 +15,6 @@
           </module-toolbar>
           <log-viewer
             v-if="!errorLogsMinimized"
-            style="height:550px;"
             :logs="logs"
           ></log-viewer>
         </v-card>

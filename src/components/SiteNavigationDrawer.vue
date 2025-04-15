@@ -23,8 +23,7 @@
         ></v-img>
       </v-col>
       <v-col
-        style="font-size:x-large; font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-weight:200;"
-        class="align-center d-flex justify-start"
+        class="align-center d-flex drawer-title justify-start"
       >
         <span> Print OS </span>
       </v-col>
@@ -68,7 +67,9 @@
         prepend-icon="mdi-view-dashboard"
         @click.native.stop="routeTo('/')"
       >
-        <v-list-item-title>Dashboard</v-list-item-title>
+        <v-list-item-title>
+          Dashboard
+        </v-list-item-title>
       </v-list-item>
 
       <v-list-item
@@ -167,5 +168,11 @@
 
   .main-drawer .v-navigation-drawer__content {
     overflow: hidden !important;
+  }
+
+  .drawer-title {
+    font-size:x-large;
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight:200;
   }
 </style>

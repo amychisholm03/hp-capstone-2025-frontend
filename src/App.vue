@@ -113,13 +113,20 @@
   border-width:1px;
   border-color: darkgray;
 }
+
+.logs-module {
+  max-width:800px;
+  max-height: 620px;
+  border-width:1px;
+  border-color: darkgray;
+}
+
 .large-module{
   max-width:800px;
   max-height: 800px;
   border-width:1px;
   border-color: darkgray;
 }
-
 
 .skinny-module{
   max-width:700px;

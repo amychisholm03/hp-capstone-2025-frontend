@@ -1,7 +1,7 @@
 <template>
   <v-card
     v-if="!loading"
-    class="simulation-report-view"
+    :class="mobile ? 'simulation-report-view-mobile' : 'simulation-report-view'"
   >
     <v-row
       no-gutters
@@ -24,8 +24,8 @@
 
     <v-row
       no-gutters
-      style="flex-wrap: nowrap;"
-      class="align-row d-flex main-body"
+      class="align-row d-flex"
+      :class="mobile ? 'main-body' : 'main-body-mobile'"
     >
       <!-- Section 1 -->
       <v-col class="section">
@@ -468,10 +468,12 @@ import ChartAll from '../Chart/chart-all.vue';
 //// Props
 const {
   reports = [],
+  mobile = false,
 }
 =
 defineProps({
   reports: Array,
+  mobile: Boolean,
 });
 
 ///////////////////
@@ -875,17 +877,40 @@ onMounted(
   --overall-padding: 1vw;
   --overall-width: 100%;
   --section-height: calc(100% - var(--overall-padding));
-  --section-width: calc((--overall-width) - calc(var(--overall-padding)) - calc(var(--horizontal-gap)));
+  --section-width: calc(((--overall-width) - calc(var(--overall-padding)) - calc(var(--horizontal-gap))) / 2);
   width: var(--overall-width);
   height: var(--overall-height);
   border-radius:10px !important;
   overflow: hidden !important;
 }
 
+.simulation-report-view-mobile {
+  --vertical-gap:  1vh;
+  --header-height: 3vh;
+  --overall-height: 96vh;
+  --overall-padding: 1vw;
+  --overall-width: 100%;
+  --section-height: 100%;
+  --section-width: var(--overall-width);
+  width: var(--overall-width);
+  height: var(--overall-height);
+  border-radius:10px !important;
+  overflow: scroll !important;
+}
+
 .header-bar {
   height: var(--header-height);
   max-height: var(--header-height);
   min-height: var(--header-height);
+}
+
+.main-body {
+  padding:var(--overall-padding);
+  height: var(--section-height);
+  max-height: var(--section-height);
+  min-height: var(--section-height);
+  overflow:hidden;
+  flex-wrap: nowrap;
 }
 
 .main-body {
@@ -933,15 +958,12 @@ onMounted(
 
 .section {
   display:block;
-
-  min-width: calc(var(--section-width) / 2);
-  max-width: calc(var(--section-width) / 2);
-  width: calc(var(--section-width) / 2);
-
+  min-width:  var(--section-width);
+  max-width:  var(--section-width);
+  width:      var(--section-width);
   min-height: var(--section-height);
   max-height: var(--section-height);
-  height: var(--section-height);
-
+  height:     var(--section-height);
   overflow:hidden;
 }
 
@@ -957,9 +979,38 @@ onMounted(
   box-shadow: none;
 }
 
+.overview-card-mobile {
+  display:block;
+
+  width:100%;
+
+  overflow:hidden;
+
+  box-shadow: none;
+}
+
 .comparison-card{
-  background:white;
   height: calc((var(--section-height) - var(--vertical-gap)) / 2);
+  background:white;
+
+  padding-left:2%;
+  padding-top:3%;
+  padding-bottom:3%;
+
+  overflow-x:hidden;
+  overflow-y:auto;
+
+  border-width: 1px;
+  border-style:solid;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow:none;
+}
+
+.comparison-card-mobile{
+  background:white;
+
+  width:100%;
 
   padding-left:2%;
   padding-top:3%;
@@ -983,6 +1034,18 @@ onMounted(
   max-height: var(--section-height);
   min-height: var(--section-height);
   max-width:inherit;
+  border-width: 1px;
+  border-style:solid;
+  border-radius:5px;
+  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow:none;
+}
+
+.chart-card-mobile {
+  background:white;
+  display:block;
+  height: 100%;
+  width:100%;
   border-width: 1px;
   border-style:solid;
   border-radius:5px;

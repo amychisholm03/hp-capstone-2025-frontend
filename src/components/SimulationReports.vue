@@ -14,6 +14,7 @@
     >
       <simulation-report-view
         :reports="selectedReports"
+        :mobile="mobile"
         @exit="clearReports"
       >
       </simulation-report-view>
@@ -59,6 +60,7 @@
           :print-jobs="printJobs"
           :workflows="workflows"
           :simulation-reports="simulationReports"
+          :mobile="mobile"
           @view-reports="viewReports"
         >
         </simulation-report-history>
@@ -68,7 +70,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { computed, ref, onMounted } from "vue";
+import {useDisplay} from 'vuetify';
 import { getCollection } from "./api.js";
 import ChatWidget from './ChatBot/chat-widget.vue';
 import DetailedReport from './SimulationReport/DetailedReport.vue';
@@ -92,6 +95,15 @@ const viewing           = ref(false);
 const simReportGenMinimized     = ref(false);
 const simReportHistoryMinimized = ref(false);
 const errorMessage              = ref('');
+
+///////////////////////
+//// COMPUTED
+///////////////////////
+
+const { name } = useDisplay();
+const mobile = computed(() => {
+  return name.value === 'xs';
+})
 
 //////////////////////
 //// Init / Refresh

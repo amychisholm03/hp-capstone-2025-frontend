@@ -131,7 +131,6 @@
 
 <script setup>
   import { nextTick, ref, onMounted, watch, computed } from "vue";
-  import { useDisplay } from 'vuetify';
   import SimulationReportListItem from "./simulation-report-list-item.vue";
 
   /////////////////
@@ -141,13 +140,15 @@
   const {
     simulationReports = [],
     workflows = [],
-    printJobs = []
+    printJobs = [],
+    mobile = false,
   }
   =
   defineProps({
     simulationReports: Array,
     workflows : Array,
     printJobs: Array,
+    mobile: Boolean,
   });
 
 
@@ -171,11 +172,6 @@
 
   const comparePossible = computed(() => {
     return selectedReports.value.length > 1;
-  });
-
-  const { name } = useDisplay();
-  const mobile = computed(() => {
-    return name.value === 'xs';
   });
 
   /////////////////

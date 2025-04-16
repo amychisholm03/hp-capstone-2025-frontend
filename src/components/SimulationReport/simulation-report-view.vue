@@ -3,304 +3,52 @@
     v-if="!loading"
     :class="mobile ? 'simulation-report-view-mobile' : 'simulation-report-view'"
   >
-    <v-row
-      no-gutters
-      class="header-bar"
+    <v-btn
+      class="close-button"
+      size="small"
+      color="white"
+      icon
+      flat
+      @click="$emit('exit')"
     >
-      <v-col class="align-center d-flex header-bar justify-end">
-        <v-btn
-          class="close-button"
-          icon
-          size="xx-small"
-          color="error"
-          @click="$emit('exit')"
-        >
-          <v-icon>
-            mdi-window-close
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+      <v-icon size="x-large">
+        mdi-window-close
+      </v-icon>
+    </v-btn>
 
     <v-row
       no-gutters
       class="align-row d-flex"
       :class="mobile ? 'main-body' : 'main-body-mobile'"
     >
-      <!-- Section 1 -->
       <v-col class="section">
         <v-row
           class="overview-card"
           no-gutters
         >
-          <report-overview :report-data="reportData">
-          </report-overview>
+          <v-col>
+            <report-overview
+              :report-data="reportData"
+              :mobile="mobile"
+            >
+            </report-overview>
+          </v-col>
         </v-row>
-        <!-- End Overview -->
 
         <div class="vertical-gap"></div>
 
-        <!-- Comparison -->
-        <div id="comparison-top" />
         <v-row
           no-gutters
           class="comparison-card"
         >
           <v-col>
-            <v-row
-              no-gutters
-              class="align-row d-flex"
-              style="flex-wrap: nowrap; height:100%; width:100%;"
-            >
-              <!-- Step Name Column -->
-              <v-col
-                class="pr-2"
-                style="overflow:hidden; min-width:15%; max-width:15%;"
-              >
-                <table style="width:100%">
-                  <thead>
-                    <tr>
-                      <th class="comparison-header">
-                        <div class="d-flex justify-left">
-                          <v-chip
-                            tile
-                            color="white"
-                            class="pa-0"
-                          >
-                            <span style="color:black; font-weight:bold;">
-                              Operation
-                            </span>
-                          </v-chip>
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="label in labels"
-                      :key="label.value"
-                    >
-                      <td
-                        class="comparison-table-step-names step-name-selectable"
-                        @click="highlightStep(label.value)"
-                      >
-                        <strong
-                          v-if="label.value === highlightedStep"
-                          class="comparison-field"
-                        >
-                          {{ label.title }}
-                        </strong>
-                        <span
-                          v-else
-                          class="comparison-field"
-                        >
-                          {{ label.title }}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </v-col>
-
-              <!-- Step Times Column -->
-              <v-col style="border-style:groove; border-width:3px; border-color:white; max-width:60%; min-width:60%; position:relative;">
-                <!-- Scroll Indicator -->
-                <v-row
-                  ref="comparisonScroll"
-                  no-gutters
-                  class="align-row d-flex"
-                  style="flex-wrap:nowrap; flex-direction:row; overflow-x:scroll; overflow-y:hidden; height:100%; width:100%;"
-                >
-                  <div
-                    v-if="comparisonArrow"
-                    class="align-center d-flex justify-center scroll-arrow"
-                  >
-                    <v-icon
-                      size="large"
-                      style="position:absolute; z-index:102;"
-                    >
-                      mdi-circle
-                    </v-icon>
-                    <v-icon
-                      color="white"
-                      style="z-index:103;"
-                    >
-                      mdi-chevron-double-right
-                    </v-icon>
-                  </div>
-
-                  <!-- Steps For A Particular Simulation... -->
-                  <v-col
-                    v-for="{report, printjob, workflow, steps, color } in reportData"
-                    :key="report.id"
-                    cols="auto"
-                  >
-                    <table>
-                      <thead>
-                        <tr>
-                          <th class="comparison-header">
-                            <v-chip
-                              :color="color"
-                              tile
-                            >
-                              <div style="color:black; font-weight:bold; overflow:hidden; font-size:0.8em; width:50em; max-width:50px;">
-                                <p style="text-overflow:ellipsis; overflow-x:hidden;">
-                                  {{ printjob.Title }}
-                                </p>
-                                <p style="text-overflow:ellipsis; overflow-x:hidden;">
-                                  {{ workflow.Title }}
-                                </p>
-                              </div>
-                            </v-chip>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(step, i) in steps"
-                          :key="i"
-                        >
-                          <td
-                            :style="`background-color:${getHeatmapColor(step)}`"
-                            class="comparison-table-data"
-                          >
-                            <!-- Highlighting active: highlighted step -->
-                            <span
-                              v-if="i === highlightedStep"
-                              class="comparison-field"
-                            >
-                              {{ toTimeUnit(step.time) }}
-                            </span>
-                            <!-- No Highlighting Active -->
-                            <span
-                              v-else-if="highlightedStep === null"
-                              class="comparison-field"
-                            >
-                              {{ toTimeUnit(step.time) }}
-                            </span>
-                            <!-- Highlighting Active: non-highlighted step -->
-                            <span
-                              v-else
-                              style="opacity:0.2;"
-                              class="comparison-field"
-                            >
-                              {{ toTimeUnit(step.time) }}
-                            </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-col>
-                </v-row>
-              </v-col>
-              <!-- End Step Times Column -->
-
-              <!-- Settings Column -->
-              <v-col
-                style="display:flex; flex-wrap:nowrap; flex-direction: column; row-gap:10px; overflow-y:scroll; overflow-x:hidden; padding-left:2%;"
-              >
-                <h3>Heat Map</h3>
-                <v-btn-toggle
-                  v-model="showHeatMap"
-                  mandatory
-                >
-                  <v-btn
-                    :value="1"
-                    size="large"
-                    class="pl-2 pr-2"
-                    style="font-size:0.8em;"
-                    border
-                  >
-                    Show
-                    <v-icon
-                      v-if="showHeatMap"
-                      class="mb-1 ml-1"
-                    >
-                      mdi-check-circle-outline
-                    </v-icon>
-                  </v-btn>
-                  <v-btn
-                    size="large"
-                    :value="0"
-                    style="font-size:0.8em;"
-                    class="pl-3 pr-4"
-                    border
-                  >
-                    Hide
-                    <v-icon
-                      v-if="!showHeatMap"
-                      class="mb-1 ml-1"
-                    >
-                      mdi-check-circle-outline
-                    </v-icon>
-                  </v-btn>
-                </v-btn-toggle>
-
-                <h3> Time Units </h3>
-                <v-btn-toggle
-                  v-model="secondsOrMinutes"
-                  mandatory
-                >
-                  <v-btn
-                    :value="0"
-                    border
-                    style="font-size:0.7em;"
-                    class="pa-2"
-                    size="small"
-                  >
-                    Minutes
-                    <v-icon
-                      v-if="!secondsOrMinutes"
-                      class="mb-1 ml-1"
-                    >
-                      mdi-check-circle-outline
-                    </v-icon>
-                  </v-btn>
-                  <v-btn
-                    border
-                    class="pa-2"
-                    style="font-size:0.7em;"
-                    size="small"
-                    :value="1"
-                  >
-                    Seconds
-                    <v-icon
-                      v-if="secondsOrMinutes"
-                      class="mb-1 ml-1"
-                    >
-                      mdi-check-circle-outline
-                    </v-icon>
-                  </v-btn>
-                </v-btn-toggle>
-                <v-spacer></v-spacer>
-              </v-col>
-              <!-- End Settings Column -->
-            </v-row>
+            <report-comparison :report-data="reportData" :labels="labels" :mobile="mobile"></report-comparison>
           </v-col>
-          <div
-            class="d-flex justify-start"
-            style="position:absolute; right:0; bottom:5px;"
-          >
-            <v-btn
-              icon
-              color="primary"
-              size="x-small"
-              @click="handleCSV"
-            >
-              <v-icon>
-                mdi-file-delimited-outline
-              </v-icon>
-            </v-btn>
-          </div>
         </v-row>
-        <!-- End Comparison -->
-      </v-col>
-      <!-- End Section 1 -->
-
-      <v-col class="horizontal-gap">
       </v-col>
 
-      <!-- Section 2 -->
+      <v-col class="horizontal-gap"></v-col>
+
       <v-col class="section">
         <!-- Charts -->
         <v-row
@@ -360,6 +108,7 @@ import { onMounted, ref, computed, nextTick } from "vue";
 import {getPrintJob, getWorkflow, getCollection, getWorkflowTimes } from "../api.js";
 import ChartAll from '../Chart/chart-all.vue';
 import ReportOverview from './View/overview.vue';
+import ReportComparison from './View/comparison.vue';
 
 //// Props
 const {
@@ -376,31 +125,14 @@ defineProps({
 //// DATA
 ///////////////////
 
-//// Master Data
 const loading = ref(true);
+
 const reportData = ref([]);
-
-//// Step Time Comparison Data
-const heatmap = ref(null);
-const secondsOrMinutes = ref(0);
-const showHeatMap = ref(0);
-const highlightedStep = ref(null);
 const genericSteps = ref(null);
-
-//// Step Time Chart Data
-const selectedChart = ref(null);
 const labels = ref([]);
-const chartCanvas = ref(null);
 
-//// Scroll Data
-const comparisonScroll = ref(null);
-const comparisonArrow = ref(false);
-const overviewArrow = ref(false);
-const scrollArrowConsumed = ref(false);
-const checkScroll = () => {
-  const element = comparisonScroll.value.$el;
-  comparisonArrow.value = element.scrollLeft + element.clientWidth < element.scrollWidth;
-}
+const selectedChart = ref(null);
+const chartCanvas = ref(null);
 
 //////////////////
 //// COMPUTED
@@ -429,125 +161,6 @@ const selectedChartLabels = computed(() => {
 const scrollToBottomOfCharts = () => {
   document.getElementById("chart-bottom").scrollIntoView();
 };
-
-const scrollToTopOfComparison = () => {
-  document.getElementById("comparison-top").scrollIntoView();
-};
-
-//////////////////////
-//// Logic
-//////////////////////
-
-const toTimeUnit = (time) => {
-  if (secondsOrMinutes.value === 0) {
-    return (time / 60).toFixed(2);
-  }
-  return time;
-};
-
-const getHeatmapColor = (step) => {
-
-  if (!showHeatMap.value) {
-    return 'white';
-  }
-
-  const map = heatmap.value[step.stepid];
-  const score = map.scores[step.reportid];
-  const scores_total = score.length;
-  const high_score = map.high_score ? map.high_score : 1;
-  const mid_score  = map.high_score / 2;
-
-  if (score > (mid_score)) {
-    return `rgba(255,0,0,${score / high_score});`
-  } else if (score < (mid_score)) {
-    return `rgba(0,255,0,calc(${1 - (score/high_score)}));`
-  } else {
-    return 'yellow';
-  }
-}
-
-const generateHeatmap = (steps) => {
-  const maps = [];
-
-  // Loop through each step (eg Rasterization, Lamination etc.)
-  steps.forEach((step) => {
-    const times = [];
-    let index = 0;
-
-    // Loop through each simulation report and get it's time for our current step
-    reportData.value.forEach((report) => {
-      times.push({
-          reportid: report.report.id,
-          time: report.steps[step.value].time
-        });
-    });
-
-    // Now that we have all times for this step, sort them.
-    times.sort((a,b)=>{
-      return (a.time > b.time);
-    });
-
-
-    // Each simulation report will be assigned a score from where it lies in the sorted array.
-    const scores = {};
-    let prev_time = times[0].time;
-    let score = 0;
-    times.forEach((time) => {
-      if (prev_time !== time.time) {
-        score++;
-      }
-      prev_time = time.time;
-      scores[time.reportid] = score;
-    });
-    maps.push({
-      stepId: step.value,
-      scores,
-      high_score: score,
-    });
-  });
-  return maps;
-};
-
-//////////////////////
-//// Handlers
-/////////////////////
-
-const handleCSV = () => {
-
-  const headers = labels.value.map((label)=>{
-    return label.title;
-  }).join(",");
-
-  const data = reportData.value.map((report) => {
-    const stepTimesInReport = [];
-    report.steps.forEach((step)=>{
-      stepTimesInReport.push(step.time);
-    });
-    const string = stepTimesInReport.join(",");
-    return string + '\n';
-  }).join('');
-
-  const csv = headers + '\n' + data;
-  const blob = new Blob([csv], { type: "text/csv"});
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = 'simulation-report-times.csv';
-  document.body.appendChild(link);
-  link.click();
-};
-
-///////////////////////
-//// Display
-//////////////////////
-
-const highlightStep = (index) => {
-  if (index === highlightedStep.value) {
-    highlightedStep.value = null;
-  } else {
-    highlightedStep.value = index;
-  }
-}
-
 
 ///////////////////////
 //// Logic
@@ -580,7 +193,6 @@ const addMissing = (workflowSteps, stepDefinitions) => {
     }
   });
 
-
   return allSteps;
 };
 
@@ -608,7 +220,6 @@ const createStep = (reportId, stepId, stepTitle, timePerPage, setupTime, totalTi
     placeholder: isPlaceholder,
   }
 }
-
 
 const prepareReports = async (workflowStepDefinitions) => {
   //// 1. Copy Reports
@@ -638,8 +249,6 @@ const prepareReports = async (workflowStepDefinitions) => {
     const stepTime = await response[2].json();
     const steps = [];
     const stepsAccountedFor = {};
-
-
 
     //// Add formatted time to report
     report.dateTime = report.Date + " " + report.Time;
@@ -695,11 +304,6 @@ const prepareReports = async (workflowStepDefinitions) => {
 
 };
 
-
-//////////////////
-//// Computed
-//////////////////
-
 //////////////////
 //// On Mounted
 //////////////////
@@ -708,23 +312,21 @@ onMounted(
   async () => {
     genericSteps.value = await getGenericWorkflowSteps();
     await prepareReports();
-    heatmap.value = generateHeatmap(labels.value);
-
     loading.value=false;
     await nextTick();
     setTimeout(() => {
-      checkScroll();
       chartCanvas.value = document.getElementById("chart-canvas");
     }, 1000);
 });
 </script>
 <style scoped>
 .simulation-report-view {
-  --vertical-gap:  1vh;
+  --vertical-gap:  16px;
   --horizontal-gap: 4vw;
   --header-height: 3vh;
   --overall-height: 96vh;
-  --overall-padding: 1vw;
+  --overall-padding: 16px;
+  --overall-padding-top: 48px;
   --overall-width: 100%;
   --section-height: calc(100% - var(--overall-padding));
   --section-width: calc(((--overall-width) - calc(var(--overall-padding)) - calc(var(--horizontal-gap))) / 2);
@@ -732,6 +334,9 @@ onMounted(
   height: var(--overall-height);
   border-radius:10px !important;
   overflow: hidden !important;
+  padding: var(--overall-padding);
+  padding-top: var(--overall-padding-top);
+  position:relative;
 }
 
 .simulation-report-view-mobile {
@@ -746,6 +351,7 @@ onMounted(
   height: var(--overall-height);
   border-radius:10px !important;
   overflow: scroll !important;
+  position:relative;
 }
 
 .header-bar {
@@ -784,6 +390,12 @@ onMounted(
   min-width:var(--horizontal-gap);
   padding:0;
   margin:0;
+}
+
+.close-button{
+  position:absolute;
+  top:2px;
+  right:2px;
 }
 
 .close-button:hover {
@@ -843,14 +455,8 @@ onMounted(
 .comparison-card{
   height: calc((var(--section-height) - var(--vertical-gap)) / 2);
   background:white;
-
-  padding-left:2%;
-  padding-top:3%;
-  padding-bottom:3%;
-
   overflow-x:hidden;
   overflow-y:auto;
-
   border-width: 1px;
   border-style:solid;
   border-radius:5px;
@@ -902,50 +508,6 @@ onMounted(
   border-radius:5px;
   border-color: rgba(0, 0, 0, 0.4);
   box-shadow:none;
-}
-
-
-.comparison-card-title{
-  height:18px;
-  text-align:center;
-  text-justify: center;
-  background-color:rgb(25,25,25);
-  color:white;
-  font-weight: bold;
-  font-size: 1.0em;
-  font-family: 'Courier New', Courier, monospace;
-  border-radius:5px;
-  text-transform: uppercase;
-}
-
-.comparison-header{
-  height:35px;
-  max-height:35px;
-  min-height:35px;
-  overflow-y:hidden;
-}
-
-.comparison-table-data{
-  text-align:center;
-  max-width:15px;
-  padding-right:10%;
-  text-wrap:nowrap;
-  overflow:hidden;
-  font-weight:500;
-}
-
-.comparison-table-step-names{
-  text-overflow:ellipsis;
-  padding-right:5%;
-  max-width:70px;
-  text-wrap:nowrap;
-  overflow:hidden;
-}
-
-.comparison-field {
-  font-size: 0.8em;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .chart-card-title{

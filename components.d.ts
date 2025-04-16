@@ -10,6 +10,7 @@ declare module 'vue' {
     ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
     ChatWidget: typeof import('./src/components/ChatBot/chat-widget.vue')['default']
     CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
+    Comparison: typeof import('./src/components/SimulationReport/View/comparison.vue')['default']
     DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']

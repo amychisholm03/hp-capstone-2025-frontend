@@ -158,8 +158,7 @@
         >
           <v-btn
             :value="1"
-            size="large"
-            class="pl-2 pr-2"
+            size="x-small"
             style="font-size:0.8em;"
             border
             tile
@@ -167,10 +166,9 @@
             Show
           </v-btn>
           <v-btn
-            size="large"
+            size="x-small"
             :value="0"
             style="font-size:0.8em;"
-            class="pl-3 pr-4"
             border
             tile
           >
@@ -189,6 +187,7 @@
             :value="0"
             style="font-size:0.7em;"
             size="x-small"
+            class="px-2"
             border
             round
           >
@@ -197,6 +196,7 @@
           <v-btn
             :value="1"
             style="font-size:0.7em;"
+            class="px-2"
             size="x-small"
             border
             round
@@ -205,24 +205,24 @@
           </v-btn>
         </v-btn-toggle>
         <v-spacer></v-spacer>
-        <div
-          class="d-flex justify-start"
-          style="position:absolute; right:4px; bottom:0px;"
-        >
-          <v-btn
-            icon
-            color="primary"
-            size="small"
-            flat
-            @click="handleCSV"
-          >
-            <v-icon>
-              mdi-file-delimited-outline
-            </v-icon>
-          </v-btn>
-        </div>
       </v-col>
     </v-row>
+    <div
+      class="d-flex justify-start"
+      style="position:absolute; right:0px; bottom:0px;"
+    >
+      <v-btn
+        icon
+        color="primary"
+        size="small"
+        flat
+        @click="handleCSV"
+      >
+        <v-icon>
+          mdi-file-delimited-outline
+        </v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -445,6 +445,7 @@ const scrollToEnd = () => {
 }
 
 .comparison-main{
+  position:relative;
   padding:2%;
   width:100%;
   height:100%;
@@ -455,14 +456,14 @@ const scrollToEnd = () => {
 }
 
 .settings-column{
-  position:relative !important;
   display:flex;
   flex-wrap:nowrap;
   flex-direction: column;
   row-gap:10px;
   overflow-y:scroll;
   overflow-x:hidden;
-  margin-left:24px;
+  margin-left:4px;
+  margin-right:4px;
 }
 
 .scroll-arrow {

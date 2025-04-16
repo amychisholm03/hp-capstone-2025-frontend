@@ -79,12 +79,11 @@
 
             <!-- Chart Canvas -->
             <div
-              class="align-center d-flex justify-center pa-3"
-              style="height:100%; width:100%;"
+              class="align-center d-flex justify-center pl-3 pr-3"
             >
               <canvas
                 id="chart-canvas"
-                style="max-width:600px; max-height:600px; display:block;"
+                style="max-width:600px; max-height:500px; display:block;"
               >
               </canvas>
             </div>
@@ -412,10 +411,7 @@ onMounted(
 }
 
 .main-body {
-  padding:var(--overall-padding);
-  height: var(--section-height);
-  max-height: var(--section-height);
-  min-height: var(--section-height);
+  height: 100%;
   overflow: hidden;
   flex-wrap: nowrap;
 }
@@ -471,7 +467,7 @@ onMounted(
 
 .section {
   display:block;
-  overflow:scroll;
+  overflow:hidden;
   min-width:  var(--section-width);
   max-width:  var(--section-width);
   width:      var(--section-width);
@@ -504,7 +500,7 @@ onMounted(
 }
 
 .comparison-card{
-  height: calc((var(--section-height) - var(--vertical-gap)) / 2);
+  height: calc((var(--section-height) / 2) + 12px);
   background:white;
   overflow-x:hidden;
   overflow-y:auto;
@@ -539,8 +535,8 @@ onMounted(
   background:white;
   display:block;
   height: 100%;
-  max-height: var(--section-height);
-  min-height: var(--section-height);
+  max-height:100%;
+  min-height:100%;
   max-width:inherit;
   border-width: 1px;
   border-style:solid;

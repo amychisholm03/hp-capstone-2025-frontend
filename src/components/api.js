@@ -3,13 +3,11 @@ export const API_PORT = import.meta.env.VITE_API_PORT
 
 async function fetchWrapper(url, options) {
     return await fetch(url,options).catch(() => {
-      console.log("Error fetchWrappering resource: " + url)
+      console.log("Error fetching resource: " + url);
   });
 }
 
 export async function getCollection(coll) {
-  console.log(API_URL);
-  console.log(API_PORT);
   return fetchWrapper(`${API_URL}:${API_PORT}/${coll}`, {
     method: 'GET',
     mode: 'cors'

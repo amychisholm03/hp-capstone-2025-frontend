@@ -1,10 +1,5 @@
 <template>
   <v-app theme="light">
-    <v-toolbar class="toolbar">
-      <v-toolbar-title class="header">
-        Dashboard
-      </v-toolbar-title>
-    </v-toolbar>
     <v-main>
       <v-container class="ma-3 pa-3">
         <v-row>

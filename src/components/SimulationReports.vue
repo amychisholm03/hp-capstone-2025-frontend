@@ -116,7 +116,6 @@ const refresh = async () => {
   ]);
   printJobs.value         = response[0];
   workflows.value         = response[1];
-  console.log(response[2]);
   simulationReports.value = addTime(response[2]);
 };
 

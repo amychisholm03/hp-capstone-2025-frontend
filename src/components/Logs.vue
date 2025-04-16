@@ -44,7 +44,6 @@
     const response = await getErrorLogs();
     if (response.ok) {
       logs.value = await response.json();
-      console.log(logs.value);
-    } // todo: error popup here
+    }
   });
 </script>

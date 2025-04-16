@@ -6,7 +6,7 @@
       <v-row
         ref="horizontalScroll"
         no-gutters
-        class="overview-list-container"
+        class="overview-list-container pb-3"
       >
         <div
           v-if="horizontalArrow && !horizontalArrowConsumed"

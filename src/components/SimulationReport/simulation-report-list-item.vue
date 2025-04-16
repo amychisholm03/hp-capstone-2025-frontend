@@ -15,8 +15,8 @@
       >
         <v-chip
           variant="outlined"
-          size="large"
-          class="align-center d-flex justify-center pb-1 pt-1"
+          size="x-large"
+          class="align-center d-flex justify-center pb-2 pt-3"
           style="width:100%; border-radius:10px;"
         >
           <v-card-text
@@ -25,7 +25,7 @@
             <p class="item-val-desc">
               Workflow
             </p>
-            <p class="d-flex justify-center">
+            <p>
               {{ report.WorkflowTitle ? report.WorkflowTitle : 'N/A' }}
             </p>
           </v-card-text>
@@ -35,23 +35,23 @@
       <!-- Print Job Title -->
       <v-col
         :cols="mobile ? '6' : '3'"
-        class="align-center d-flex pt-1"
+        class="align-center d-flex pb-1 pt-1"
         :class="mobile ? 'justify-center pr-3' : ''"
       >
         <v-chip
           flat
-          size="large"
+          size="x-large"
           variant="outlined"
           style="width:100%; border-radius:10px;"
-          class="align-center d-flex justify-center pb-1 pt-1"
+          class="align-center d-flex justify-center pb-2 pt-3"
         >
           <div
             :class="mobile ? 'mobile-item-val' : 'item-val'"
           >
-            <p class="d-flex item-val-desc justify-center">
+            <p class="item-val-desc">
               Print
             </p>
-            <p class="d-flex justify-center">
+            <p>
               {{ report.PrintJobTitle ? report.PrintJobTitle : 'N/A' }}
             </p>
           </div>
@@ -115,8 +115,11 @@ const {report = null} = defineProps({
   font-weight:800;
   color:darkslategrey;
   opacity:0.6;
-  font-size:0.7em;
+  font-size:0.6em;
+  line-height:8px;
   font-family:'Courier New', Courier, monospace;
+  text-align:center;
+  width:100%;
 }
 
 .mobile-item-val{

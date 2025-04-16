@@ -209,7 +209,7 @@
     </v-row>
     <div
       class="d-flex justify-start"
-      style="position:absolute; right:0px; bottom:0px;"
+      style="position:absolute; right:3px; bottom:6px;"
     >
       <v-btn
         icon
@@ -459,11 +459,10 @@ const scrollToEnd = () => {
   display:flex;
   flex-wrap:nowrap;
   flex-direction: column;
+  overflow:hidden;
   row-gap:10px;
-  overflow-y:scroll;
-  overflow-x:hidden;
   margin-left:4px;
-  margin-right:4px;
+  margin-right:16px;
 }
 
 .scroll-arrow {

@@ -500,7 +500,7 @@ onMounted(
 }
 
 .comparison-card{
-  height: calc((var(--section-height) / 2) + 12px);
+  height: calc((var(--section-height) / 2));
   background:white;
   overflow-x:hidden;
   overflow-y:auto;

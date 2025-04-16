@@ -259,7 +259,7 @@
 }
 
 .report-history-item {
-  height:64px;
+  height:72px;
   border-width:1px;
   border-left-width:0px;
   border-right-width:0px;

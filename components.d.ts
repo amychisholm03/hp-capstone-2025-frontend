@@ -16,6 +16,7 @@ declare module 'vue' {
     Logs: typeof import('./src/components/Logs.vue')['default']
     LogViewer: typeof import('./src/components/Log/LogViewer.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']
+    Overview: typeof import('./src/components/SimulationReport/View/overview.vue')['default']
     PrintJobCreate: typeof import('./src/components/PrintJob/print-job-create.vue')['default']
     PrintJobs: typeof import('./src/components/PrintJobs.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

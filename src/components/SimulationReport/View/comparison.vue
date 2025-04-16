@@ -7,7 +7,7 @@
     >
       <v-col
         class="pr-2"
-        style="overflow:hidden; min-width:15%; max-width:15%;"
+        :class="mobile ? 'label-column-mobile' : 'label-column'"
       >
         <table style="width:100%">
           <thead>
@@ -54,7 +54,9 @@
         </table>
       </v-col>
 
-      <v-col style="border-style:groove; border-width:3px; border-color:white; max-width:60%; min-width:60%; position:relative;">
+      <v-col
+        :class="mobile ? 'times-column-mobile' : 'times-column'"
+      >
         <v-row
           ref="horizontalScroll"
           no-gutters
@@ -176,7 +178,9 @@
           </v-btn>
         </v-btn-toggle>
 
-        <h3 class="ml-3"> Time Units </h3>
+        <h3 class="ml-3">
+          Time Units
+        </h3>
         <v-btn-toggle
           v-model="secondsOrMinutes"
           mandatory
@@ -459,6 +463,51 @@ const scrollToEnd = () => {
   overflow-y:scroll;
   overflow-x:hidden;
   margin-left:24px;
+}
+
+.scroll-arrow {
+  position:absolute;
+  right:5%;
+  bottom:50%;
+  animation-name:pop;
+  animation-duration:6s;
+  animation-fill-mode:forwards;
+  color:black;
+  z-index:150;
+}
+
+.scroll-arrow:hover {
+  opacity: 0.5;
+}
+
+.label-column{
+  overflow:hidden;
+  min-width:15%;
+  max-width:15%;
+}
+
+.label-column-mobile{
+  overflow:hidden;
+  min-width:35%;
+  max-width:35%;
+}
+
+.times-column{
+  border-style:groove;
+  border-width:3px;
+  border-color:white;
+  max-width:60%;
+  min-width:60%;
+  position:relative;
+}
+
+.times-column-mobile{
+  border-style:groove;
+  border-width:3px;
+  border-color:white;
+  max-width:65%;
+  min-width:65%;
+  position:relative;
 }
 </style>
 

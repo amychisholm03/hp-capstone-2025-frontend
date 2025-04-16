@@ -22,6 +22,7 @@
       :class="mobile ? 'main-body' : 'main-body-mobile'"
     >
       <v-col class="section">
+        <!-- Overview -->
         <v-row
           class="overview-card"
           no-gutters
@@ -37,20 +38,76 @@
 
         <div class="vertical-gap"></div>
 
+        <!-- Comparison -->
         <v-row
           no-gutters
           class="comparison-card"
         >
           <v-col>
-            <report-comparison :report-data="reportData" :labels="labels" :mobile="mobile"></report-comparison>
+            <report-comparison
+              :report-data="reportData"
+              :labels="labels"
+              :mobile="mobile"
+            ></report-comparison>
+          </v-col>
+        </v-row>
+
+        <!-- Graphs (Mobile Only) -->
+        <v-row
+          v-if="mobile"
+          class="chart-card"
+          no-gutters
+        >
+          <v-col
+            style="display:flex; flex-direction:column; overflow:hidden; height:100%;"
+          >
+            <v-tabs
+              v-model="selectedChart"
+              fixed-tabs
+            >
+              <v-tab
+                v-for="{ index, printjob, workflow } in reportData"
+                :key="index"
+                :value="index"
+                color="white"
+                :class="index === selectedChart ? 'tab-selected' : 'tab-unselected'"
+                style="max-width:unset;"
+              >
+                {{ printjob.Title }} - {{ workflow.Title }}
+              </v-tab>
+            </v-tabs>
+
+            <!-- Chart Canvas -->
+            <div
+              class="align-center d-flex justify-center pa-3"
+              style="height:100%; width:100%;"
+            >
+              <canvas
+                id="chart-canvas"
+                style="max-width:600px; max-height:600px; display:block;"
+              >
+              </canvas>
+            </div>
+
+            <!-- Chart Selector -->
+            <chart-all
+              v-if="chartCanvas"
+              style="margin-top:auto;"
+              :chart-info="{data: selectedChartData, labels: selectedChartLabels }"
+              :canvas="chartCanvas"
+            >
+            </chart-all>
           </v-col>
         </v-row>
       </v-col>
 
       <v-col class="horizontal-gap"></v-col>
 
-      <v-col class="section">
-        <!-- Charts -->
+      <!-- Graph Section (desktop only) -->
+      <v-col
+        v-if="!mobile"
+        class="section"
+      >
         <v-row
           class="chart-card"
           no-gutters
@@ -96,8 +153,6 @@
             </chart-all>
           </v-col>
         </v-row>
-        <!-- End Charts -->
-        <div id="chart-bottom" />
       </v-col>
     </v-row>
   </v-card>
@@ -153,14 +208,6 @@ const selectedChartLabels = computed(() => {
     return label.title;
   })
 });
-
-//////////////////
-//// Navigation
-//////////////////
-
-const scrollToBottomOfCharts = () => {
-  document.getElementById("chart-bottom").scrollIntoView();
-};
 
 ///////////////////////
 //// Logic
@@ -343,14 +390,18 @@ onMounted(
   --vertical-gap:  1vh;
   --header-height: 3vh;
   --overall-height: 96vh;
-  --overall-padding: 1vw;
+  --overall-padding: 2vw;
   --overall-width: 100%;
   --section-height: 100%;
   --section-width: var(--overall-width);
   width: var(--overall-width);
   height: var(--overall-height);
+  max-height: var(--overall-height);
   border-radius:10px !important;
-  overflow: scroll !important;
+  padding-left: var(--overall-padding);
+  padding-right: var(--overall-padding);
+  padding-top: 32px;
+  overflow-y: scroll !important;
   position:relative;
 }
 
@@ -365,16 +416,15 @@ onMounted(
   height: var(--section-height);
   max-height: var(--section-height);
   min-height: var(--section-height);
-  overflow:hidden;
+  overflow: hidden;
   flex-wrap: nowrap;
 }
 
-.main-body {
+.main-body-mobile {
   padding:var(--overall-padding);
   height: var(--section-height);
   max-height: var(--section-height);
   min-height: var(--section-height);
-  overflow:hidden;
 }
 
 .vertical-gap {
@@ -396,6 +446,7 @@ onMounted(
   position:absolute;
   top:2px;
   right:2px;
+  z-index:999;
 }
 
 .close-button:hover {
@@ -420,13 +471,13 @@ onMounted(
 
 .section {
   display:block;
+  overflow:scroll;
   min-width:  var(--section-width);
   max-width:  var(--section-width);
   width:      var(--section-width);
   min-height: var(--section-height);
   max-height: var(--section-height);
   height:     var(--section-height);
-  overflow:hidden;
 }
 
 .overview-card {
@@ -534,22 +585,6 @@ onMounted(
  90%   { scale: 2.0; opacity:1; }
  100%  { scale: 2.0; opacity:0; }
 }
-
-.scroll-arrow {
-  position:absolute;
-  right:5%;
-  bottom:50%;
-  animation-name:pop;
-  animation-duration:6s;
-  animation-fill-mode:forwards;
-  color:black;
-  z-index:150;
-}
-
-.scroll-arrow:hover {
-  opacity: 0.5;
-}
-
 .v-btn-toggle .v-btn {
   margin-right: 0 !important;
   margin-left: 0 !important;

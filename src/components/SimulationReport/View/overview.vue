@@ -30,7 +30,7 @@
         <v-col
           v-for="{report, printjob, workflow, color} in reportData"
           :key="report.id"
-          class="overview-list"
+          :class="mobile ? 'overview-list-mobile' : 'overview-list'"
           style=""
         >
           <!-- Data -->
@@ -118,10 +118,12 @@ import { onMounted, ref, computed, nextTick, reactive } from "vue";
 //////////////////////////
 const {
   reportData = [],
+  mobile = false,
 }
 =
 defineProps({
   reportData: Array,
+  mobile: Boolean,
 });
 
 //////////////////////////
@@ -159,22 +161,6 @@ const scrollToEnd = () => {
     el.scrollBy(max,0, 'smooth');
   }
   horizontalArrowConsumed.value = true;
-};
-
-/**
-* Calculates how wide each report in the overview should be
-* Based on the assumption each of the two sections (data and graph)
-* takes up roughly have the viewport.
-*/
-const calculateOverviewWidth = () => {
-  const reportCount = reportData.value.length ? reportData.value.length : 1;
-  if (reportCount === 1) {
-    return '100%';
-  }
-  if (reportCount <= 3) {
-    return (45 / reportCount) + 'vw';
-  }
-  return (45 / 3) + 'vw';
 };
 </script>
 
@@ -280,6 +266,35 @@ const calculateOverviewWidth = () => {
   margin-right:5px;
   border-radius: 15px;
   border-style:groove;
+}
+
+.overview-list-mobile{
+  background:white;
+  height:inherit;
+  max-height:inherit;
+  width:45vw;
+  min-width:45vw;
+  max-width:45vw;
+  border-width:1px;
+  border-color:rgba(50,50,50,0.5);
+  margin-right:5px;
+  border-radius: 15px;
+  border-style:groove;
+}
+
+.scroll-arrow {
+  position:absolute;
+  right:5%;
+  bottom:50%;
+  animation-name:pop;
+  animation-duration:6s;
+  animation-fill-mode:forwards;
+  color:black;
+  z-index:103;
+}
+
+.scroll-arrow:hover {
+  opacity: 0.5;
 }
 </style>
 

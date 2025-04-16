@@ -166,7 +166,7 @@ const createPrintSettings = async () => {
   );
 
   if (!response.ok) {
-    console.log("Error creating print job. Response from server: " + String(response.status))
+    console.log("Error creating print job: " + String(response.status))
     failure.value = true;
     setTimeout(() => {
       failure.value = false;

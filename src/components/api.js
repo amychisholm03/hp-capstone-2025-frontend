@@ -1,43 +1,49 @@
 export const API_URL = import.meta.env.VITE_API_URL
 export const API_PORT = import.meta.env.VITE_API_PORT
 
+async function fetchWrapper(url, options) {
+    return await fetch(url,options).catch(() => {
+      console.log("Error fetching resource: " + url);
+  });
+}
+
 export async function getCollection(coll) {
-  return await fetch(`${API_URL}:${API_PORT}/${coll}`, {
+  return fetchWrapper(`${API_URL}:${API_PORT}/${coll}`, {
     method: 'GET',
     mode: 'cors'
   });
 }
 
 export async function getPrintJob(id) {
-  return await fetch(`${API_URL}:${API_PORT}/${'PrintJob'}/${id}`, {
+  return fetchWrapper(`${API_URL}:${API_PORT}/${'PrintJob'}/${id}`, {
     method: 'GET',
     mode: 'cors'
   });
 }
 
 export async function getErrorLogs() {
-  return fetch(`${API_URL}:${API_PORT}/${'Log'}/${'Error'}`, {
+  return fetchWrapper(`${API_URL}:${API_PORT}/${'Log'}/${'Error'}`, {
     method: 'GET',
     mode: 'cors'
   });
 }
 
 export async function getWorkflow(id) {
-  return await fetch(`${API_URL}:${API_PORT}/${'Workflow'}/${id}`, {
+  return fetchWrapper(`${API_URL}:${API_PORT}/${'Workflow'}/${id}`, {
     method: 'GET',
     mode: 'cors'
   })
 }
 
 export async function getWorkflowTimes(id) {
-  return await fetch(`${API_URL}:${API_PORT}/${'SimulationReport'}/${id}/WorkflowStep/Time`, {
+  return fetchWrapper(`${API_URL}:${API_PORT}/${'SimulationReport'}/${id}/WorkflowStep/Time`, {
     method: 'GET',
     mode: 'cors'
   })
 }
 
 async function postNewDocument(coll, doc) {
-  return await fetch(`${API_URL}:${API_PORT}/${coll}`, {
+  return fetchWrapper(`${API_URL}:${API_PORT}/${coll}`, {
     method: 'POST',
     mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
@@ -47,7 +53,7 @@ async function postNewDocument(coll, doc) {
 
 
 export async function postPrintJob(Title, PageCount, RasterizationProfileID) {
-  return await postNewDocument("PrintJob", {
+  return postNewDocument("PrintJob", {
     Title: Title,
     PageCount: PageCount,
     RasterizationProfileID: RasterizationProfileID
@@ -61,7 +67,7 @@ export async function postPrintJob(Title, PageCount, RasterizationProfileID) {
  * @returns
  */
 export async function postWorkflow(Title, WorkflowSteps) {
-  return await postNewDocument("Workflow", {
+  return postNewDocument("Workflow", {
     Title: Title,
     WorkflowSteps: WorkflowSteps
   });
@@ -94,7 +100,7 @@ export function formatSteps(steps, numOfRIPs) {
 }
 
 export async function postSimulationReport(PrintJobID, WorkFlowID) {
-  return await postNewDocument("SimulationReport", {
+  return postNewDocument("SimulationReport", {
     PrintJobID: PrintJobID,
     WorkflowID: WorkFlowID
   });

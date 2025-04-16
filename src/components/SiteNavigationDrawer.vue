@@ -1,15 +1,14 @@
 <template>
   <v-navigation-drawer
-    style="min-width: 300px; height: 100%;"
+    :model-value="open || !mobile"
+    :permanent="!mobile"
+    :persistent="true"
     class="main-drawer"
-    :rail="disabled"
-    :model-value="true"
-    permanent
     theme="light"
   >
     <v-row
       no-gutters
-      style="height: 10%;"
+      class="align-center d-flex"
     >
       <v-col
         cols="3"
@@ -24,67 +23,81 @@
         ></v-img>
       </v-col>
       <v-col
-        style="font-size:x-large; font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-weight:200;"
-        class="align-center d-flex justify-start"
+        class="align-center d-flex drawer-title justify-start"
       >
         <span> Print OS </span>
       </v-col>
-    </v-row>
-    <v-divider></v-divider>
-    <v-list
-      style="height: 90%; width:100%; display: flex; flex-direction:column;"
-    >
-
-      <v-list-item @click="routeTo('/Login')">
-      <v-btn
-        class="login-btn"
-        variant="outlined"
-        rounded
-        color="primary"
-        style="max-width: 280px; margin: 10px auto;"
+      <v-col
+        v-if="mobile"
+        cols="auto"
       >
-        {{ userStore.email ? `Hello, ${userStore.email}` : 'Log in / Create account' }}
-      </v-btn>
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="white"
+        >
+          <v-icon
+            size="x-large"
+            @click="$emit('close')"
+          >
+            mdi-chevron-left
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-divider class="ma-0 pa-0"></v-divider>
+    <v-list
+      style="display: flex; flex-direction:column;"
+    >
+      <v-list-item @click.native.stop="routeTo('/Login')">
+        <v-btn
+          class="login-btn"
+          variant="outlined"
+          rounded
+          color="primary"
+          style="max-width: 280px; margin: 10px auto;"
+        >
+          {{ userStore.email ? `Hello, ${userStore.email}` : 'Log in / Create account' }}
+        </v-btn>
       </v-list-item>
 
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-view-dashboard"
-        @click="routeTo('/')"
+        @click.native.stop="routeTo('/')"
       >
-        <v-list-item-title>Dashboard</v-list-item-title>
+        <v-list-item-title>
+          Dashboard
+        </v-list-item-title>
       </v-list-item>
 
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-printer-pos-plus"
-        @click="routeTo('/PrintJobs')"
+        @click.native.stop="routeTo('/PrintJobs')"
       >
         <v-list-item-title>Print Jobs</v-list-item-title>
       </v-list-item>
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-sitemap"
-        @click="routeTo('/Workflows')"
+        @click.native.stop="routeTo('/Workflows')"
       >
         <v-list-item-title>Workflows</v-list-item-title>
       </v-list-item>
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-test-tube"
-        @click="routeTo('/SimulationReports')"
+        @click.native.stop="routeTo('/SimulationReports')"
       >
         <v-list-item-title>Simulation</v-list-item-title>
       </v-list-item>
-
-      <v-divider
-        style="margin-top:auto;"
-        class="pb-2"
-      />
+      <v-divider style="margin-top:auto;" />
       <v-list-item
         class="menu-item"
         prepend-icon="mdi-archive"
-        @click="routeTo('/Logs')"
+        @click.native.stop="routeTo('/Logs')"
       >
         <v-list-item-title>Logging</v-list-item-title>
       </v-list-item>
@@ -93,19 +106,37 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, watch } from "vue";
+  import { ref, computed, onMounted, watch } from "vue";
+  import { useDisplay } from "vuetify"
   import { useRouter } from 'vue-router';
   import { useUserStore } from '@/stores/user';
-
   const router = useRouter();
   const disabled = ref(false);
+  const { name } = useDisplay();
+
+  const userStore = useUserStore();
+
+  //// EMITS ////
+  const emit = defineEmits(['close']);
+
+  //// PROPS ////
+  defineProps({
+    open: {
+      type: Boolean,
+      required: true,
+    }
+  });
 
   //// ROUTING ////
   const routeTo = (where) => {
     router.push(where);
+    emit('close');
   };
 
-  const userStore = useUserStore();
+  //// COMPUTED ////
+  const mobile = computed(() => {
+    return name.value === 'xs';
+  });
 </script>
 
 <style>
@@ -129,7 +160,19 @@
     font-weight:bold;
   }
 
+  .main-drawer{
+    position: fixed;
+    max-height:100vh;
+    z-index:99;
+  }
+
   .main-drawer .v-navigation-drawer__content {
-    overflow: hidden;
+    overflow: hidden !important;
+  }
+
+  .drawer-title {
+    font-size:x-large;
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight:200;
   }
 </style>

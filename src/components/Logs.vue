@@ -3,8 +3,7 @@
     <v-main>
       <v-container class="ma-3 pa-3">
         <v-card
-          class="module"
-          style="max-height: 600px; height: auto; max-width: 1000px; width: 1000px;"
+          class="logs-module ma-3"
         >
           <module-toolbar
             class="module-toolbar"
@@ -16,7 +15,6 @@
           </module-toolbar>
           <log-viewer
             v-if="!errorLogsMinimized"
-            style="height:550px;"
             :logs="logs"
           ></log-viewer>
         </v-card>
@@ -46,7 +44,6 @@
     const response = await getErrorLogs();
     if (response.ok) {
       logs.value = await response.json();
-      console.log(logs.value);
-    } // todo: error popup here
+    }
   });
 </script>

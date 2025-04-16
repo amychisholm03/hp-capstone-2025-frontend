@@ -8,14 +8,15 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ChartAll: typeof import('./src/components/Chart/chart-all.vue')['default']
+    Charts: typeof import('./src/components/SimulationReport/View/charts.vue')['default']
     ChatWidget: typeof import('./src/components/ChatBot/chat-widget.vue')['default']
-    CompareReports: typeof import('./src/components/SimulationReport/CompareReports.vue')['default']
-    DetailedReport: typeof import('./src/components/SimulationReport/DetailedReport.vue')['default']
+    Comparison: typeof import('./src/components/SimulationReport/View/comparison.vue')['default']
     ErrorPopups: typeof import('./src/components/ErrorPopups.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
     Logs: typeof import('./src/components/Logs.vue')['default']
     LogViewer: typeof import('./src/components/Log/LogViewer.vue')['default']
     ModuleToolbar: typeof import('./src/components/module-toolbar.vue')['default']
+    Overview: typeof import('./src/components/SimulationReport/View/overview.vue')['default']
     PrintJobCreate: typeof import('./src/components/PrintJob/print-job-create.vue')['default']
     PrintJobs: typeof import('./src/components/PrintJobs.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -176,7 +176,7 @@ const getWorkflowSteps = async () => {
       errorMessage.value = "Error fetching list of workflow steps";
     }
   } catch (error) {
-    errorMessage.value = "Error fetching list of workflow steps"; s
+    errorMessage.value = "Error fetching list of workflow steps";
   }
 }
 

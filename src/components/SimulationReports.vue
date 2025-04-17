@@ -74,7 +74,6 @@ import { computed, ref, onMounted } from "vue";
 import {useDisplay} from 'vuetify';
 import { getCollection } from "./api.js";
 import ChatWidget from './ChatBot/chat-widget.vue';
-import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';
 import SimulationReportView from './SimulationReport/simulation-report-view.vue';

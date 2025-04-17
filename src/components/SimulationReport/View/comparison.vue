@@ -208,8 +208,9 @@
       </v-col>
     </v-row>
     <div
+      v-if="!mobile"
       class="d-flex justify-start"
-      style="position:absolute; right:3px; bottom:6px;"
+      style="position:absolute; right:9px; bottom:12px;"
     >
       <v-btn
         icon

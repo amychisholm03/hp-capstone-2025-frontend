@@ -19,18 +19,21 @@
     <v-row
       no-gutters
       class="align-row d-flex"
-      :class="mobile ? 'main-body' : 'main-body-mobile'"
+      :class="mobile ? 'main-body-mobile' : 'main-body'"
     >
       <v-col class="section">
         <!-- Overview -->
         <v-row
-          class="overview-card"
+          :class="mobile ? 'overview-card-mobile' : 'overview-card'"
           no-gutters
         >
-          <v-col>
+          <v-col
+            style="height:inherit;"
+          >
             <report-overview
               :report-data="reportData"
               :mobile="mobile"
+              style="height:inherit;"
             >
             </report-overview>
           </v-col>
@@ -52,14 +55,14 @@
           </v-col>
         </v-row>
 
-        <!-- Graphs (Mobile Only) -->
+        <!-- Graph Section (Mobile Only) -->
         <v-row
           v-if="mobile"
-          class="chart-card"
+          class="chart-card-mobile mt-5"
           no-gutters
         >
           <v-col
-            style="display:flex; flex-direction:column; overflow:hidden; height:100%;"
+            style="display:flex; flex-direction:column;"
           >
             <v-tabs
               v-model="selectedChart"
@@ -98,6 +101,9 @@
             </chart-all>
           </v-col>
         </v-row>
+
+
+
       </v-col>
 
       <v-col class="horizontal-gap"></v-col>
@@ -367,29 +373,32 @@ onMounted(
 </script>
 <style scoped>
 .simulation-report-view {
-  --vertical-gap:  16px;
-  --horizontal-gap: 4vw;
+  --vertical-gap:  0;
+  --horizontal-gap: 16px;
   --header-height: 3vh;
   --overall-height: 96vh;
   --overall-padding: 16px;
-  --overall-padding-top: 48px;
-  --overall-width: 100%;
-  --section-height: calc(100% - var(--overall-padding));
-  --section-width: calc(((--overall-width) - calc(var(--overall-padding)) - calc(var(--horizontal-gap))) / 2);
+  --overall-width: 98vw;
+  --usable-width: calc(var(--overall-width) - var(--overall-padding) - var(--vertical-gap));
+  --section-width: calc(var(--usable-width) / 2);
+  --section-height: calc(95vh - var(--horizontal-gap) - var(--overall-padding));
+
   width: var(--overall-width);
+  max-width: var(--overall-width);
   height: var(--overall-height);
+
   border-radius:10px !important;
   overflow: hidden !important;
   padding: var(--overall-padding);
-  padding-top: var(--overall-padding-top);
   position:relative;
 }
 
 .simulation-report-view-mobile {
   --vertical-gap:  1vh;
   --header-height: 3vh;
+  --horizontal-gap: 0;
   --overall-height: 96vh;
-  --overall-padding: 2vw;
+  --overall-padding: 16px;
   --overall-width: 100%;
   --section-height: 100%;
   --section-width: var(--overall-width);
@@ -400,7 +409,6 @@ onMounted(
   padding-left: var(--overall-padding);
   padding-right: var(--overall-padding);
   padding-top: 32px;
-  overflow-y: scroll !important;
   position:relative;
 }
 
@@ -412,15 +420,14 @@ onMounted(
 
 .main-body {
   height: 100%;
-  overflow: hidden;
   flex-wrap: nowrap;
 }
 
 .main-body-mobile {
-  padding:var(--overall-padding);
-  height: var(--section-height);
-  max-height: var(--section-height);
-  min-height: var(--section-height);
+  height:100%;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  flex-wrap: nowrap;
 }
 
 .vertical-gap {
@@ -467,7 +474,6 @@ onMounted(
 
 .section {
   display:block;
-  overflow:hidden;
   min-width:  var(--section-width);
   max-width:  var(--section-width);
   width:      var(--section-width);
@@ -478,24 +484,17 @@ onMounted(
 
 .overview-card {
   display:block;
-  height: calc((var(--section-height) - var(--vertical-gap)) / 2);
+  height: calc((var(--section-height) / 2));
   justify-content:start;
-
   max-width:inherit;
   min-width:inherit;
-
-  overflow:hidden;
-
   box-shadow: none;
 }
 
 .overview-card-mobile {
   display:block;
-
-  width:100%;
-
-  overflow:hidden;
-
+  height:40vh;
+  justify-content:start;
   box-shadow: none;
 }
 
@@ -530,25 +529,23 @@ onMounted(
   box-shadow:none;
 }
 
-
 .chart-card{
   background:white;
   display:block;
-  height: 100%;
-  max-height:100%;
-  min-height:100%;
-  max-width:inherit;
+  --top-padding: 30px;
+  height: calc(var(--section-height) - var(--top-padding));
+  width:inherit;
   border-width: 1px;
   border-style:solid;
   border-radius:5px;
   border-color: rgba(0, 0, 0, 0.4);
   box-shadow:none;
+  margin-top: var(--top-padding);
 }
 
 .chart-card-mobile {
   background:white;
   display:block;
-  height: 100%;
   width:100%;
   border-width: 1px;
   border-style:solid;

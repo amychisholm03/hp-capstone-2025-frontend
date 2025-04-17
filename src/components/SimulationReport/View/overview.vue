@@ -1,112 +1,107 @@
 <template>
   <div>
     <div id="overview-top" />
-    <!-- Overview -->
-    <v-col>
-      <v-row
-        ref="horizontalScroll"
-        no-gutters
-        class="overview-list-container pb-3"
+    <v-row
+      ref="horizontalScroll"
+      no-gutters
+      class="overview-list-container pb-3"
+    >
+      <div
+        v-if="horizontalArrow && !horizontalArrowConsumed"
+        class="align-center d-flex justify-center scroll-arrow"
+        @click="scrollToEnd"
       >
-        <div
-          v-if="horizontalArrow && !horizontalArrowConsumed"
-          class="align-center d-flex justify-center scroll-arrow"
-          @click="scrollToEnd"
+        <v-icon
+          size="large"
+          style="z-index:102; position:absolute;"
         >
-          <v-icon
-            size="large"
-            style="z-index:102; position:absolute;"
-          >
-            mdi-circle
-          </v-icon>
-          <v-icon
-            color="white"
-            style="z-index:103;"
-          >
-            mdi-chevron-double-right
-          </v-icon>
-        </div>
-
-        <v-col
-          v-for="{report, printjob, workflow, color} in reportData"
-          :key="report.id"
-          :class="mobile ? 'overview-list-mobile' : 'overview-list'"
-          style=""
+          mdi-circle
+        </v-icon>
+        <v-icon
+          color="white"
+          style="z-index:103;"
         >
-          <!-- Data -->
-          <v-row
-            style="overflow:hidden; height:100%;"
-            no-gutters
-          >
-            <v-col style="width:12vw; height:100%; max-height:100%;">
-              <!-- Simulation Report Title -->
-              <div
-                class="overview-list-header"
-              >
-                <v-chip
-                  :color="color"
-                  size="x-small"
-                >
-                  {{ printjob.Title }}
-                </v-chip>
-                <br />
-                <v-chip
-                  size="x-small"
-                  :color="color"
-                >
-                  {{ workflow.Title }}
-                </v-chip>
-              </div>
+          mdi-chevron-double-right
+        </v-icon>
+      </div>
 
-              <!-- Simulation Report Labels -->
-              <div
-                v-for="header in headers.report"
-                :key="header.value"
-                class="overview-list-item"
+      <v-col
+        v-for="{report, printjob, workflow, color} in reportData"
+        :key="report.id"
+        :class="mobile ? 'overview-list-mobile' : 'overview-list'"
+      >
+        <!-- Data -->
+        <v-row
+          no-gutters
+        >
+          <v-col style="width:10vw; height:100%; max-height:100%;">
+            <!-- Simulation Report Title -->
+            <div
+              class="overview-list-header"
+            >
+              <v-chip
+                :color="color"
+                size="x-small"
               >
-                <div class="overview-list-label">
-                  {{ header.text }}
-                </div>
-                <div class="overview-list-value">
-                  {{ report[header.value] }}
-                </div>
-                <br />
-              </div>
+                {{ printjob.Title }}
+              </v-chip>
+              <br />
+              <v-chip
+                size="x-small"
+                :color="color"
+              >
+                {{ workflow.Title }}
+              </v-chip>
+            </div>
 
-              <!-- Print Job Labels -->
-              <div
-                v-for="header in headers.printjob"
-                :key="header.value"
-                class="overview-list-item"
-              >
-                <div class="overview-list-label">
-                  {{ header.text }}
-                </div>
-                <div class="overview-list-value">
-                  {{ printjob[header.value] }}
-                </div>
-                <br />
+            <!-- Simulation Report Labels -->
+            <div
+              v-for="header in headers.report"
+              :key="header.value"
+              class="overview-list-item"
+            >
+              <div class="overview-list-label">
+                {{ header.text }}
               </div>
+              <div class="overview-list-value">
+                {{ report[header.value] }}
+              </div>
+              <br />
+            </div>
 
-              <!-- Workflow Labels -->
-              <div
-                v-for="header in headers.workflow"
-                :key="header.value"
-                class="overview-list-item"
-              >
-                <div class="overview-list-label">
-                  {{ header.text }}
-                </div>
-                <div class="overview-list-value">
-                  {{ workflow[header.value] }}
-                </div>
-                <br />
+            <!-- Print Job Labels -->
+            <div
+              v-for="header in headers.printjob"
+              :key="header.value"
+              class="overview-list-item"
+            >
+              <div class="overview-list-label">
+                {{ header.text }}
               </div>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-col>
+              <div class="overview-list-value">
+                {{ printjob[header.value] }}
+              </div>
+              <br />
+            </div>
+
+            <!-- Workflow Labels -->
+            <div
+              v-for="header in headers.workflow"
+              :key="header.value"
+              class="overview-list-item"
+            >
+              <div class="overview-list-label">
+                {{ header.text }}
+              </div>
+              <div class="overview-list-value">
+                {{ workflow[header.value] }}
+              </div>
+              <br />
+            </div>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -169,8 +164,6 @@ const scrollToEnd = () => {
   margin-left:20px;
   margin-right:20px;
   margin-bottom:20px;
-  overflow-x:hidden;
-  overflow-y:hidden;
   border-style:solid;
   border-width:1px;
   border-radius:0px;
@@ -257,8 +250,8 @@ const scrollToEnd = () => {
 
 .overview-list{
   background:white;
-  height:inherit;
-  max-height:inherit;
+  height: inherit;
+  max-height: inherit;
   width:14vw;
   max-width:14vw;
   border-width:1px;
@@ -270,11 +263,12 @@ const scrollToEnd = () => {
 
 .overview-list-mobile{
   background:white;
+  height: inherit;
+  max-height: inherit;
+  width:50vw;
+  min-width:50vw;
+  max-width:50vw;
   height:inherit;
-  max-height:inherit;
-  width:45vw;
-  min-width:45vw;
-  max-width:45vw;
   border-width:1px;
   border-color:rgba(50,50,50,0.5);
   margin-right:5px;

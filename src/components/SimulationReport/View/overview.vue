@@ -1,108 +1,108 @@
 <template>
-  <div>
-    <div id="overview-top" />
-    <v-row
-      ref="horizontalScroll"
-      no-gutters
-      class="overview-list-container pb-3"
+  <v-row
+    ref="horizontalScroll"
+    no-gutters
+    fill-height
+    class="container"
+  >
+    <div
+      v-if="horizontalArrow && !horizontalArrowConsumed"
+      class="align-center d-flex justify-center scroll-arrow"
+      @click="scrollToEnd"
     >
-      <div
-        v-if="horizontalArrow && !horizontalArrowConsumed"
-        class="align-center d-flex justify-center scroll-arrow"
-        @click="scrollToEnd"
+      <v-icon
+        size="large"
+        style="z-index:102; position:absolute;"
       >
-        <v-icon
-          size="large"
-          style="z-index:102; position:absolute;"
+        mdi-circle
+      </v-icon>
+      <v-icon
+        color="white"
+        style="z-index:103;"
+      >
+        mdi-chevron-double-right
+      </v-icon>
+    </div>
+
+    <v-col
+      v-for="{report, printjob, workflow, color} in reportData"
+      :key="report.id"
+      :class="mobile ? 'overview-list-mobile' : 'overview-list'"
+      class="pa-2 soft-border"
+      no-gutters
+    >
+      <!-- Simulation Report Title -->
+      <div class="list-header">
+        <v-chip
+          :color="color"
+          class="list-chips"
+          size="x-small"
+          variant="elevated"
         >
-          mdi-circle
-        </v-icon>
-        <v-icon
-          color="white"
-          style="z-index:103;"
+          {{ printjob.Title }}
+        </v-chip>
+        <br>
+        <v-chip
+          size="x-small"
+          :color="color"
+          class="list-chips"
+          variant="elevated"
         >
-          mdi-chevron-double-right
-        </v-icon>
+          {{ workflow.Title }}
+        </v-chip>
       </div>
 
-      <v-col
-        v-for="{report, printjob, workflow, color} in reportData"
-        :key="report.id"
-        :class="mobile ? 'overview-list-mobile' : 'overview-list'"
+      <div
+        class="divider my-1"
+      ></div>
+
+      <!-- Simulation Report Labels -->
+      <div
+        v-for="header in headers.report"
+        :key="header.value"
+        class="overview-list-item"
       >
-        <!-- Data -->
-        <v-row
-          no-gutters
-        >
-          <v-col style="width:10vw; height:100%; max-height:100%;">
-            <!-- Simulation Report Title -->
-            <div
-              class="overview-list-header"
-            >
-              <v-chip
-                :color="color"
-                size="x-small"
-              >
-                {{ printjob.Title }}
-              </v-chip>
-              <br />
-              <v-chip
-                size="x-small"
-                :color="color"
-              >
-                {{ workflow.Title }}
-              </v-chip>
-            </div>
+        <div class="overview-list-label">
+          {{ header.text }}
+        </div>
+        <div class="overview-list-value">
+          {{ report[header.value] }}
+        </div>
+      </div>
 
-            <!-- Simulation Report Labels -->
-            <div
-              v-for="header in headers.report"
-              :key="header.value"
-              class="overview-list-item"
-            >
-              <div class="overview-list-label">
-                {{ header.text }}
-              </div>
-              <div class="overview-list-value">
-                {{ report[header.value] }}
-              </div>
-              <br />
-            </div>
+      <!-- Print Job Labels -->
+      <div
+        v-for="header in headers.printjob"
+        :key="header.value"
+        class="overview-list-item"
+      >
+        <div class="overview-list-label">
+          {{ header.text }}
+        </div>
+        <div class="overview-list-value">
+          {{ printjob[header.value] }}
+        </div>
+      </div>
 
-            <!-- Print Job Labels -->
-            <div
-              v-for="header in headers.printjob"
-              :key="header.value"
-              class="overview-list-item"
-            >
-              <div class="overview-list-label">
-                {{ header.text }}
-              </div>
-              <div class="overview-list-value">
-                {{ printjob[header.value] }}
-              </div>
-              <br />
-            </div>
+      <!-- Workflow Labels -->
+      <div
+        v-for="header in headers.workflow"
+        :key="header.value"
+        class="overview-list-item"
+      >
+        <div class="overview-list-label">
+          {{ header.text }}
+        </div>
+        <div class="overview-list-value">
+          {{ workflow[header.value] }}
+        </div>
+      </div>
 
-            <!-- Workflow Labels -->
-            <div
-              v-for="header in headers.workflow"
-              :key="header.value"
-              class="overview-list-item"
-            >
-              <div class="overview-list-label">
-                {{ header.text }}
-              </div>
-              <div class="overview-list-value">
-                {{ workflow[header.value] }}
-              </div>
-              <br />
-            </div>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-  </div>
+      <div
+        class="divider my-1"
+      ></div>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
@@ -160,118 +160,54 @@ const scrollToEnd = () => {
 </script>
 
 <style scoped>
-.overview-container{
-  margin-left:20px;
-  margin-right:20px;
-  margin-bottom:20px;
-  border-style:solid;
-  border-width:1px;
-  border-radius:0px;
-  border-color:rgba(0,0,0,0.2);
-}
-
-.overview-item{
-  border-width:1px;
-  margin:0;
-  padding:0;
-}
-
-.overview-card-title {
-  font-size: 1.2em;
-  height:18px;
-  text-align:center;
-  text-justify: center;
-  background-color:rgb(25,25,25);
-  color:white;
-  font-weight: bold;
-  font-size: 1.0em;
-  font-family: 'Courier New', Courier, monospace;
-  border-radius:0px;
-  text-transform: uppercase;
-  margin-bottom:10px;
-
-}
-
-.overview-list-item{
-  width:100%;
-  height:14.28%;
-  border-width:1px;
-}
-
-.overview-list-header{
-  width:100%;
-  text-align:center;
-  align-content:center;
-  height:20%;
-  color:white;
-  font-family:'Courier New', Courier;
-  text-overflow:ellipsis;
-  overflow:hidden;
-  text-wrap:nowrap;
-  max-height:40%;
-}
-
-.overview-list-label{
-  opacity: 0.7;
-  text-overflow:hidden;
-  text-align: center;
-  max-height:40%;
-  max-width:80%;
-  margin-left:auto;
-  margin-right:auto;
-  text-wrap:nowrap;
-  overflow:hidden;
-  font-size:0.8em;
-}
-
-.overview-list-value{
-  opacity:1.0;
-  text-overflow:ellipsis;
-  max-height:60%;
-  max-width:80%;
-  margin-left:auto;
-  margin-right:auto;
-  text-align: center;
-  text-wrap:nowrap;
-  overflow:hidden;
-  font-size:0.9em;
-}
-
-.overview-list-container {
-  height:100%;
-  position:relative;
+.container {
   display:flex;
   flex-direction: row;
+  flex-wrap:nowrap;
+  position:relative;
+  column-gap:4px;
+
   overflow-x:scroll;
   overflow-y:hidden;
-  flex-wrap:nowrap;
-  flex-grow:1;
+
+  padding:8px;
 }
 
 .overview-list{
-  background:white;
-  height: inherit;
-  max-height: inherit;
-  width:14vw;
-  max-width:14vw;
-  border-width:1px;
-  border-color:rgba(50,50,50,0.5);
-  margin-right:5px;
-  border-radius: 15px;
-  border-style:groove;
+  width:30%;
+  max-width:30%;
+  justify-items:center;
+  text-align:center;
 }
 
 .overview-list-mobile{
-  background:white;
-  height: inherit;
-  max-height: inherit;
-  width:50vw;
-  min-width:50vw;
-  max-width:50vw;
-  height:inherit;
+  width: 50vw;
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+}
+
+.list-header{
+  font-family:'Courier New', Courier;
+  text-overflow:ellipsis;
+  text-wrap:nowrap;
+  overflow:hidden;
+}
+
+.overview-list-label{
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color:black;
+  font-size:xx-small;
+}
+
+.overview-list-value{
+  font-size:xx-small;
+  font-family:'Courier New', Courier, monospace;
+}
+
+.soft-border{
   border-width:1px;
   border-color:rgba(50,50,50,0.5);
-  margin-right:5px;
   border-radius: 15px;
   border-style:groove;
 }
@@ -290,5 +226,15 @@ const scrollToEnd = () => {
 .scroll-arrow:hover {
   opacity: 0.5;
 }
-</style>
+.list-chips{
 
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.divider{
+  border-top-width:1px;
+  height:1px;
+  width:75%;
+  border-top-style:solid;
+  border-color:rgba(50,50,50,0.2);
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
   <v-card
     v-if="!loading"
-    :class="mobile ? 'simulation-report-view-mobile' : 'simulation-report-view'"
+    class="simulation-report-view"
   >
     <v-btn
       class="close-button"
@@ -17,147 +17,68 @@
     </v-btn>
 
     <v-row
+      fill-height
       no-gutters
-      class="align-row d-flex"
-      :class="mobile ? 'main-body-mobile' : 'main-body'"
     >
-      <v-col class="section">
-        <!-- Overview -->
-        <v-row
-          :class="mobile ? 'overview-card-mobile' : 'overview-card'"
-          no-gutters
+      <!-- Left Half of View -->
+      <v-col
+        style="overflow:hidden;"
+        fill-height
+        no-gutters
+        cols="6"
+        class="pa-3"
+      >
+        <report-overview
+          style="height:45%; width:100%;"
+          :report-data="reportData"
+          :mobile="mobile"
         >
-          <v-col
-            style="height:inherit;"
-          >
-            <report-overview
-              :report-data="reportData"
-              :mobile="mobile"
-              style="height:inherit;"
-            >
-            </report-overview>
-          </v-col>
-        </v-row>
+        </report-overview>
 
         <div class="vertical-gap"></div>
 
-        <!-- Comparison -->
-        <v-row
-          no-gutters
-          class="comparison-card"
-        >
-          <v-col>
-            <report-comparison
-              :report-data="reportData"
-              :labels="labels"
-              :mobile="mobile"
-            ></report-comparison>
-          </v-col>
-        </v-row>
+        <report-comparison
+          style="height:50%; width:100%;"
+          :report-data="reportData"
+          :labels="labels"
+          :mobile="mobile"
+        ></report-comparison>
 
-        <!-- Graph Section (Mobile Only) -->
-        <v-row
+        <div
           v-if="mobile"
-          class="chart-card-mobile mt-5"
-          no-gutters
+          class="vertical-gap"
+        ></div>
+
+        <report-chart
+          v-if="mobile"
+          :mobile="mobile"
+          :report-data="reportData"
+          :selected-chart-data="selectedChartData"
+          :selected-chart-labels="selectedChartLabels"
+          @select-chart="selectChart"
         >
-          <v-col
-            style="display:flex; flex-direction:column;"
-          >
-            <v-tabs
-              v-model="selectedChart"
-              fixed-tabs
-            >
-              <v-tab
-                v-for="{ index, printjob, workflow } in reportData"
-                :key="index"
-                :value="index"
-                color="white"
-                :class="index === selectedChart ? 'tab-selected' : 'tab-unselected'"
-                style="max-width:unset;"
-              >
-                {{ printjob.Title }} - {{ workflow.Title }}
-              </v-tab>
-            </v-tabs>
-
-            <!-- Chart Canvas -->
-            <div
-              class="align-center d-flex justify-center pl-3 pr-3"
-            >
-              <canvas
-                id="chart-canvas"
-                style="max-width:600px; max-height:500px; display:block;"
-              >
-              </canvas>
-            </div>
-
-            <!-- Chart Selector -->
-            <chart-all
-              v-if="chartCanvas"
-              style="margin-top:auto;"
-              :chart-info="{data: selectedChartData, labels: selectedChartLabels }"
-              :canvas="chartCanvas"
-            >
-            </chart-all>
-          </v-col>
-        </v-row>
-
-
-
+        </report-chart>
       </v-col>
 
       <v-col class="horizontal-gap"></v-col>
-
-      <!-- Graph Section (desktop only) -->
+    
+      <!-- Right Half of View -->
       <v-col
         v-if="!mobile"
-        class="section"
+        style="overflow:hidden;"
+        no-gutters
+        fill-height
+        cols="6"
+        class="pa-3 pb-12 pt-12"
       >
-        <v-row
-          class="chart-card"
-          no-gutters
-        >
-          <v-col
-            style="display:flex; flex-direction:column; overflow:hidden; height:100%;"
-          >
-            <v-tabs
-              v-model="selectedChart"
-              fixed-tabs
-            >
-              <v-tab
-                v-for="{ index, printjob, workflow } in reportData"
-                :key="index"
-                :value="index"
-                color="white"
-                :class="index === selectedChart ? 'tab-selected' : 'tab-unselected'"
-                style="max-width:unset;"
-              >
-                {{ printjob.Title }} - {{ workflow.Title }}
-              </v-tab>
-            </v-tabs>
-
-            <!-- Chart Canvas -->
-            <div
-              class="align-center d-flex justify-center pa-3"
-              style="height:100%; width:100%;"
-            >
-              <canvas
-                id="chart-canvas"
-                style="max-width:600px; max-height:600px; display:block;"
-              >
-              </canvas>
-            </div>
-
-            <!-- Chart Selector -->
-            <chart-all
-              v-if="chartCanvas"
-              style="margin-top:auto;"
-              :chart-info="{data: selectedChartData, labels: selectedChartLabels }"
-              :canvas="chartCanvas"
-            >
-            </chart-all>
-          </v-col>
-        </v-row>
+        <report-chart
+          style="height:100%; width:100%;"
+          :mobile="mobile"
+          :report-data="reportData"
+          :selected-chart-data="selectedChartData"
+          :selected-chart-labels="selectedChartLabels"
+          @select-chart="selectChart"
+        ></report-chart>
       </v-col>
     </v-row>
   </v-card>
@@ -166,9 +87,9 @@
 <script setup>
 import { onMounted, ref, computed, nextTick } from "vue";
 import {getPrintJob, getWorkflow, getCollection, getWorkflowTimes } from "../api.js";
-import ChartAll from '../Chart/chart-all.vue';
 import ReportOverview from './View/overview.vue';
 import ReportComparison from './View/comparison.vue';
+import ReportChart from './View/charts.vue';
 
 //// Props
 const {
@@ -185,6 +106,24 @@ defineProps({
 //// DATA
 ///////////////////
 
+const colors = [ //nice colors to associate with simulation reports
+    'purple',
+    'orange-darken-2',
+    'green-darken-3',
+    'red',
+    'blue-darken-2',
+    'purple',
+    'orange-darken-2',
+    'green-darken-3',
+    'red',
+    'blue-darken-2',
+    'purple',
+    'orange-darken-2',
+    'green-darken-3',
+    'red',
+    'blue-darken-2',
+  ];
+
 const loading = ref(true);
 
 const reportData = ref([]);
@@ -192,7 +131,6 @@ const genericSteps = ref(null);
 const labels = ref([]);
 
 const selectedChart = ref(null);
-const chartCanvas = ref(null);
 
 //////////////////
 //// COMPUTED
@@ -217,6 +155,10 @@ const selectedChartLabels = computed(() => {
 ///////////////////////
 //// Logic
 //////////////////////
+
+const selectChart = (selection) =>{
+  selectedChart.value = selection;
+};
 
 const addTimes = (workflowSteps, stepTimes) => {
   workflowSteps.forEach((step) => {
@@ -326,14 +268,6 @@ const prepareReports = async (workflowStepDefinitions) => {
       }
     }
 
-    let colors = [
-      'purple',
-      'orange',
-      'green',
-      'red',
-      'blue',
-    ];
-
     const all = {
       printjob: printjob,
       workflow: workflow,
@@ -365,34 +299,17 @@ onMounted(
     genericSteps.value = await getGenericWorkflowSteps();
     await prepareReports();
     loading.value=false;
-    await nextTick();
-    setTimeout(() => {
-      chartCanvas.value = document.getElementById("chart-canvas");
-    }, 1000);
 });
 </script>
 <style scoped>
 .simulation-report-view {
-  --vertical-gap:  0;
-  --horizontal-gap: 16px;
-  --header-height: 3vh;
-  --overall-height: 96vh;
-  --overall-padding: 16px;
-  --overall-width: 98vw;
-  --usable-width: calc(var(--overall-width) - var(--overall-padding) - var(--vertical-gap));
-  --section-width: calc(var(--usable-width) / 2);
-  --section-height: calc(95vh - var(--horizontal-gap) - var(--overall-padding));
-
-  width: var(--overall-width);
-  max-width: var(--overall-width);
-  height: var(--overall-height);
-
-  border-radius:10px !important;
-  overflow: hidden !important;
-  padding: var(--overall-padding);
-  position:relative;
+  position: relative;
+  height: inherit;
+  width:  inherit;
+  max-height: inherit;
+  max-width:  inherit;
 }
-
+/* 
 .simulation-report-view-mobile {
   --vertical-gap:  1vh;
   --header-height: 3vh;
@@ -410,25 +327,7 @@ onMounted(
   padding-right: var(--overall-padding);
   padding-top: 32px;
   position:relative;
-}
-
-.header-bar {
-  height: var(--header-height);
-  max-height: var(--header-height);
-  min-height: var(--header-height);
-}
-
-.main-body {
-  height: 100%;
-  flex-wrap: nowrap;
-}
-
-.main-body-mobile {
-  height:100%;
-  overflow-y:scroll;
-  overflow-x:hidden;
-  flex-wrap: nowrap;
-}
+} */
 
 .vertical-gap {
   height:var(--vertical-gap);
@@ -472,22 +371,16 @@ onMounted(
   margin:0;
 }
 
-.section {
-  display:block;
-  min-width:  var(--section-width);
-  max-width:  var(--section-width);
-  width:      var(--section-width);
-  min-height: var(--section-height);
-  max-height: var(--section-height);
-  height:     var(--section-height);
-}
-
 .overview-card {
   display:block;
-  height: calc((var(--section-height) / 2));
   justify-content:start;
-  max-width:inherit;
-  min-width:inherit;
+
+  width: 30vw;
+
+  /* min-width:  var(--section-width);
+  max-width:  var(--section-width);
+  width:      var(--section-width); */
+
   box-shadow: none;
 }
 
@@ -529,44 +422,6 @@ onMounted(
   box-shadow:none;
 }
 
-.chart-card{
-  background:white;
-  display:block;
-  --top-padding: 30px;
-  height: calc(var(--section-height) - var(--top-padding));
-  width:inherit;
-  border-width: 1px;
-  border-style:solid;
-  border-radius:5px;
-  border-color: rgba(0, 0, 0, 0.4);
-  box-shadow:none;
-  margin-top: var(--top-padding);
-}
-
-.chart-card-mobile {
-  background:white;
-  display:block;
-  width:100%;
-  border-width: 1px;
-  border-style:solid;
-  border-radius:5px;
-  border-color: rgba(0, 0, 0, 0.4);
-  box-shadow:none;
-}
-
-.chart-card-title{
-  height:18px;
-  text-align:center;
-  text-justify: center;
-  background-color:rgb(25,25,25);
-  color:white;
-  font-weight: bold;
-  font-size: 1.0em;
-  font-family: 'Courier New', Courier, monospace;
-  border-radius:5px;
-  text-transform: uppercase;
-}
-
 @keyframes pop {
  0%    { scale: 2.0; }
  10%   { scale: 2.5; }
@@ -582,25 +437,16 @@ onMounted(
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
-
 .v-btn-toggle {
   margin-left: 5px !important;
 }
-
 .step-name-selectable:hover {
   opacity:0.5;
   cursor:pointer;
 }
-
-.tab-selected {
-  color: #000000 !important;
-  font-weight:600;
-  font-size:1.0em;
-}
-
-.tab-unselected {
-  font-weight:400;
-  font-size:0.8em;
+.conform{
+  max-height:inherit;
+  max-width:inherit;
 }
 </style>
 

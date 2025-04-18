@@ -10,7 +10,11 @@
     <v-dialog
       v-model="viewing"
       persistent
-      height="96vh"
+      class="simulation-report-view-dialog"
+      height="95vh"
+      width="95vw"
+      max-height="95vh"
+      max-width="95vw"
     >
       <simulation-report-view
         :reports="selectedReports"
@@ -229,6 +233,14 @@ const getWorkflows = async () => {
 .dashboard-container {
   max-width: 400px;
 }
+
+.simulation-report-view-dialog {
+  width:95vw;
+  max-width:95vw;
+  height:95vh;
+  max-height:95vh;
+}
+
 
 :deep(.v-overlay--active) {
   display: none;

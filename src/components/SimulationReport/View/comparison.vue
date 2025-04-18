@@ -1,11 +1,14 @@
 <template>
-  <div class="comparison-main">
+  <div class="container">
     <v-row
       no-gutters
+      fill-height
       class="align-row d-flex"
       style="flex-wrap: nowrap; height:100%; width:100%;"
     >
       <v-col
+        no-gutters
+        fill-height
         class="pr-2"
         :class="mobile ? 'label-column-mobile' : 'label-column'"
       >
@@ -149,61 +152,46 @@
         v-if="!mobile"
         class="settings-column"
       >
-        <h3 class="ml-2">
-          Heat Map
-        </h3>
-        <v-btn-toggle
-          v-model="showHeatMap"
-          mandatory
+        <p
+          class="mb-3 settings-title"
         >
-          <v-btn
-            :value="1"
-            size="x-small"
-            style="font-size:0.8em;"
-            border
-            tile
-          >
-            Show
-          </v-btn>
-          <v-btn
-            size="x-small"
-            :value="0"
-            style="font-size:0.8em;"
-            border
-            tile
-          >
-            Hide
-          </v-btn>
-        </v-btn-toggle>
-
-        <h3 class="ml-3">
           Time Units
-        </h3>
+        </p>
         <v-btn-toggle
           v-model="secondsOrMinutes"
           mandatory
         >
           <v-btn
             :value="0"
-            style="font-size:0.7em;"
-            size="x-small"
-            class="px-2"
+            class="ma-0"
+            style="font-size:xx-small; width:64px; height:28px;"
             border
-            round
           >
             Minutes
           </v-btn>
           <v-btn
             :value="1"
-            style="font-size:0.7em;"
-            class="px-2"
-            size="x-small"
+            class="ma-0"
+            style="font-size:xx-small; width:64px; height:28px;"
             border
-            round
           >
             Seconds
           </v-btn>
         </v-btn-toggle>
+
+        <div>
+          <p
+            class="settings-title"
+            variant="outlined"
+            tile
+          >
+            Heat Map 
+          </p>
+          <v-switch
+            v-model="showHeatMap"
+          >
+          </v-switch>
+        </div>
         <v-spacer></v-spacer>
       </v-col>
     </v-row>
@@ -402,7 +390,7 @@ const scrollToEnd = () => {
 </script>
 
 <style scoped>
-.comparison-card-title{
+/* .comparison-card-title{
   height:18px;
   text-align:center;
   text-justify: center;
@@ -413,7 +401,7 @@ const scrollToEnd = () => {
   font-family: 'Courier New', Courier, monospace;
   border-radius:5px;
   text-transform: uppercase;
-}
+} */
 
 .comparison-header{
   height:35px;
@@ -445,15 +433,15 @@ const scrollToEnd = () => {
   text-overflow: ellipsis;
 }
 
-.comparison-main{
+.container{
+  padding:16px;
+  padding-bottom:8px;
   position:relative;
-  padding:2%;
-  width:100%;
-  height:100%;
-}
-
-.step-times-column{
-  height:100%;
+  font-size:0.9em;
+  border-style:solid;
+  border-color:rgba(50,50,50,0.6);
+  border-width:1px;
+  border-radius:10px;
 }
 
 .settings-column{
@@ -461,9 +449,9 @@ const scrollToEnd = () => {
   flex-wrap:nowrap;
   flex-direction: column;
   overflow:hidden;
-  row-gap:10px;
-  margin-left:4px;
-  margin-right:16px;
+  row-gap:0px;
+  margin-left:12px;
+  margin-right:12px;
 }
 
 .scroll-arrow {
@@ -509,6 +497,14 @@ const scrollToEnd = () => {
   max-width:65%;
   min-width:65%;
   position:relative;
+}
+
+.settings-title{
+  font-size:x-small;
+  color:rgba(100,100,100, 0.9);
+  font-weight:500;
+  line-height: 12px;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 </style>
 

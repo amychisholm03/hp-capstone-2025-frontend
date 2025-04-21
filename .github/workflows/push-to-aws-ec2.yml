@@ -32,7 +32,9 @@ jobs:
             host: ${{ secrets.EC2_HOST }}
             username: ${{ secrets.EC2_USER}}
             key: ${{ secrets.EC2_SSH_KEY }}
-            script: |
+            SCRIPT_BEFORE: |
+              sudo rm -rf /var/www/html
+            SCRIPT_AFTER: |
                   sudo chown builder:web /var/www/html
                   sudo chown -R builder:builder /var/www/html/*
                   sudo chown -R builder:builder /var/www/html/.*

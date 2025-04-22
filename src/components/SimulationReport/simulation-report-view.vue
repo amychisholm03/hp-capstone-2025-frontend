@@ -140,7 +140,6 @@ const selectedChartData = computed(() => {
   if (selectedChart.value === null) {
     return [];
   }
-  console.log("lolol");
   const report = reportData.value[selectedChart.value];
   return report.steps.map((step)=>{
     return step.time;

@@ -68,10 +68,8 @@ const chartCanvas   = ref(null);
 onMounted(
   async () => {
     await nextTick();
-    console.log(selectedChartData);
     setTimeout(() => {
       chartCanvas.value = document.getElementById('chart-canvas');
-      console.log(chartCanvas.value);
 
       //select default chart.
       selectedChart.value = 0;

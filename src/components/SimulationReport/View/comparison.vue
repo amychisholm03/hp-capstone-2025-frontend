@@ -280,7 +280,6 @@ const generateHeatmap = (data, steps) => {
 
   // Loop through each step (eg Rasterization, Lamination etc.)
   steps.forEach((step) => {
-    console.log(step);
     let times = [];
     let index = 0;
 
@@ -306,8 +305,6 @@ const generateHeatmap = (data, steps) => {
         score++;
       }
       prev_time = time.time;
-      console.log(time.reportid);
-      console.log(score);
       scores[time.reportid] = score;
     });
     maps.push({

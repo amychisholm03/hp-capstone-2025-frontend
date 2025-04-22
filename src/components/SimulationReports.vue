@@ -10,7 +10,11 @@
     <v-dialog
       v-model="viewing"
       persistent
-      height="96vh"
+      class="simulation-report-view-dialog"
+      height="95vh"
+      width="95vw"
+      max-height="95vh"
+      max-width="95vw"
     >
       <simulation-report-view
         :reports="selectedReports"
@@ -74,7 +78,6 @@ import { computed, ref, onMounted } from "vue";
 import {useDisplay} from 'vuetify';
 import { getCollection } from "./api.js";
 import ChatWidget from './ChatBot/chat-widget.vue';
-import DetailedReport from './SimulationReport/DetailedReport.vue';
 import SimulationReportHistory from './SimulationReport/simulation-report-history.vue';
 import SimulationReportGenerate from './SimulationReport/simulation-report-generate.vue';
 import SimulationReportView from './SimulationReport/simulation-report-view.vue';
@@ -175,7 +178,7 @@ const addTime = (reports) => {
 */
 const getSimulationReports = async () => {
   const response = await getCollection("SimulationReport");
-  if (response.ok) {
+  if (response && response.ok) {
     return response.json();
   } else {
     errorMessage.value = "Error fetching list of simulation reports";
@@ -230,6 +233,14 @@ const getWorkflows = async () => {
 .dashboard-container {
   max-width: 400px;
 }
+
+.simulation-report-view-dialog {
+  width:95vw;
+  max-width:95vw;
+  height:95vh;
+  max-height:95vh;
+}
+
 
 :deep(.v-overlay--active) {
   display: none;

@@ -105,7 +105,7 @@ const {report = null} = defineProps({
 
 .item-val {
   font-weight:600;
-  font-size:1.0em;
+  font-size:0.8em;
   color:rgba(50,50,50,0.9);
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width:100%;

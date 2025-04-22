@@ -1,12 +1,12 @@
 <template>
   <div
-    class="container"
+    :class="mobile ? 'mobile-container' : 'container'"
   >
     <v-tabs
       v-model="selectedChart"
       fixed-tabs
       class="charts-selection"
-      @change="$emit('select-chart', selectedChart)"
+      @click="$emit('select-chart', selectedChart)"
     >
       <v-tab
         v-for="{ index, printjob, workflow } in reportData"
@@ -20,11 +20,11 @@
 
     <!-- Chart Canvas -->
     <div
-      class="charts-canvas"
+      class="charts-canvas align-center justify-center d-flex"
     >
       <canvas
         id="chart-canvas"
-        style="max-width:500px; max-height:500px; display:block;"
+        :class="mobile ? 'chart-canvas-div-mobile' : 'chart-canvas-div'"
       >
       </canvas>
     </div>
@@ -79,9 +79,18 @@ onMounted(
 </script>
 <style scoped>
 .container {
-  border-width:1px;
-  border-style:solid;
-  border-color:black;
+
+}
+.mobile-container {
+  width:100%;
+  padding-inline:24px;
+}
+.chart-canvas-div-mobile {
+  max-width:  200px;
+  max-height: 200px;
+  min-width:  200px;
+  min-height: 200px;
+  display: block;
 }
 .tab-selected {
   color: #000000 !important;
@@ -92,19 +101,24 @@ onMounted(
   font-weight:400;
   font-size:0.8em;
 }
-.charts-canvas{
+.charts-canvas {
   min-width:100%;
-  min-height:85%;
+  min-height:95%;
   max-width:100%;
-  max-height:85%;
-  justify-items:center;
-  display:block;
+  max-height:95%;
+}
+.chart-canvas-div {
+  max-width:  500px;
+  max-height: 500px;
+  min-width:  500px;
+  min-height: 500px;
+  display: block;
 }
 
-.charts-selection{
+.charts-selection {
   min-width:100%;
-  min-height:15%;
   max-width:100%;
-  max-height:15%;
+  max-height:5%;
+  min-height:5%;
 }
 </style>

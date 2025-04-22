@@ -25,11 +25,11 @@
         style="overflow:hidden;"
         fill-height
         no-gutters
-        cols="6"
+        :cols="mobile ? 12 : 6"
         class="pa-3"
       >
         <report-overview
-          style="height:45%; width:100%;"
+          :class="mobile ? 'overview-container-mobile' : 'overview-container'"
           :report-data="reportData"
           :mobile="mobile"
         >
@@ -60,25 +60,27 @@
         </report-chart>
       </v-col>
 
-      <v-col class="horizontal-gap"></v-col>
-    
+      <v-col v-if="!mobile" class="horizontal-gap"></v-col>
+
       <!-- Right Half of View -->
       <v-col
         v-if="!mobile"
-        style="overflow:hidden;"
+        style="overflow: hidden;"
         no-gutters
         fill-height
         cols="6"
-        class="pa-3 pb-12 pt-12"
+        class="mt-8 pa-3"
       >
-        <report-chart
-          style="height:90%; width:100%;"
-          :mobile="mobile"
-          :report-data="reportData"
-          :selected-chart-data="selectedChartData"
-          :selected-chart-labels="selectedChartLabels"
-          @select-chart="selectChart"
-        ></report-chart>
+        <div class="report-chart-container">
+          <report-chart
+            style="height:90%; width:100%;"
+            :mobile="mobile"
+            :report-data="reportData"
+            :selected-chart-data="selectedChartData"
+            :selected-chart-labels="selectedChartLabels"
+            @select-chart="selectChart"
+          ></report-chart>
+        </div>
       </v-col>
     </v-row>
   </v-card>
@@ -137,9 +139,11 @@ const selectedChart = ref(null);
 //////////////////
 
 const selectedChartData = computed(() => {
+  console.log(selectedChart.value);
   if (selectedChart.value === null) {
     return [];
   }
+  console.log("Changed to ", selectedChart.value);
   const report = reportData.value[selectedChart.value];
   return report.steps.map((step)=>{
     return step.time;
@@ -157,6 +161,7 @@ const selectedChartLabels = computed(() => {
 //////////////////////
 
 const selectChart = (selection) =>{
+  console.log("SELECTION!", selection);
   selectedChart.value = selection;
 };
 
@@ -303,31 +308,12 @@ onMounted(
 </script>
 <style scoped>
 .simulation-report-view {
-  position: relative;
-  height: inherit;
-  width:  inherit;
+  position:   relative;
+  height:     inherit;
+  width:      inherit;
   max-height: inherit;
   max-width:  inherit;
 }
-/* 
-.simulation-report-view-mobile {
-  --vertical-gap:  1vh;
-  --header-height: 3vh;
-  --horizontal-gap: 0;
-  --overall-height: 96vh;
-  --overall-padding: 16px;
-  --overall-width: 100%;
-  --section-height: 100%;
-  --section-width: var(--overall-width);
-  width: var(--overall-width);
-  height: var(--overall-height);
-  max-height: var(--overall-height);
-  border-radius:10px !important;
-  padding-left: var(--overall-padding);
-  padding-right: var(--overall-padding);
-  padding-top: 32px;
-  position:relative;
-} */
 
 .vertical-gap {
   height:var(--vertical-gap);
@@ -336,6 +322,7 @@ onMounted(
   padding:0;
   margin:0;
 }
+
 .horizontal-gap {
   width:var(--horizontal-gap);
   max-width:var(--horizontal-gap);
@@ -377,10 +364,6 @@ onMounted(
 
   width: 30vw;
 
-  /* min-width:  var(--section-width);
-  max-width:  var(--section-width);
-  width:      var(--section-width); */
-
   box-shadow: none;
 }
 
@@ -389,6 +372,14 @@ onMounted(
   height:40vh;
   justify-content:start;
   box-shadow: none;
+}
+
+.report-chart-container{
+  border-width:1px;
+  border-style:solid;
+  border-color:rgba(0,0,0,0.5);
+  border-radius:10px;
+  height:100%;
 }
 
 .comparison-card{
@@ -447,6 +438,10 @@ onMounted(
 .conform{
   max-height:inherit;
   max-width:inherit;
+}
+.overview-container{
+  height:40%;
+  width:100%;
 }
 </style>
 

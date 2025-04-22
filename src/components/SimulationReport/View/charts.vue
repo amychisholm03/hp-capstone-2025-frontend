@@ -5,6 +5,7 @@
     <v-tabs
       v-model="selectedChart"
       fixed-tabs
+      class="charts-selection"
       @change="$emit('select-chart', selectedChart)"
     >
       <v-tab
@@ -23,7 +24,7 @@
     >
       <canvas
         id="chart-canvas"
-        style="max-width:600px; max-height:500px; display:block;"
+        style="max-width:500px; max-height:500px; display:block;"
       >
       </canvas>
     </div>
@@ -41,6 +42,8 @@
 <script setup>
 import { onMounted, ref, computed, nextTick } from "vue";
 import ChartAll from '../../Chart/chart-all.vue';
+
+const emit = defineEmits(['select-chart']);
 
 //////////////////////////
 //// Props
@@ -65,9 +68,14 @@ const chartCanvas   = ref(null);
 onMounted(
   async () => {
     await nextTick();
+    console.log(selectedChartData);
     setTimeout(() => {
-      chartCanvas.value = ref(document.getElementById("chart-canvas"));
+      chartCanvas.value = document.getElementById('chart-canvas');
       console.log(chartCanvas.value);
+
+      //select default chart.
+      selectedChart.value = 0;
+      emit('select-chart', 0);
     }, 3000);
 });
 </script>
@@ -87,8 +95,18 @@ onMounted(
   font-size:0.8em;
 }
 .charts-canvas{
-  max-width:600px;
-  max-height:600px;
+  min-width:100%;
+  min-height:85%;
+  max-width:100%;
+  max-height:85%;
+  justify-items:center;
   display:block;
+}
+
+.charts-selection{
+  min-width:100%;
+  min-height:15%;
+  max-width:100%;
+  max-height:15%;
 }
 </style>

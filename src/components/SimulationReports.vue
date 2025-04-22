@@ -178,7 +178,7 @@ const addTime = (reports) => {
 */
 const getSimulationReports = async () => {
   const response = await getCollection("SimulationReport");
-  if (response.ok) {
+  if (response && response.ok) {
     return response.json();
   } else {
     errorMessage.value = "Error fetching list of simulation reports";

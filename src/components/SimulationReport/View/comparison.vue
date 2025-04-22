@@ -188,6 +188,7 @@
             Heat Map 
           </p>
           <v-switch
+            class="pl-2"
             v-model="showHeatMap"
           >
           </v-switch>
@@ -266,9 +267,9 @@ const getHeatmapColor = (step) => {
   const mid_score  = map.high_score / 2;
 
   if (score > (mid_score)) {
-    return `rgba(255,0,0,${score / high_score});`
+    return `rgba(255,100,100,${score / mid_score});`
   } else if (score < (mid_score)) {
-    return `rgba(0,255,0,calc(${1 - (score/high_score)}));`
+    return `rgba(100,255,100,calc(${1 - (score / high_score)}));`
   } else {
     return 'yellow';
   }
@@ -279,7 +280,8 @@ const generateHeatmap = (data, steps) => {
 
   // Loop through each step (eg Rasterization, Lamination etc.)
   steps.forEach((step) => {
-    const times = [];
+    console.log(step);
+    let times = [];
     let index = 0;
 
     // Loop through each simulation report and get it's time for our current step
@@ -291,10 +293,9 @@ const generateHeatmap = (data, steps) => {
     });
 
     // Now that we have all times for this step, sort them.
-    times.sort((a,b)=>{
-      return (a.time > b.time);
+    times = times.sort((a,b)=>{
+      return (Number(a.time) - Number(b.time));
     });
-
 
     // Each simulation report will be assigned a score from where it lies in the sorted array.
     const scores = {};
@@ -305,6 +306,8 @@ const generateHeatmap = (data, steps) => {
         score++;
       }
       prev_time = time.time;
+      console.log(time.reportid);
+      console.log(score);
       scores[time.reportid] = score;
     });
     maps.push({

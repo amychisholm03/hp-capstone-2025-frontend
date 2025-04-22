@@ -72,7 +72,7 @@
         class="pa-3 pb-12 pt-12"
       >
         <report-chart
-          style="height:100%; width:100%;"
+          style="height:90%; width:100%;"
           :mobile="mobile"
           :report-data="reportData"
           :selected-chart-data="selectedChartData"
@@ -140,6 +140,7 @@ const selectedChartData = computed(() => {
   if (selectedChart.value === null) {
     return [];
   }
+  console.log("lolol");
   const report = reportData.value[selectedChart.value];
   return report.steps.map((step)=>{
     return step.time;
